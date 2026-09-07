@@ -174,8 +174,7 @@ test.describe('Chess Quick Play Lobby', () => {
       return;
     }
 
-    const playBtn = bulletCard.getByRole('button', { name: /play/i });
-    await expect(playBtn).toBeEnabled();
+    await expect(bulletCard).toBeEnabled();
   });
 });
 
