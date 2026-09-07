@@ -2,7 +2,17 @@
 
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { ChessClientState } from '../types';
+import type { MoveQuality } from '@/features/analysis/lib/analyzeGame';
 import { generateMoveList, generatePGN } from '../lib/pgn';
+
+const QUALITY_BADGE: Record<MoveQuality, { symbol: string; color: string }> = {
+  brilliant: { symbol: '✦', color: 'text-cyan-400' },
+  great: { symbol: '!', color: 'text-purple-400' },
+  good: { symbol: '', color: '' },
+  inaccuracy: { symbol: '?!', color: 'text-amber-400' },
+  mistake: { symbol: '?', color: 'text-orange-400' },
+  blunder: { symbol: '??', color: 'text-red-400' },
+};
 
 interface MoveListProps {
   state: ChessClientState;
@@ -13,6 +23,8 @@ interface MoveListProps {
   onMoveHover?: (moveIndex: number | null) => void;
   onSelectMove?: (moveIndex: number) => void;
   selectedMoveIndex?: number | null;
+  openingName?: string | null;
+  moveQualities?: MoveQuality[];
 }
 
 export function MoveList({
@@ -21,6 +33,8 @@ export function MoveList({
   onMoveHover,
   onSelectMove,
   selectedMoveIndex,
+  openingName,
+  moveQualities,
 }: MoveListProps) {
   const [copied, setCopied] = useState(false);
   const [hoveredMove, setHoveredMove] = useState<number | null>(null);
@@ -93,13 +107,23 @@ export function MoveList({
   return (
     <div className="flex flex-col gap-1.5 shrink-0">
       <div className="flex justify-between items-center px-1 shrink-0">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] text-[var(--textSecondary)] font-bold uppercase tracking-wider">
-            Moves
-          </span>
-          <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/5 text-[var(--textSecondary)] font-mono">
-            {totalMoves}
-          </span>
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] text-[var(--textSecondary)] font-bold uppercase tracking-wider">
+              Moves
+            </span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/5 text-[var(--textSecondary)] font-mono">
+              {totalMoves}
+            </span>
+          </div>
+          {openingName && (
+            <span
+              className="text-[9px] font-semibold text-[var(--textSecondary)] bg-white/5 px-1.5 py-0.5 rounded-full border border-white/10 truncate max-w-[160px]"
+              title={openingName}
+            >
+              ♟ {openingName}
+            </span>
+          )}
         </div>
         <button
           type="button"
@@ -145,7 +169,7 @@ export function MoveList({
               </span>
               <button
                 type="button"
-                className={`flex-1 text-left px-2 py-0.5 rounded cursor-pointer transition-colors ${
+                className={`flex-1 text-left px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-0.5 ${
                   isWhiteActive
                     ? 'bg-amber-500/25 text-amber-300 font-bold shadow-sm'
                     : 'text-[var(--color)] hover:bg-white/10'
@@ -160,11 +184,19 @@ export function MoveList({
                 }}
                 onClick={() => onSelectMove?.(pair.whiteIdx)}
               >
-                {pair.white}
+                <span>{pair.white}</span>
+                {moveQualities?.[pair.whiteIdx] &&
+                  QUALITY_BADGE[moveQualities[pair.whiteIdx]!].symbol && (
+                    <span
+                      className={`text-[9px] font-black leading-none ${QUALITY_BADGE[moveQualities[pair.whiteIdx]!].color}`}
+                    >
+                      {QUALITY_BADGE[moveQualities[pair.whiteIdx]!].symbol}
+                    </span>
+                  )}
               </button>
               <button
                 type="button"
-                className={`flex-1 text-left px-2 py-0.5 rounded cursor-pointer transition-colors ${
+                className={`flex-1 text-left px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-0.5 ${
                   isBlackActive
                     ? 'bg-amber-500/25 text-amber-300 font-bold shadow-sm'
                     : 'text-[var(--textSecondary)] hover:text-[var(--color)] hover:bg-white/10'
@@ -179,7 +211,15 @@ export function MoveList({
                 }}
                 onClick={() => onSelectMove?.(pair.blackIdx)}
               >
-                {pair.black}
+                <span>{pair.black}</span>
+                {moveQualities?.[pair.blackIdx] &&
+                  QUALITY_BADGE[moveQualities[pair.blackIdx]!].symbol && (
+                    <span
+                      className={`text-[9px] font-black leading-none ${QUALITY_BADGE[moveQualities[pair.blackIdx]!].color}`}
+                    >
+                      {QUALITY_BADGE[moveQualities[pair.blackIdx]!].symbol}
+                    </span>
+                  )}
               </button>
             </div>
           );

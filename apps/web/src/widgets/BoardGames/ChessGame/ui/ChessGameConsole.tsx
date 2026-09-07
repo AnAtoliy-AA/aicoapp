@@ -1,11 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@arcadeum/ui';
 import { MoveList } from './MoveList';
+import {
+  MoveAccuracySummary,
+  computePlayerAccuracy,
+} from './MoveAccuracySummary';
+import { ChessSettingsPanel } from './ChessSettingsPanel';
 import { CoachControls } from '@/features/coach/ui/CoachControls';
 import { OpeningExplorer } from '@/features/analysis/ui/OpeningExplorer';
-import { PIECE_STYLE_OPTIONS, type ChessPieceStyle } from '../lib/piece-style';
+import { analyzeGame } from '@/features/analysis/lib/analyzeGame';
+import { detectOpening } from '../lib/eco-openings';
+import type { ChessPieceStyle } from '../lib/piece-style';
 import type { UseChessCoachResult } from '../hooks/useChessCoach';
 import type { ChessClientState } from '../types';
 import type { TranslationKey } from '@/shared/lib/useTranslation';
@@ -76,7 +83,7 @@ function formatNps(nps: number | null | undefined): string {
 
 export function ChessGameConsole({
   snapshot,
-  myColor: _myColor,
+  myColor,
   isGameOver,
   isSpectator,
   currentUserId,
@@ -107,6 +114,34 @@ export function ChessGameConsole({
   const [activeTab, setActiveTab] = useState<'game' | 'settings'>('game');
   const [selectedMoveIndex, setSelectedMoveIndex] = useState<number | null>(
     null,
+  );
+
+  const gameAnalysis = useMemo(() => {
+    if (!isGameOver || snapshot.positionHistory.length < 2) return null;
+    const notations = snapshot.moveHistory.map((m) => m.notation);
+    return analyzeGame(snapshot.positionHistory, notations);
+  }, [isGameOver, snapshot.positionHistory, snapshot.moveHistory]);
+
+  const moveQualities = useMemo(
+    () => gameAnalysis?.moves.map((m) => m.quality),
+    [gameAnalysis],
+  );
+
+  const openingName = useMemo(
+    () => detectOpening(snapshot.positionHistory),
+    [snapshot.positionHistory],
+  );
+
+  const whiteAccuracy = useMemo(
+    () =>
+      gameAnalysis ? computePlayerAccuracy(gameAnalysis.moves, 'white') : null,
+    [gameAnalysis],
+  );
+
+  const blackAccuracy = useMemo(
+    () =>
+      gameAnalysis ? computePlayerAccuracy(gameAnalysis.moves, 'black') : null,
+    [gameAnalysis],
   );
 
   const hasDrawOffer = !!snapshot.drawOfferedBy;
@@ -224,7 +259,17 @@ export function ChessGameConsole({
               onMoveHover={onMoveHover}
               onSelectMove={setSelectedMoveIndex}
               selectedMoveIndex={selectedMoveIndex}
+              openingName={openingName}
+              moveQualities={moveQualities}
             />
+
+            {whiteAccuracy && blackAccuracy && (
+              <MoveAccuracySummary
+                white={whiteAccuracy}
+                black={blackAccuracy}
+                myColor={myColor}
+              />
+            )}
 
             {moveCandidates && moveCandidates.length > 1 && (
               <div className="chess-candidate-lines shrink-0 p-2 rounded-xl bg-black/20 border border-white/5 flex flex-col gap-1 font-mono text-[11px]">
@@ -273,97 +318,19 @@ export function ChessGameConsole({
         )}
 
         {activeTab === 'settings' && (
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] font-bold text-[var(--textSecondary)] uppercase tracking-wider">
-                Chess Piece Set
-              </span>
-              <div className="grid grid-cols-2 gap-1.5">
-                {PIECE_STYLE_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => onSelectPieceStyle?.(opt.id)}
-                    className={`flex flex-col items-start p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                      pieceStyle === opt.id
-                        ? 'bg-amber-500/15 border-amber-400 text-white shadow-sm'
-                        : 'bg-white/5 border-white/10 text-[var(--textSecondary)] hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <span className="text-xs font-bold leading-none mb-1">
-                      {opt.name}
-                    </span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-black/40 text-[var(--textSecondary)]">
-                      {opt.badge}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 pt-1 border-t border-white/10">
-              {onFlipBoard && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  fullWidth
-                  onClick={onFlipBoard}
-                >
-                  Flip Board View
-                </Button>
-              )}
-
-              {onExportPgn && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  fullWidth
-                  onClick={onExportPgn}
-                >
-                  Export PGN
-                </Button>
-              )}
-
-              {onToggleConfirmMoves && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  fullWidth
-                  onClick={onToggleConfirmMoves}
-                >
-                  {confirmMoves ? 'Confirm Moves: ON' : 'Confirm Moves: OFF'}
-                </Button>
-              )}
-
-              {isAdmin && (onToggleBestMove || onToggleThreats) && (
-                <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-                  <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                    Admin Streamer Assists
-                  </span>
-                  {onToggleBestMove && (
-                    <Button
-                      variant={showBestMove ? 'primary' : 'outline'}
-                      size="sm"
-                      fullWidth
-                      onClick={onToggleBestMove}
-                    >
-                      🎯 Best Move Arrow: {showBestMove ? 'ON' : 'OFF'}
-                    </Button>
-                  )}
-                  {onToggleThreats && (
-                    <Button
-                      variant={showThreats ? 'primary' : 'outline'}
-                      size="sm"
-                      fullWidth
-                      onClick={onToggleThreats}
-                    >
-                      ⚔️ Threats &amp; Attacks: {showThreats ? 'ON' : 'OFF'}
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <ChessSettingsPanel
+            pieceStyle={pieceStyle}
+            onSelectPieceStyle={onSelectPieceStyle}
+            isAdmin={isAdmin}
+            showBestMove={showBestMove}
+            showThreats={showThreats}
+            onToggleBestMove={onToggleBestMove}
+            onToggleThreats={onToggleThreats}
+            onFlipBoard={onFlipBoard}
+            onExportPgn={onExportPgn}
+            onToggleConfirmMoves={onToggleConfirmMoves}
+            confirmMoves={confirmMoves}
+          />
         )}
       </div>
 

@@ -1,5 +1,4 @@
 'use client';
-
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { GameWidgetContainer } from '@/features/games/ui/GameWidgetContainer';
 import {
@@ -29,6 +28,7 @@ import { useSquareClick } from '../hooks/useSquareClick';
 import { useChessPremoves } from '../hooks/useChessPremoves';
 import { useChessStreamerOverlays } from '../hooks/useChessStreamerOverlays';
 import { useChessGameSounds } from '../hooks/useChessGameSounds';
+import { useKeyboardMoveInput } from '../hooks/useKeyboardMoveInput';
 import { calculateOptimisticChessState } from '../lib/optimisticMove';
 import { getChessA11yAnnouncement } from '../lib/a11yAnnouncement';
 import { downloadPGN } from '../lib/pgn';
@@ -37,8 +37,8 @@ import { createDisplayNameResolver } from '../lib/displayNameResolver';
 import { ChessLobby } from './ChessLobby';
 import { ChessBoardPanel } from './ChessBoardPanel';
 import { ChessGameModals } from './ChessGameModals';
+import { ChessKeyboardInput } from './ChessKeyboardInput';
 import { ChessThemeProvider } from '../lib/ChessThemeContext';
-
 function ChessGameImpl({
   roomId,
   room: initialRoom,
@@ -108,7 +108,6 @@ function ChessGameImpl({
         p.color === displaySnapshot.currentTurnColor,
     )
   );
-
   const coach = useChessCoach({ room, currentUserId, displaySnapshot });
   const { eval: liveEval, analyzing: liveEvalAnalyzing } = useStockfishAnalysis(
     {
@@ -220,13 +219,11 @@ function ChessGameImpl({
     setSelectedSquare,
   });
   const { handlePremoveSquareClick, handlePremovePieceDrop } = premoves;
-
   useChessGameSounds({
     displaySnapshot,
     isGameOver,
     playSound,
   });
-
   const regularLegalMoves = useMemo(() => {
     if (!selectedSquare || !displaySnapshot) return [];
     return (displaySnapshot.legalMovesForCurrentPlayer ?? [])
@@ -237,15 +234,18 @@ function ChessGameImpl({
       )
       .map((m) => m.to);
   }, [selectedSquare, displaySnapshot]);
-
   const activeLegalMoves = displayMyTurn
     ? regularLegalMoves
     : premoves.premoveLegalMoves;
-
+  const spectatorCount =
+    room?.members && displaySnapshot?.players
+      ? room.members.filter(
+          (m) => !displaySnapshot.players.map((p) => p.playerId).includes(m.id),
+        ).length
+      : 0;
   const kingPosition = displaySnapshot
     ? findKingPosition(displaySnapshot)
     : null;
-
   const handleSquareClick = useSquareClick({
     displaySnapshot,
     myColor,
@@ -261,7 +261,6 @@ function ChessGameImpl({
     setSelectedSquare,
     setPendingPromotion,
   });
-
   const onSquareClick = useCallback(
     (file: File, rank: Rank) => {
       if (displayMyTurn) {
@@ -272,7 +271,17 @@ function ChessGameImpl({
     },
     [displayMyTurn, handleSquareClick, handlePremoveSquareClick],
   );
-
+  const keyboardInput = useKeyboardMoveInput({
+    enabled: displayMyTurn && !isGameOver,
+    legalMoves: displaySnapshot?.legalMovesForCurrentPlayer ?? [],
+    onMove: useCallback(
+      (fromFile: File, fromRank: Rank, toFile: File, toRank: Rank) => {
+        applyOptimisticMove(fromFile, fromRank, toFile, toRank);
+        movePiece(fromFile, fromRank, toFile, toRank);
+      },
+      [applyOptimisticMove, movePiece],
+    ),
+  });
   const handlePromotionSelect = useCallback(
     (pieceType: PieceType) => {
       if (!pendingPromotion) return;
@@ -294,7 +303,6 @@ function ChessGameImpl({
     },
     [pendingPromotion, movePiece, applyOptimisticMove],
   );
-
   const handlePieceDrop = useCallback(
     (fromFile: File, fromRank: Rank, toFile: File, toRank: Rank) => {
       if (isGameOver || !myColor || !displaySnapshot) return;
@@ -425,6 +433,7 @@ function ChessGameImpl({
       showThreats={streamer.showThreats}
       onToggleBestMove={streamer.toggleBestMove}
       onToggleThreats={streamer.toggleThreats}
+      spectatorCount={spectatorCount}
     />
   );
   const themeVariant =
@@ -483,6 +492,7 @@ function ChessGameImpl({
           },
         }}
       />
+      <ChessKeyboardInput keyboardInput={keyboardInput} />
     </ChessThemeProvider>
   );
 }
