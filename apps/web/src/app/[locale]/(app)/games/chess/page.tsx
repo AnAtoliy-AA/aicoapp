@@ -6,6 +6,7 @@ import { isLocale, DEFAULT_LOCALE, type Locale } from '@/shared/i18n';
 import { JsonLd } from '@/shared/ui/JsonLd';
 import { buildPageMetadata } from '@/shared/seo/buildPageMetadata';
 import { buildVideoGameJsonLd } from '@/shared/seo/videoGameJsonLd';
+import { buildHowToJsonLd } from '@/shared/seo/howToJsonLd';
 import ChessLanding from './ChessLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
@@ -63,6 +64,8 @@ export default async function ChessLandingRoute({ params }: PageProps) {
   const description =
     messages.games?.chess_v1?.description ?? landing?.meta?.description;
 
+  const chessPageUrl = `${appConfig.siteUrl}${routes.chessLanding}`;
+
   const jsonLd: Record<string, unknown>[] = [
     ...buildVideoGameJsonLd({
       gameId: CHESS_SLUG,
@@ -74,12 +77,14 @@ export default async function ChessLandingRoute({ params }: PageProps) {
       genre: CHESS_GENRE,
       alternateName: [
         'Chess Online',
+        'Play Chess Free',
         'Chess960',
         'Fischer Random Chess',
         'Bullet Chess',
         'Blitz Chess',
         'Rapid Chess',
         'Daily Chess',
+        'Correspondence Chess',
         'Stockfish 19 Chess',
         'Puzzle Rush Chess',
         'Free Chess Game',
@@ -88,12 +93,49 @@ export default async function ChessLandingRoute({ params }: PageProps) {
         'Chess Tournaments',
         'Chess Puzzles',
         'Endgame Tablebase Chess',
+        'Chess with Friends',
+        'Chess vs AI',
+        'Chess Analysis',
+        'Chess Variants',
+        'Atomic Chess',
+        'Crazyhouse Chess',
+        'King of the Hill Chess',
+        'Three-Check Chess',
+        'No Signup Chess',
+        'Browser Chess',
+        'Real-Time Chess',
+        'Chess Bot',
+        'Chess Personalities',
+        'Online Chess Game Free',
+        'Play Chess No Download',
       ],
       breadcrumb: {
         home: messages.navigation?.homeTab ?? 'Home',
         games: messages.navigation?.gamesTab ?? 'Games',
         game: gameName,
       },
+    }),
+    buildHowToJsonLd({
+      name: `How to Play Chess on ${appConfig.appName}`,
+      description:
+        'Start playing chess online in seconds — create a room, invite a friend or add a bot, and play with full Stockfish 19 analysis.',
+      steps: [
+        {
+          name: 'Create a room',
+          text: 'Pick a variant (Standard, Chess960, or others), time control, and visual theme. Choose public or invite-only.',
+        },
+        {
+          name: 'Invite a friend or add a bot',
+          text: 'Share the direct link with a friend, use Quick Play auto-matchmaking, or start with one of 20 AI bot personalities for instant play.',
+        },
+        {
+          name: 'Play, analyze, and improve',
+          text: 'Make your moves on the interactive board. Get real-time Stockfish 19 analysis, review your game with accuracy scores, and track your rating progress.',
+        },
+      ],
+      totalTime: 'PT2M',
+      locale,
+      pageUrl: chessPageUrl,
     }),
   ];
 

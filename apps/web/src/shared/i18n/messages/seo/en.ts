@@ -49,8 +49,8 @@ export const en = {
     description: `Play Cascade online on ${APP} — a shedding card game with Draw-Two and Wild +4 stacking chains and four selectable themes. 2–10 players, free instant rooms, no download.`,
   },
   chessLanding: {
-    title: `Chess · Multiplayer · Standard & Chess960 · ${APP}`,
-    description: `Play Chess online on ${APP} — standard and Chess960 variants, optional time controls, AI bots. Free, instant rooms, no download.`,
+    title: `Play Chess Online Free — Stockfish 19, 20 AI Bots, 6 Variants · ${APP}`,
+    description: `Play chess online free on ${APP} with Stockfish 19 engine, 20 AI bot personalities, 6 variants (Chess960, Crazyhouse, Atomic), Puzzle Rush, live analysis, game review, endgame tablebases, and tournaments — no signup, no download.`,
   },
   checkersLanding: {
     title: `Checkers · Multiplayer · ${APP}`,

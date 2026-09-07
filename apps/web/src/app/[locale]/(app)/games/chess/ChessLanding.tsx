@@ -6,6 +6,7 @@ import {
 import { getTranslatedSharedThemes } from '@/features/games/lib/shared-themes';
 import type { Locale } from '@/shared/i18n';
 import { ChessLandingPreview } from './ChessLandingPreview';
+import { ChessAdvantages } from './ChessAdvantages';
 
 type ChessMsg = ChessMessages['chess_v1'];
 type Landing = ChessMsg['landing'];
@@ -198,7 +199,7 @@ export default function ChessLanding({
         chips: [
           'Stockfish 19',
           '6 Variants',
-          '12 AI Bots',
+          '20 AI Bots',
           'Bullet/Blitz/Rapid/Daily',
           'Puzzle Rush',
           'Analysis Board',
@@ -268,7 +269,7 @@ export default function ChessLanding({
         gameId,
         title: 'Master the 64 Squares',
         subtitle:
-          'Powered by Stockfish 19. Play against 12 AI personalities, solve puzzles, analyze games, and compete in tournaments — all free.',
+          'Powered by Stockfish 19. Play against 20 AI personalities, solve puzzles, analyze games, and compete in tournaments — all free.',
         roomsHref,
         gamesHref,
         ctaQuickplayLabel: landing.hero.ctaQuickplay,
@@ -276,6 +277,11 @@ export default function ChessLanding({
         browseRoomsLabel: landing.hero.browseRooms,
         backToGamesLabel: landing.hero.backToGames ?? 'All Games',
       }}
+      extraSection={
+        landing.advantages ? (
+          <ChessAdvantages advantages={landing.advantages} />
+        ) : undefined
+      }
     />
   );
 }
