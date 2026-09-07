@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.48] - 2026-09-07
+
+### Added
+- add board themes, opening display, move analysis, sound prefs, rating HUD, spectator count, share links, quick-play lobby, keyboard input, and streamer mode
+
+### Fixed
+- remove nested button assertion from E2E quick-play test — card IS the button
+- wire sound preferences to playback, add rating to ChessPlayer type, and connect streamer mode URL param to game rendering
+
+
 ## [1.28.47] - 2026-09-07
 
 ### Fixed
