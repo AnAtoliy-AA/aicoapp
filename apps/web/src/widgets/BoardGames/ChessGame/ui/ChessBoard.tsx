@@ -46,8 +46,6 @@ interface ChessBoardProps {
   threatArrows?: import('../hooks/useBoardDrawings').Arrow[];
   showBestMove?: boolean;
   showThreats?: boolean;
-  onToggleBestMove?: () => void;
-  onToggleThreats?: () => void;
   onSquareClick: (file: File, rank: Rank) => void;
   onDeselectSquare?: () => void;
   onPieceDrop?: (
@@ -82,8 +80,6 @@ function ChessBoardImpl({
   threatArrows = [],
   showBestMove = false,
   showThreats = false,
-  onToggleBestMove,
-  onToggleThreats,
   onSquareClick,
   onDeselectSquare,
   onPieceDrop,
@@ -237,8 +233,6 @@ function ChessBoardImpl({
         threatArrows={threatArrows}
         showBestMove={showBestMove}
         showThreats={showThreats}
-        onToggleBestMove={onToggleBestMove}
-        onToggleThreats={onToggleThreats}
         onAddArrow={addArrow}
         onToggleCircle={toggleCircle}
         onClear={clearDrawings}

@@ -3,6 +3,7 @@
 import { memo, useState, useCallback, useMemo } from 'react';
 import { cx } from '@arcadeum/ui/utils/cx';
 import { useWidgetFullscreen } from '@/features/games/ui/GameWidgetContainer';
+import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { ChessBoard } from './ChessBoard';
 import { EvalBar } from './EvalBar';
 import { ChessPlayerHud } from './ChessPlayerHud';
@@ -125,6 +126,9 @@ function ChessBoardPanelImpl({
   const [hoveredMoveIdx, setHoveredMoveIdx] = useState<number | null>(null);
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
   const isFullscreen = useWidgetFullscreen();
+
+  const { snapshot: sessionSnapshot } = useSessionTokens();
+  const isAdmin = sessionSnapshot.role === 'admin';
 
   const handleMoveHover = useCallback((idx: number | null) => {
     setHoveredMoveIdx(idx);
@@ -264,8 +268,6 @@ function ChessBoardPanelImpl({
                 threatArrows={threatArrows}
                 showBestMove={showBestMove}
                 showThreats={showThreats}
-                onToggleBestMove={onToggleBestMove}
-                onToggleThreats={onToggleThreats}
                 ariaLabel={t('games.chess_v1.status.boardLabel', {
                   color:
                     snapshot.currentTurnColor === 'white'
@@ -312,6 +314,11 @@ function ChessBoardPanelImpl({
           onFlipBoard={onFlipBoard}
           onExportPgn={onExportPgn}
           onToggleConfirmMoves={onToggleConfirmMoves}
+          isAdmin={isAdmin}
+          showBestMove={showBestMove}
+          showThreats={showThreats}
+          onToggleBestMove={onToggleBestMove}
+          onToggleThreats={onToggleThreats}
         />
 
         <div className="chess-landscape-hud chess-landscape-hud-bottom">

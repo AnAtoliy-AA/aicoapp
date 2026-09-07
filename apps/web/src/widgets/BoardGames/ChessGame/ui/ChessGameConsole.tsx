@@ -53,6 +53,11 @@ interface ChessGameConsoleProps {
   onFlipBoard?: () => void;
   onExportPgn?: () => void;
   onToggleConfirmMoves?: () => void;
+  isAdmin?: boolean;
+  showBestMove?: boolean;
+  showThreats?: boolean;
+  onToggleBestMove?: () => void;
+  onToggleThreats?: () => void;
 }
 
 function formatNodes(nodes: number | null | undefined): string {
@@ -93,6 +98,11 @@ export function ChessGameConsole({
   onFlipBoard,
   onExportPgn,
   onToggleConfirmMoves,
+  isAdmin = false,
+  showBestMove = false,
+  showThreats = false,
+  onToggleBestMove,
+  onToggleThreats,
 }: ChessGameConsoleProps) {
   const [activeTab, setActiveTab] = useState<'game' | 'settings'>('game');
   const [selectedMoveIndex, setSelectedMoveIndex] = useState<number | null>(
@@ -141,7 +151,7 @@ export function ChessGameConsole({
               : 'text-[var(--textSecondary)] hover:text-white hover:bg-white/5 border border-transparent'
           }`}
         >
-          Game &amp; Engine
+          Game & Engine
         </button>
         <button
           type="button"
@@ -152,14 +162,14 @@ export function ChessGameConsole({
               : 'text-[var(--textSecondary)] hover:text-white hover:bg-white/5 border border-transparent'
           }`}
         >
-          Tools &amp; Settings
+          Tools & Settings
         </button>
       </div>
 
       <div className="chess-console-body">
         {activeTab === 'game' && (
-          <div className="flex flex-col gap-2.5 flex-1 min-h-0">
-            <div className="chess-telemetry-card flex flex-col gap-1.5 p-2 rounded-xl bg-black/30 border border-white/10 shadow-inner">
+          <div className="flex flex-col gap-2.5 shrink-0">
+            <div className="chess-telemetry-card shrink-0 flex flex-col gap-1.5 p-2 rounded-xl bg-black/30 border border-white/10 shadow-inner">
               <div className="flex items-center justify-between font-mono">
                 <div className="flex items-center gap-1.5">
                   <span
@@ -217,7 +227,7 @@ export function ChessGameConsole({
             />
 
             {moveCandidates && moveCandidates.length > 1 && (
-              <div className="chess-candidate-lines p-2 rounded-xl bg-black/20 border border-white/5 flex flex-col gap-1 font-mono text-[11px]">
+              <div className="chess-candidate-lines shrink-0 p-2 rounded-xl bg-black/20 border border-white/5 flex flex-col gap-1 font-mono text-[11px]">
                 <span className="text-[9px] font-bold text-[var(--textSecondary)] uppercase tracking-wider">
                   Top Candidate Lines
                 </span>
@@ -242,20 +252,22 @@ export function ChessGameConsole({
             )}
 
             {currentFen && (
-              <div className="chess-opening-explorer">
+              <div className="chess-opening-explorer shrink-0">
                 <OpeningExplorer fen={currentFen} />
               </div>
             )}
 
             {coach.visible && (
-              <CoachControls
-                enabled={coach.enabled}
-                hintAvailable={coach.hintAvailable}
-                hint={coach.hint}
-                onToggle={coach.toggleEnabled}
-                onHint={coach.requestHint}
-                t={t}
-              />
+              <div className="shrink-0">
+                <CoachControls
+                  enabled={coach.enabled}
+                  hintAvailable={coach.hintAvailable}
+                  hint={coach.hint}
+                  onToggle={coach.toggleEnabled}
+                  onHint={coach.requestHint}
+                  t={t}
+                />
+              </div>
             )}
           </div>
         )}
@@ -321,6 +333,34 @@ export function ChessGameConsole({
                 >
                   {confirmMoves ? 'Confirm Moves: ON' : 'Confirm Moves: OFF'}
                 </Button>
+              )}
+
+              {isAdmin && (onToggleBestMove || onToggleThreats) && (
+                <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+                  <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+                    Admin Streamer Assists
+                  </span>
+                  {onToggleBestMove && (
+                    <Button
+                      variant={showBestMove ? 'primary' : 'outline'}
+                      size="sm"
+                      fullWidth
+                      onClick={onToggleBestMove}
+                    >
+                      🎯 Best Move Arrow: {showBestMove ? 'ON' : 'OFF'}
+                    </Button>
+                  )}
+                  {onToggleThreats && (
+                    <Button
+                      variant={showThreats ? 'primary' : 'outline'}
+                      size="sm"
+                      fullWidth
+                      onClick={onToggleThreats}
+                    >
+                      ⚔️ Threats &amp; Attacks: {showThreats ? 'ON' : 'OFF'}
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
           </div>

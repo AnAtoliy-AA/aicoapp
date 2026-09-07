@@ -109,31 +109,12 @@ describe('ChessBoard', () => {
     });
   });
 
-  it('renders streamer controls and handles best move and threat toggles', () => {
+  it('does not render floating streamer buttons on the chessboard', () => {
     const board = createEmptyBoard();
-    const onToggleBestMove = vi.fn();
-    const onToggleThreats = vi.fn();
+    renderWithProvider(<ChessBoard {...defaultProps} board={board} />);
 
-    renderWithProvider(
-      <ChessBoard
-        {...defaultProps}
-        board={board}
-        onToggleBestMove={onToggleBestMove}
-        onToggleThreats={onToggleThreats}
-      />,
-    );
-
-    const bestBtn = screen.getByTitle('Streamer Best Move Arrow');
-    const threatsBtn = screen.getByTitle('Streamer Threats & Attacks');
-
-    expect(bestBtn).toBeDefined();
-    expect(threatsBtn).toBeDefined();
-
-    bestBtn.click();
-    expect(onToggleBestMove).toHaveBeenCalledTimes(1);
-
-    threatsBtn.click();
-    expect(onToggleThreats).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTitle('Streamer Best Move Arrow')).toBeNull();
+    expect(screen.queryByTitle('Streamer Threats & Attacks')).toBeNull();
   });
 
   it('renders premove ghost pieces and queued indicators', () => {

@@ -139,6 +139,32 @@ export class ChessBotService extends ChessBot {
       return;
     }
 
+    const botPlayer = state.players.find(
+      (p) => this.isBot(p.playerId) || p.isBot,
+    );
+    if (
+      botPlayer &&
+      state.takebackOfferedBy &&
+      state.takebackOfferedBy !== botPlayer.playerId
+    ) {
+      await this.chessService.takebackAccept(
+        botPlayer.playerId,
+        freshSession.roomId,
+      );
+      return;
+    }
+    if (
+      botPlayer &&
+      state.drawOfferedBy &&
+      state.drawOfferedBy !== botPlayer.playerId
+    ) {
+      await this.chessService.drawAccept(
+        botPlayer.playerId,
+        freshSession.roomId,
+      );
+      return;
+    }
+
     const currentId = state.players.find(
       (p) => p.color === state.currentTurnColor,
     )?.playerId;

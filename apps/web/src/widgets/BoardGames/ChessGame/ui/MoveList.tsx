@@ -91,7 +91,7 @@ export function MoveList({
   );
 
   return (
-    <div className="flex flex-col gap-1.5 flex-1 min-h-0">
+    <div className="flex flex-col gap-1.5 shrink-0">
       <div className="flex justify-between items-center px-1 shrink-0">
         <div className="flex items-center gap-1.5">
           <span className="text-[11px] text-[var(--textSecondary)] font-bold uppercase tracking-wider">
@@ -116,7 +116,7 @@ export function MoveList({
 
       <div
         ref={scrollContainerRef}
-        className="flex-1 min-h-[60px] sm:min-h-[120px] max-h-[220px] overflow-y-auto modern-scrollbar p-1.5 rounded-xl bg-black/25 border border-white/5 font-mono select-none"
+        className="h-[140px] max-h-[180px] overflow-y-auto modern-scrollbar p-1.5 rounded-xl bg-black/25 border border-white/5 font-mono select-none"
       >
         {pairs.length === 0 && (
           <div className="text-xs text-[var(--textSecondary)] text-center py-6">

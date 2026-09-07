@@ -26,4 +26,35 @@ test.describe('Chess Modern Arena UI/UX', () => {
       .first();
     await expect(advantages).toBeVisible();
   });
+
+  test('renders offline chess with clean board and non-overlapping console', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 750 });
+    const response = await page.goto('/en/offline/chess', {
+      waitUntil: 'domcontentloaded',
+    });
+    expect(response?.status()).toBe(200);
+
+    const board = page.locator('[role="grid"]').first();
+    await expect(board).toBeVisible();
+
+    const streamerPill = page.locator('button', { hasText: '🎯 Best' });
+    await expect(streamerPill).toHaveCount(0);
+
+    const settingsTab = page
+      .locator('button', { hasText: 'Tools & Settings' })
+      .first();
+    await expect(settingsTab).toBeVisible();
+    await settingsTab.click();
+
+    const gameTab = page
+      .locator('button', { hasText: 'Game & Engine' })
+      .first();
+    await expect(gameTab).toBeVisible();
+    await gameTab.click();
+
+    const movesHeader = page.locator('text=MOVES').first();
+    await expect(movesHeader).toBeVisible();
+  });
 });

@@ -18,8 +18,6 @@ interface BoardOverlayProps {
   threatArrows?: Arrow[];
   showBestMove?: boolean;
   showThreats?: boolean;
-  onToggleBestMove?: () => void;
-  onToggleThreats?: () => void;
   children: React.ReactNode;
   onAddArrow: (from: BoardPosition, to: BoardPosition, color?: string) => void;
   onToggleCircle: (square: BoardPosition, color?: string) => void;
@@ -147,8 +145,6 @@ export function BoardOverlay({
   threatArrows = [],
   showBestMove = false,
   showThreats = false,
-  onToggleBestMove,
-  onToggleThreats,
   children,
   onAddArrow,
   onToggleCircle,
@@ -276,40 +272,8 @@ export function BoardOverlay({
         {children}
       </div>
 
-      <div className="absolute top-2 right-2 z-30 hidden lg:flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md shadow-lg pointer-events-auto">
-        {onToggleBestMove && (
-          <button
-            type="button"
-            onClick={onToggleBestMove}
-            title="Streamer Best Move Arrow"
-            className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
-              showBestMove
-                ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-400/50 shadow-sm'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
-            }`}
-          >
-            <span>🎯</span>
-            <span>Best</span>
-          </button>
-        )}
-
-        {onToggleThreats && (
-          <button
-            type="button"
-            onClick={onToggleThreats}
-            title="Streamer Threats & Attacks"
-            className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
-              showThreats
-                ? 'bg-red-500/25 text-red-300 border border-red-400/50 shadow-sm'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
-            }`}
-          >
-            <span>⚔️</span>
-            <span>Threats</span>
-          </button>
-        )}
-
-        {(arrows.length > 0 || circles.length > 0) && (
+      {(arrows.length > 0 || circles.length > 0) && (
+        <div className="absolute top-2 right-2 z-30 hidden lg:flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md shadow-lg pointer-events-auto">
           <button
             type="button"
             onClick={onClear}
@@ -318,8 +282,8 @@ export function BoardOverlay({
           >
             Clear
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {boardRect && (
         <svg
