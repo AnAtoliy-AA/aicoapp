@@ -12,6 +12,7 @@ import {
   SoloActionButton,
 } from '@/features/games/ui/SoloGameContainer';
 import { useSoloTheme } from '@/features/games/store/soloThemeStore';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { Game2048ThemeProvider } from '../lib/Game2048ThemeContext';
 import { useGame2048Store } from '../store/game2048Store';
 import type { Direction } from '../types';
@@ -45,6 +46,7 @@ function Game2048Table() {
   const isRunning = finishedAt === null;
   const pause = useSoloPause(isRunning, finishedAt);
   const timer = useSoloTimer(isRunning, startedAt, pause.isPaused);
+  const { play } = useGameSound('game_2048_v1');
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -98,9 +100,16 @@ function Game2048Table() {
   const handleMove = useCallback(
     (direction: Direction) => {
       if (pause.isPaused) return;
+      const prevScore = useGame2048Store.getState().score;
       move(direction);
+      const newScore = useGame2048Store.getState().score;
+      if (newScore > prevScore) {
+        play('merge');
+      } else {
+        play('slide_tile');
+      }
     },
-    [move, pause.isPaused],
+    [move, pause.isPaused, play],
   );
 
   const statsItems = [

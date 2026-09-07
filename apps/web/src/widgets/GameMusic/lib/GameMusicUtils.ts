@@ -72,11 +72,11 @@ export async function fetchTracks(): Promise<readonly MusicTrack[]> {
 
   if (process.env.NODE_ENV !== 'production') {
     console.warn(
-      '[GameMusic] NEXT_PUBLIC_CDN_URL is not set — using 10 fallback tracks. Set the env var to load the full catalog from R2.',
+      '[GameMusic] NEXT_PUBLIC_CDN_URL is not set — music player will be empty. Set the env var to load the full catalog from R2.',
     );
   }
 
-  return FALLBACK_TRACKS;
+  return [];
 }
 
 export const DEFAULT_VOLUME = 0.3;

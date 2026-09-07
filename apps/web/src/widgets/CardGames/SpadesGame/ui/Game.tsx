@@ -15,6 +15,7 @@ import { usePostGameAnalytics } from '@/features/games/hooks/usePostGameAnalytic
 import { PostGameAnalytics } from '@/features/games/ui/PostGameAnalytics';
 import { resolveDisplayName } from '@/features/games/lib/resolveDisplayName';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { SpadesGameProps } from '../types';
 import { useSpadesState } from '../hooks/useSpadesState';
 import { useSpadesActions } from '../hooks/useSpadesActions';
@@ -58,6 +59,8 @@ function SpadesGameImpl({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('spades_v1');
 
   const { pendingStart, markPendingStart, clearPendingStart } = usePendingStart(
     session?.id,
@@ -150,16 +153,18 @@ function SpadesGameImpl({
 
   const handleBid = useCallback(
     (amount: number) => {
+      play('click');
       bid(amount);
     },
-    [bid],
+    [bid, play],
   );
 
   const handlePlayCard = useCallback(
     (card: string) => {
+      play('play');
       playCard(card);
     },
-    [playCard],
+    [playCard, play],
   );
 
   const players = useMemo(
