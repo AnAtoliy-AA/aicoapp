@@ -7,7 +7,8 @@ export const esMessages = {
       'Desafía a amigos o bots a una partida de ajedrez con variantes estándar y Chess960 con controles de tiempo opcionales.',
     landing: {
       meta: {
-        title: 'Ajedrez Online — Bullet, Blitz, Rápido, Diario y Chess960 | Arcadeum',
+        title:
+          'Ajedrez Online — Bullet, Blitz, Rápido, Diario y Chess960 | Arcadeum',
         description:
           'Juega al ajedrez online con análisis del motor Stockfish 19, controles de tiempo bullet/blitz/rapido/diario, 6 variantes, 12 personalidades IA, Puzzle Rush, deshacer movimientos, importación PGN, tablas de finales, emparejamiento automático y revisión de partidas — todo gratis.',
         keywords:
@@ -17,7 +18,7 @@ export const esMessages = {
       hero: {
         title: 'Ajedrez — el juego de estrategia atemporal',
         subtitle:
-          'Impulsado por Stockfish 19. Bullet, blitz, rápido, diario y Chess960. Juega contra amigos, 12 personalidades IA o toda la comunidad.',
+          'Impulsado por Stockfish 19. Bullet, blitz, rápido, diario y Chess960. Juega contra amigos, 20 personalidades IA o toda la comunidad.',
         createRoom: 'Crear sala',
         ctaQuickplay: 'Jugar contra la IA',
         ctaQuickplayError: 'No se pudo iniciar la partida — inténtalo de nuevo',
@@ -26,8 +27,8 @@ export const esMessages = {
       },
       highlights: {
         players: {
-          title: '2 jugadores + 12 bots IA',
-          body: 'Desafía a un amigo o elige entre 12 personalidades IA (rating 400–2800), cada una con estilo de juego y repertorio de aperturas único.',
+          title: '2 jugadores + 20 bots IA',
+          body: 'Desafía a un amigo o elige entre 20 personalidades IA (rating 400–2800), cada una con estilo de juego y repertorio de aperturas único.',
         },
         variants: {
           title: '6 variantes',
@@ -83,6 +84,72 @@ export const esMessages = {
           answer:
             'Puzzle Rush es un modo de puzzles cronometrado. En Supervivencia tienes 3 vidas e intentas resolver la mayor cantidad de puzzles posible. En Modo Tiempo tienes 3 minutos.',
         },
+      },
+      advantages: {
+        kicker: 'Por qué los jugadores eligen Arcadeum',
+        title: 'Todo lo que necesitas para jugar, aprender y mejorar',
+        items: [
+          {
+            key: 'engine',
+            title: 'Motor Stockfish 19',
+            body: 'Análisis en tiempo real con Stockfish 19 y la red neuronal SFNNv16 — el motor de ajedrez de código abierto más fuerte del mundo.',
+          },
+          {
+            key: 'bots',
+            title: '20 personalidades IA',
+            body: 'No solo niveles de dificultad — 20 personajes únicos con estilos de juego, repertorios de aperturas y gestión de tiempo propias. Rating 400–2800.',
+          },
+          {
+            key: 'variants',
+            title: '6 variantes',
+            body: 'Estándar, Chess960 (Fischer Random), Rey de la Colina, Tres Jaques, Crazyhouse y Atómico — cada uno con condiciones de victoria únicas.',
+          },
+          {
+            key: 'friction',
+            title: 'Sin fricción',
+            body: 'Sin registro, sin descarga, sin tienda de apps. Abre tu navegador y empieza a jugar en segundos. Funciona en cualquier dispositivo.',
+          },
+          {
+            key: 'puzzles',
+            title: 'Puzzle Rush y tácticas',
+            body: 'Modos de supervivencia y cronometrado, puzzles diarios, conjuntos tácticos temáticos y seguimiento de rachas.',
+          },
+          {
+            key: 'analysis',
+            title: 'Revisión y análisis',
+            body: 'Puntuación de precisión con calificaciones A–F, clasificación de movimientos, gráficos de evaluación y detección de momentos clave.',
+          },
+          {
+            key: 'tablebases',
+            title: 'Tablas de finales',
+            body: 'Tablas Syzygy para posiciones con 7 o menos piezas — juego de finales perfecto al nivel de grandes maestros.',
+          },
+          {
+            key: 'broadcast',
+            title: 'Transmisión en vivo',
+            body: 'Observa partidas en tiempo real con evaluación del motor, contador de espectadores y superposiciones.',
+          },
+          {
+            key: 'training',
+            title: 'Herramientas de entrenamiento',
+            body: 'Entrenador de coordenadas, editor de tablero, análisis con multi-PV y explorer de aperturas con estadísticas.',
+          },
+          {
+            key: 'cosmetics',
+            title: 'Temas y cosméticos',
+            body: 'Personaliza la experiencia con temas visuales, diseños de tablero y recompensas de temporada.',
+          },
+          {
+            key: 'battlepass',
+            title: 'Battle Pass estacional',
+            body: 'Gana XP en cada partida, sube por 50 niveles y desbloquea recompensas exclusivas.',
+          },
+          {
+            key: 'anticheat',
+            title: 'Juego limpio',
+            body: 'Sistema anti-trampas con análisis de coincidencias, seguimiento de tiempos y monitoreo estadístico.',
+          },
+        ],
       },
     },
     lobby: {

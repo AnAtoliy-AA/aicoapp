@@ -73,6 +73,10 @@ export function buildVideoGameJsonLd({
         name: appConfig.appName,
         url: appConfig.siteUrl,
       },
+      softwareHelp: {
+        '@type': 'WebPage',
+        url: `${appConfig.siteUrl}${routes.support}`,
+      },
     },
     {
       '@context': 'https://schema.org',

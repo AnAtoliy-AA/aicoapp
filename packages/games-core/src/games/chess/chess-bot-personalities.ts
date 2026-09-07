@@ -33,6 +33,7 @@ export interface BotPersonality {
 }
 
 export const BOT_PERSONALITIES: BotPersonality[] = [
+  // ── Easy (400–800) ──────────────────────────────────────────────
   {
     id: 'rookie-rick',
     name: 'Rookie Rick',
@@ -52,6 +53,27 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
       attackWeight: 0.8,
       safetyWeight: 0.6,
       materialWeight: 1.1,
+    },
+  },
+  {
+    id: 'careful-carol',
+    name: 'Careful Carol',
+    avatar: '🐢',
+    rating: 500,
+    style: 'defensive',
+    difficulty: 'easy',
+    openingPreference: ['London System', 'Torre Attack'],
+    timeManagement: 'steady',
+    chatMessages: {
+      onWin: ['Slow and steady wins!', 'Patience paid off.'],
+      onLoss: ['You were too fast for me.', 'Good game!'],
+      onBlunder: ['I moved too quickly.', 'Should have thought longer.'],
+      onGreatMove: ['Nice one!', 'I didn\'t expect that!'],
+    },
+    evaluationModifiers: {
+      attackWeight: 0.5,
+      safetyWeight: 1.5,
+      materialWeight: 1.0,
     },
   },
   {
@@ -76,6 +98,27 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
     },
   },
   {
+    id: 'eager-ethan',
+    name: 'Eager Ethan',
+    avatar: '🚀',
+    rating: 700,
+    style: 'aggressive',
+    difficulty: 'easy',
+    openingPreference: ["King's Gambit", 'Danish Gambit'],
+    timeManagement: 'blitz',
+    chatMessages: {
+      onWin: ['Attack is the best defense!', 'Gambit paid off!'],
+      onLoss: ['You saw through my trap.', 'Well defended.'],
+      onBlunder: ['That gambit backfired.', 'Over-eager perhaps?'],
+      onGreatMove: ['Wow, sharp move!', 'Didn\'t see that coming!'],
+    },
+    evaluationModifiers: {
+      attackWeight: 1.4,
+      safetyWeight: 0.5,
+      materialWeight: 0.8,
+    },
+  },
+  {
     id: 'aggressive-annie',
     name: 'Aggressive Annie',
     avatar: '⚔️',
@@ -94,6 +137,29 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
       attackWeight: 1.5,
       safetyWeight: 0.5,
       materialWeight: 0.8,
+    },
+  },
+
+  // ── Medium (1000–1400) ──────────────────────────────────────────
+  {
+    id: 'calm-carmen',
+    name: 'Calm Carmen',
+    avatar: '🧘',
+    rating: 1100,
+    style: 'positional',
+    difficulty: 'medium',
+    openingPreference: ['English Opening', 'Réti Opening'],
+    timeManagement: 'thinker',
+    chatMessages: {
+      onWin: ['Patience is a virtue.', 'The position spoke for itself.'],
+      onLoss: ['You accelerated past me.', 'Strong game.'],
+      onBlunder: ['I relaxed too early.', 'That was avoidable.'],
+      onGreatMove: ['Very precise!', 'I underestimated you.'],
+    },
+    evaluationModifiers: {
+      attackWeight: 0.7,
+      safetyWeight: 1.3,
+      materialWeight: 1.1,
     },
   },
   {
@@ -118,9 +184,30 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
     },
   },
   {
+    id: 'fast-felix',
+    name: 'Fast Felix',
+    avatar: '⚡',
+    rating: 1300,
+    style: 'tactical',
+    difficulty: 'medium',
+    openingPreference: ['Sicilian Defense', 'Scandinavian'],
+    timeManagement: 'blitz',
+    chatMessages: {
+      onWin: ['Speed and accuracy!', 'Time pressure is my weapon.'],
+      onLoss: ['You were faster on the draw.', 'Good clock management.'],
+      onBlunder: ['Moved too fast!', 'Rushing cost me.'],
+      onGreatMove: ['Quick and lethal!', 'Impressive speed!'],
+    },
+    evaluationModifiers: {
+      attackWeight: 1.2,
+      safetyWeight: 0.8,
+      materialWeight: 1.0,
+    },
+  },
+  {
     id: 'blitz-bobby',
     name: 'Blitz Bobby',
-    avatar: '⚡',
+    avatar: '💨',
     rating: 1200,
     style: 'tactical',
     difficulty: 'medium',
@@ -159,6 +246,8 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
       materialWeight: 1.1,
     },
   },
+
+  // ── Hard (1600–2000) ────────────────────────────────────────────
   {
     id: 'tactical-tina',
     name: 'Tactical Tina',
@@ -178,6 +267,27 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
       attackWeight: 1.3,
       safetyWeight: 0.8,
       materialWeight: 0.9,
+    },
+  },
+  {
+    id: 'precision-priya',
+    name: 'Precision Priya',
+    avatar: '🎯',
+    rating: 1700,
+    style: 'positional',
+    difficulty: 'hard',
+    openingPreference: ['Nimzo-Indian', 'Queen\'s Gambit Declined'],
+    timeManagement: 'thinker',
+    chatMessages: {
+      onWin: ['Precision prevails.', 'Every move had a purpose.'],
+      onLoss: ['You found the flaw in my plan.', 'Well calculated.'],
+      onBlunder: ['A rare inaccuracy from me.', 'That was imprecise.'],
+      onGreatMove: ['Very sharp!', 'That was deeply calculated.'],
+    },
+    evaluationModifiers: {
+      attackWeight: 0.9,
+      safetyWeight: 1.2,
+      materialWeight: 1.1,
     },
   },
   {
@@ -202,6 +312,27 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
     },
   },
   {
+    id: 'dynamic-derek',
+    name: 'Dynamic Derek',
+    avatar: '🌊',
+    rating: 1900,
+    style: 'aggressive',
+    difficulty: 'hard',
+    openingPreference: ['Sicilian Najdorf', 'King\'s Indian Defense'],
+    timeManagement: 'steady',
+    chatMessages: {
+      onWin: ['Dynamic play won!', 'The initiative was decisive.'],
+      onLoss: ['You weathered the storm.', 'Strong defensive play.'],
+      onBlunder: ['Over-pressured.', 'That was too ambitious.'],
+      onGreatMove: ['Counter-punch!', 'You turned the tables beautifully.'],
+    },
+    evaluationModifiers: {
+      attackWeight: 1.5,
+      safetyWeight: 0.7,
+      materialWeight: 0.9,
+    },
+  },
+  {
     id: 'scholar-susan',
     name: 'Scholar Susan',
     avatar: '📚',
@@ -222,6 +353,8 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
       materialWeight: 1.1,
     },
   },
+
+  // ── Expert (2200–2800) ──────────────────────────────────────────
   {
     id: 'master-mike',
     name: 'Master Mike',
@@ -244,13 +377,34 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
     },
   },
   {
+    id: 'strategic-sofia',
+    name: 'Strategic Sofia',
+    avatar: '🏛️',
+    rating: 2300,
+    style: 'balanced',
+    difficulty: 'expert',
+    openingPreference: ['Catalan', 'English Opening'],
+    timeManagement: 'thinker',
+    chatMessages: {
+      onWin: ['Strategic dominance.', 'The plan unfolded perfectly.'],
+      onLoss: ['You outplayed me strategically.', 'Excellent positional play.'],
+      onBlunder: ['A strategic misjudgment.', 'That was a rare error.'],
+      onGreatMove: ['Deep strategy!', 'That was world-class understanding.'],
+    },
+    evaluationModifiers: {
+      attackWeight: 0.95,
+      safetyWeight: 1.1,
+      materialWeight: 1.05,
+    },
+  },
+  {
     id: 'grandmaster-grace',
     name: 'Grandmaster Grace',
     avatar: '👑',
     rating: 2400,
     style: 'positional',
     difficulty: 'expert',
-    openingPreference: ['English Opening', 'Reti Opening'],
+    openingPreference: ['English Opening', 'Réti Opening'],
     timeManagement: 'thinker',
     chatMessages: {
       onWin: ['Positional mastery.', 'The squeeze was effective.'],
@@ -262,6 +416,27 @@ export const BOT_PERSONALITIES: BotPersonality[] = [
       attackWeight: 0.85,
       safetyWeight: 1.25,
       materialWeight: 1.05,
+    },
+  },
+  {
+    id: 'masterful-marco',
+    name: 'Masterful Marco',
+    avatar: '🎭',
+    rating: 2500,
+    style: 'balanced',
+    difficulty: 'expert',
+    openingPreference: ['Sicilian Dragon', 'Ruy Lopez'],
+    timeManagement: 'thinker',
+    chatMessages: {
+      onWin: ['All-around mastery.', 'Every phase was strong.'],
+      onLoss: ['You were the complete player today.', 'Magnificent game.'],
+      onBlunder: ['A rare slip at this level.', 'That was unexpected from me.'],
+      onGreatMove: ['Truly masterful!', 'That was beyond calculation.'],
+    },
+    evaluationModifiers: {
+      attackWeight: 1.05,
+      safetyWeight: 1.05,
+      materialWeight: 1.0,
     },
   },
   {

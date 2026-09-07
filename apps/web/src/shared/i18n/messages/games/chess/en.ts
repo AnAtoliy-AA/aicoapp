@@ -7,17 +7,18 @@ export const enMessages = {
       'Challenge friends or bots to a game of chess with standard or Chess960 variants and optional time controls.',
     landing: {
       meta: {
-        title: 'Chess Online — Bullet, Blitz, Rapid, Daily & Chess960 | Arcadeum',
+        title:
+          'Play Chess Online Free — Stockfish 19, 20 AI Bots, 6 Variants | Arcadeum',
         description:
-          'Play chess online with Stockfish 19 engine analysis, bullet/blitz/rapid/daily time controls, 6 variants, 12 AI personalities, Puzzle Rush, takeback, PGN import, endgame tablebases, auto-matchmaking, and game review — all free, no install.',
+          'Play chess online free with Stockfish 19 engine, 20 AI bot personalities, 6 variants (Chess960, Crazyhouse, Atomic), Puzzle Rush, live analysis, game review with accuracy scores, endgame tablebases, tournaments, and auto-matchmaking — no signup, no download.',
         keywords:
-          'chess online, chess game, multiplayer chess, chess960, bullet chess, blitz chess, rapid chess, daily chess, stockfish 19, chess puzzles, puzzle rush, chess analysis, endgame tablebase, syzygy, play chess free, online chess engine, AI chess bot, chess variants, atomic chess, crazyhouse, king of the hill, three-check chess, chess tournaments, chess clubs, online chess game, real-time chess',
+          'play chess online free, chess game online, multiplayer chess, chess960, bullet chess, blitz chess, rapid chess, daily chess, stockfish 19, chess puzzles, puzzle rush, chess analysis, endgame tablebase, syzygy, play chess with friends, online chess engine, AI chess bot, chess variants, atomic chess, crazyhouse, king of the hill, three-check chess, chess tournaments, chess clubs, online chess game, real-time chess, chess without signup, free chess no download, chess game review, accuracy scores chess',
         howToPlayTitle: 'How to play {{gameName}}',
       },
       hero: {
         title: 'Chess — the timeless strategy game',
         subtitle:
-          'Powered by Stockfish 19. Bullet, blitz, rapid, daily, and Chess960. Play against friends, 12 AI personalities, or the entire community.',
+          'Powered by Stockfish 19. Bullet, blitz, rapid, daily, and Chess960. Play against friends, 20 AI personalities, or the entire community.',
         createRoom: 'Create a room',
         ctaQuickplay: 'Play vs AI now',
         ctaQuickplayError: "Couldn't start a game — try again",
@@ -26,8 +27,8 @@ export const enMessages = {
       },
       highlights: {
         players: {
-          title: '2 players + 12 AI bots',
-          body: 'Challenge a friend or pick from 12 unique bot personalities rated 400–2800, each with distinct play styles and opening repertoires.',
+          title: '2 players + 20 AI bots',
+          body: 'Challenge a friend or pick from 20 unique bot personalities rated 400–2800, each with distinct play styles and opening repertoires.',
         },
         variants: {
           title: '6 game variants',
@@ -71,7 +72,7 @@ export const enMessages = {
         stockfish: {
           question: 'What is Stockfish 19?',
           answer:
-            'Stockfish 19 is the latest release of the world\'s strongest open-source chess engine. It uses the SFNNv16 neural network architecture and powers all live analysis, game review, and AI bot difficulty on Arcadeum.',
+            "Stockfish 19 is the latest release of the world's strongest open-source chess engine. It uses the SFNNv16 neural network architecture and powers all live analysis, game review, and AI bot difficulty on Arcadeum.",
         },
         takeback: {
           question: 'Can I undo a move?',
@@ -83,6 +84,72 @@ export const enMessages = {
           answer:
             'Puzzle Rush is a timed puzzle mode. In Survival, you get 3 lives and try to solve as many puzzles as possible. In Timed mode, you have 3 minutes to solve as many as you can.',
         },
+      },
+      advantages: {
+        kicker: 'Why Players Choose Arcadeum',
+        title: 'Everything you need to play, learn, and improve',
+        items: [
+          {
+            key: 'engine',
+            title: 'Stockfish 19 Engine',
+            body: 'Live analysis powered by Stockfish 19 with the SFNNv16 neural network — the strongest open-source chess engine available. Real-time eval during every game.',
+          },
+          {
+            key: 'bots',
+            title: '20 AI Bot Personalities',
+            body: 'Not just difficulty levels — 20 unique characters with distinct play styles, opening repertoires, time management, and personality-driven chat. Rated 400–2800.',
+          },
+          {
+            key: 'variants',
+            title: '6 Game Variants',
+            body: 'Standard, Chess960 (Fischer Random), King of the Hill, Three-Check, Crazyhouse, and Atomic — each with unique win conditions and strategies.',
+          },
+          {
+            key: 'friction',
+            title: 'Zero Friction',
+            body: 'No signup, no download, no app store. Open your browser and start playing in seconds. Works on any device with a web browser.',
+          },
+          {
+            key: 'puzzles',
+            title: 'Puzzle Rush & Tactics',
+            body: 'Survival and timed puzzle modes, daily puzzles, themed tactical sets, and rating-tracked puzzle solving with streak tracking.',
+          },
+          {
+            key: 'analysis',
+            title: 'Game Review & Analysis',
+            body: 'Post-game accuracy scores with A–F grades, move classification (brilliant/great/good/inaccuracy/mistake/blunder), evaluation graphs, and key moment detection.',
+          },
+          {
+            key: 'tablebases',
+            title: 'Endgame Tablebases',
+            body: 'Syzygy tablebase lookup for positions with 7 or fewer pieces — perfect endgame play powered by the same databases used by grandmasters.',
+          },
+          {
+            key: 'broadcast',
+            title: 'Live Broadcast & Spectator',
+            body: 'Watch live games with real-time engine evaluation, viewer counts, and spectator overlays. Broadcast your own games to the community.',
+          },
+          {
+            key: 'training',
+            title: 'Training Tools',
+            body: 'Built-in coordinate trainer, board editor with presets, analysis board with multi-PV engine lines, and opening explorer with win/draw/loss statistics.',
+          },
+          {
+            key: 'cosmetics',
+            title: 'Board Themes & Cosmetics',
+            body: 'Customize your experience with visual themes, board designs, piece sets, and seasonal cosmetic rewards through the Battle Pass.',
+          },
+          {
+            key: 'battlepass',
+            title: 'Seasonal Battle Pass',
+            body: 'Earn XP from every game, level up through 50 tiers, and unlock exclusive rewards including coins, cosmetics, emotes, and titles.',
+          },
+          {
+            key: 'anticheat',
+            title: 'Fair Play Guaranteed',
+            body: 'Advanced anti-cheat system with engine match rate analysis, move time variance detection, and statistical deviation monitoring for fair, competitive games.',
+          },
+        ],
       },
     },
     lobby: {
@@ -319,7 +386,7 @@ export const enMessages = {
       survivalDesc: '3 lives — one wrong and you lose a life',
       timed: 'Timed Mode',
       timedDesc: '3 minutes — solve as many as possible',
-      gameOver: 'Time\'s up!',
+      gameOver: "Time's up!",
       playAgain: 'Play Again',
       endRun: 'End Run',
       score: 'Score',
