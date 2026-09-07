@@ -9,9 +9,15 @@ const QUICK_PHRASES = ['gl hf', 'nice play', 'thinking…', 'gg'];
 interface ChatQuickBarProps {
   onEmote?: (emoteId: EmoteId) => void;
   onQuickPhrase: (phrase: string) => void;
+  /** True when the user may send chat messages (player or authenticated). */
+  canSend?: boolean;
 }
 
-export function ChatQuickBar({ onEmote, onQuickPhrase }: ChatQuickBarProps) {
+export function ChatQuickBar({
+  onEmote,
+  onQuickPhrase,
+  canSend = true,
+}: ChatQuickBarProps) {
   const [emoteOpen, setEmoteOpen] = useState(false);
 
   if (emoteOpen && onEmote) {
@@ -27,7 +33,16 @@ export function ChatQuickBar({ onEmote, onQuickPhrase }: ChatQuickBarProps) {
 
   return (
     <QuickRow role="toolbar" aria-label="Quick phrases">
-      <QuickButton onClick={() => setEmoteOpen(true)} aria-label="Send emote">
+      <QuickButton
+        onClick={() => {
+          if (canSend) {
+            setEmoteOpen(true);
+          }
+        }}
+        aria-label={canSend ? 'Send emote' : 'Sign in to react'}
+        title={canSend ? undefined : 'Sign in to react'}
+        className={!canSend ? 'opacity-50 cursor-not-allowed' : undefined}
+      >
         <QuickButtonText>😀</QuickButtonText>
       </QuickButton>
       {QUICK_PHRASES.map((p) => (

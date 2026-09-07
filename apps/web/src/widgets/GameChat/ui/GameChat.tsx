@@ -58,6 +58,8 @@ interface GameChatProps {
   isHost?: boolean;
   onDeleteMessage?: (messageId: string) => void;
   signInPlaceholder?: string;
+  /** When true the emote-picker button is hidden (SpectatorReactionsBar handles it). */
+  isSpectating?: boolean;
 }
 
 const FFA_SCOPES: ChatScope[] = ['all', 'players', 'private'];
@@ -108,6 +110,7 @@ export function GameChat({
   isHost,
   onDeleteMessage,
   signInPlaceholder = 'Sign in to chat',
+  isSpectating = false,
 }: GameChatProps) {
   const logs = useGameChatStore((s) => s.logs);
   const sendMessage = useGameChatStore((s) => s.sendMessage);
@@ -345,8 +348,9 @@ export function GameChat({
 
       <Foot>
         <ChatQuickBar
-          onEmote={onEmote}
+          onEmote={isSpectating ? undefined : onEmote}
           onQuickPhrase={(p) => setDraft((d) => (d ? `${d} ${p}` : p))}
+          canSend={canSend}
         />
 
         <InputPill
