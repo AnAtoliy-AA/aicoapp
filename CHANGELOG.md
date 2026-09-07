@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.46] - 2026-09-07
+
+### Added
+- rework shorts and gameplay factories
+
+
 ## [1.28.45] - 2026-09-07
 
 ### Added
