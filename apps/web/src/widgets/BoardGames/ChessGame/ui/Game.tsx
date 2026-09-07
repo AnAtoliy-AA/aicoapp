@@ -29,6 +29,7 @@ import { useChessPremoves } from '../hooks/useChessPremoves';
 import { useChessStreamerOverlays } from '../hooks/useChessStreamerOverlays';
 import { useChessGameSounds } from '../hooks/useChessGameSounds';
 import { useKeyboardMoveInput } from '../hooks/useKeyboardMoveInput';
+import { useStreamerMode } from '../lib/streamer-mode';
 import { calculateOptimisticChessState } from '../lib/optimisticMove';
 import { getChessA11yAnnouncement } from '../lib/a11yAnnouncement';
 import { downloadPGN } from '../lib/pgn';
@@ -206,7 +207,7 @@ function ChessGameImpl({
     myColor,
     bestMoveUci: liveEval?.pv?.[0],
   });
-
+  const streamerMode = useStreamerMode();
   const premoves = useChessPremoves({
     snapshot: displaySnapshot,
     myColor,
@@ -429,8 +430,8 @@ function ChessGameImpl({
       onCancelPremoves={premoves.cancelPremoves}
       bestMoveArrow={streamer.bestMoveArrow}
       threatArrows={streamer.threatArrows}
-      showBestMove={streamer.showBestMove}
-      showThreats={streamer.showThreats}
+      showBestMove={streamerMode.enabled || streamer.showBestMove}
+      showThreats={streamerMode.enabled || streamer.showThreats}
       onToggleBestMove={streamer.toggleBestMove}
       onToggleThreats={streamer.toggleThreats}
       spectatorCount={spectatorCount}
@@ -441,7 +442,6 @@ function ChessGameImpl({
     (room?.gameOptions?.cardVariant as string | undefined) ??
     (room?.gameOptions?.variant as string | undefined) ??
     'cyberpunk';
-
   const modals = (
     <ChessGameModals
       showResultModal={showResultModal}

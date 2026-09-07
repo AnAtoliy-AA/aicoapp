@@ -193,7 +193,7 @@ function ChessBoardPanelImpl({
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
-      rating={(topPlayer as { rating?: number | null } | undefined)?.rating}
+      rating={topPlayer?.rating}
     />
   );
 
@@ -210,7 +210,7 @@ function ChessBoardPanelImpl({
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
-      rating={(bottomPlayer as { rating?: number | null } | undefined)?.rating}
+      rating={bottomPlayer?.rating}
     />
   );
 
