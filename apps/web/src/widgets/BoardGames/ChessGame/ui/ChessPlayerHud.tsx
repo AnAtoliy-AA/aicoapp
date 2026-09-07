@@ -16,6 +16,7 @@ interface ChessPlayerHudProps {
   incrementSeconds?: number;
   board: Board;
   pieceStyle?: ChessPieceStyle;
+  rating?: number | null;
 }
 
 const PIECE_VALUES: Record<PieceType, number> = {
@@ -56,6 +57,7 @@ export function ChessPlayerHud({
   incrementSeconds = 0,
   board,
   pieceStyle = 'neo',
+  rating,
 }: ChessPlayerHudProps) {
   const opponentColor: PieceColor = color === 'white' ? 'black' : 'white';
 
@@ -154,6 +156,19 @@ export function ChessPlayerHud({
             <span className="text-[9px] px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider bg-white/5 text-[var(--textSecondary)] border border-white/10">
               {color}
             </span>
+            {rating != null && (
+              <span
+                className={`text-[9px] px-1.5 py-0.2 rounded font-bold font-mono border ${
+                  rating >= 1800
+                    ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                    : rating >= 1200
+                      ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                      : 'bg-white/5 text-[var(--textSecondary)] border-white/10'
+                }`}
+              >
+                {rating}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1 mt-0.5 min-h-[14px]">

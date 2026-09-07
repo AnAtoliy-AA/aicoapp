@@ -64,6 +64,7 @@ export interface ChessPlayer {
   playerId: string;
   color: PieceColor;
   isBot: boolean;
+  rating?: number | null;
 }
 
 export interface ChessOptions {

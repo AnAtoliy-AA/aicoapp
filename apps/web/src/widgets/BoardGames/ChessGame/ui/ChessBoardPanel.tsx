@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useState, useCallback, useMemo } from 'react';
+import type { CSSProperties } from 'react';
 import { cx } from '@arcadeum/ui/utils/cx';
 import { useWidgetFullscreen } from '@/features/games/ui/GameWidgetContainer';
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
@@ -9,6 +10,10 @@ import { EvalBar } from './EvalBar';
 import { ChessPlayerHud } from './ChessPlayerHud';
 import { ChessGameConsole } from './ChessGameConsole';
 import { useChessPieceStylePreference } from '../lib/piece-style';
+import {
+  useBoardThemePreference,
+  getBoardThemeCssVars,
+} from '../lib/board-theme';
 import type { UseChessCoachResult } from '../hooks/useChessCoach';
 import './styles/chess-arena.scss';
 import type { ChessClientState, BoardPosition, File, Rank } from '../types';
@@ -79,6 +84,7 @@ interface ChessBoardPanelProps {
   showThreats?: boolean;
   onToggleBestMove?: () => void;
   onToggleThreats?: () => void;
+  spectatorCount?: number;
 }
 
 function ChessBoardPanelImpl({
@@ -122,9 +128,11 @@ function ChessBoardPanelImpl({
   showThreats = false,
   onToggleBestMove,
   onToggleThreats,
+  spectatorCount = 0,
 }: ChessBoardPanelProps) {
   const [hoveredMoveIdx, setHoveredMoveIdx] = useState<number | null>(null);
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
+  const { activeBoardTheme } = useBoardThemePreference();
   const isFullscreen = useWidgetFullscreen();
 
   const { snapshot: sessionSnapshot } = useSessionTokens();
@@ -172,6 +180,8 @@ function ChessBoardPanelImpl({
       ? 'White'
       : 'Black';
 
+  const boardThemeVars = getBoardThemeCssVars(activeBoardTheme);
+
   const topPlayerHud = (
     <ChessPlayerHud
       playerId={topPlayer?.playerId ?? ''}
@@ -183,6 +193,7 @@ function ChessBoardPanelImpl({
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
+      rating={topPlayer?.rating}
     />
   );
 
@@ -199,6 +210,7 @@ function ChessBoardPanelImpl({
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
+      rating={bottomPlayer?.rating}
     />
   );
 
@@ -206,6 +218,7 @@ function ChessBoardPanelImpl({
     <div className={cx('chess-arena-root', isFullscreen && 'is-fullscreen')}>
       <div
         className={cx('chess-board-column', isFullscreen && 'is-fullscreen')}
+        style={boardThemeVars as CSSProperties}
       >
         <div className="chess-hud-row">{topPlayerHud}</div>
 
@@ -230,6 +243,12 @@ function ChessBoardPanelImpl({
             </div>
 
             <div className="chess-board-grid-wrapper relative">
+              {spectatorCount > 0 && (
+                <div className="absolute top-2 right-2 z-30 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md text-white/70 text-[10px] font-semibold select-none pointer-events-none">
+                  <span>👁</span>
+                  <span>{spectatorCount}</span>
+                </div>
+              )}
               {premoveQueue.length > 0 && (
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 backdrop-blur-md shadow-lg text-amber-300 text-xs font-semibold select-none pointer-events-auto">
                   <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />

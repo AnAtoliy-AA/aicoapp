@@ -20,6 +20,7 @@ import { RulesModal } from './RulesModal';
 import { BotSelector, type BotPersonalityOption } from './BotSelector';
 import { PgnImportModal } from './PgnImportModal';
 import { MatchmakingButton } from './MatchmakingButton';
+import { QuickPlayPanel } from './QuickPlayPanel';
 import { BOT_PERSONALITIES } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
 import { apiClient } from '@/shared/lib/api-client';
 
@@ -234,6 +235,14 @@ export function ChessLobby({
 
   const optionsSlot = (
     <div className="flex flex-col items-stretch gap-4">
+      {isHost && (
+        <QuickPlayPanel
+          disabled={startBusy}
+          onSelectTimeControl={(tc) => {
+            setOption({ timeControl: tc });
+          }}
+        />
+      )}
       <LobbyOptionSection title={t('games.create.sectionVariant')}>
         <GameThemePicker
           selectedTheme={options.theme}
