@@ -4,29 +4,13 @@ import { getMockLeaderboard, getMockPlayer } from '@/shared/api/leaderboard';
 import type { GameMode } from '@/entities/leaderboard/model/types';
 
 test.describe('Leaderboards page', () => {
-  // The leaderboards UI is data-driven (ticker only renders with events,
-  // self row + jump-to-me only render when `data.self` is set, etc.). The
-  // app has a built-in `getMockLeaderboard` gated on NEXT_PUBLIC_E2E, but
-  // the env var doesn't reach a reused dev server, and the real BE either
-  // has no Mongo or no auto-seed in CI. Serve the same mock snapshot at
-  // the network layer so every project gets a deterministic dataset.
   test.beforeEach(async ({ page }) => {
-    // Regex covers both the index (`/leaderboards`) and nested
-    // (`/leaderboards/players/<id>`). The `**/leaderboards*` glob only
-    // matched within the last path segment, so the player-detail URL
-    // slipped through to the BE.
     await page.route(/\/leaderboards(\/.*)?(\?.*)?$/, async (route) => {
-      // Don't intercept the page navigation — the same regex also matches
-      // the document request to /leaderboards on the web origin and would
-      // hand the browser JSON instead of HTML, breaking hydration.
       if (route.request().resourceType() === 'document') {
         return route.fallback();
       }
       const url = new URL(route.request().url());
 
-      // /leaderboards/players/<id> — player profile lookup used by the
-      // mythic-challenge CTA tests. Without this the request hits the BE
-      // and 404s for synthetic ids like p_1.
       const playerMatch = url.pathname.match(
         /\/leaderboards\/players\/([^/]+)$/,
       );
@@ -43,9 +27,6 @@ test.describe('Leaderboards page', () => {
       if (!url.pathname.endsWith('/leaderboards')) {
         return route.fallback();
       }
-      // Compute the snapshot per request so `mode` and `q` (search) actually
-      // affect the rows — the "switching mode" and "search filters" tests
-      // both rely on the response changing when the query string changes.
       const mode = url.searchParams.get('mode') ?? 'all';
       const page_ = Number(url.searchParams.get('page') ?? '1') || 1;
       const pageSize = Number(url.searchParams.get('pageSize') ?? '50') || 50;
@@ -65,9 +46,7 @@ test.describe('Leaderboards page', () => {
     });
   });
 
-  test('hero, ticker, cup, mythic spotlight, runner-ups, table all render', async ({
-    page,
-  }) => {
+  test('renders all leaderboard sections', async ({ page }) => {
     await navigateTo(page, '/leaderboards');
 
     await expect(page.getByTestId('leaderboard-hero')).toBeVisible();
@@ -80,24 +59,26 @@ test.describe('Leaderboards page', () => {
     await expect(page.getByTestId('runner-up-3')).toBeVisible();
     await expect(page.getByTestId('leaderboard-table')).toBeVisible();
     await expect(page.getByTestId('leaderboard-row-1')).toBeVisible();
-  });
-
-  test('mythic spotlight exposes the profile CTA', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
     await expect(page.getByTestId('mythic-challenge')).toBeVisible();
+    await expect(page.getByTestId('row-live-chip').first()).toBeVisible();
+    await expect(page.getByTestId('leaderboard-freshness')).toBeVisible();
+    const panel = page.getByTestId('cup-coming-soon');
+    await expect(panel).toContainText(/coming soon/i);
   });
 
-  test('switching mode updates the first row', async ({ page }) => {
+  test('supports mode switching, search, keyboard nav, and jump-to-me', async ({
+    page,
+  }) => {
     await navigateTo(page, '/leaderboards');
+
+    // Mode switching
     const firstRow = page.getByTestId('leaderboard-row-1');
     const before = (await firstRow.textContent()) ?? '';
     await page.getByTestId('mode-tab-critical_v1').click();
     await expect(page.getByTestId('leaderboard-table')).toBeVisible();
     await expect(firstRow).not.toHaveText(before);
-  });
 
-  test('mode tabs are keyboard navigable', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
+    // Keyboard navigation
     const all = page.getByTestId('mode-tab-all');
     await all.focus();
     await page.keyboard.press('ArrowRight');
@@ -106,51 +87,28 @@ test.describe('Leaderboards page', () => {
         page.getByTestId('mode-tab-critical_v1').getAttribute('aria-selected'),
       )
       .toBe('true');
-  });
 
-  test('live chip appears on at least one row', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
-    await expect(page.getByTestId('row-live-chip').first()).toBeVisible();
-  });
-
-  test('search filters rows', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
-    const firstRow = page.getByTestId('leaderboard-row-1');
+    // Search filtering
     await expect(firstRow).toBeVisible();
     await page.getByTestId('leaderboard-search').fill('zzzznotaplayer');
     await expect(firstRow).not.toBeVisible();
-  });
 
-  test('jump-to-me brings self row into view', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
+    // Jump-to-me
     await page.getByTestId('leaderboard-jump-to-me').click();
     await expect(page.getByTestId('leaderboard-self-row')).toBeInViewport();
-  });
 
-  test('pinned self row stays in viewport on scroll', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
+    // Pinned self row stays in viewport on scroll
     const self = page.getByTestId('leaderboard-self-row');
     await expect(self).toBeVisible();
-    // mouse.wheel isn't supported in mobile WebKit; window.scrollBy works
-    // across every project we run e2e on.
     await page.evaluate(() => window.scrollBy(0, 2000));
     await expect(self).toBeInViewport();
   });
 
-  test('tournament section shows coming-soon placeholder', async ({ page }) => {
+  test('mythic challenge navigates to player profile and back', async ({
+    page,
+  }) => {
     await navigateTo(page, '/leaderboards');
-    const panel = page.getByTestId('cup-coming-soon');
-    await expect(panel).toBeVisible();
-    await expect(panel).toContainText(/coming soon/i);
-  });
 
-  test('freshness indicator renders above the cup card', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
-    await expect(page.getByTestId('leaderboard-freshness')).toBeVisible();
-  });
-
-  test('mythic challenge CTA navigates to /players/<id>', async ({ page }) => {
-    await navigateTo(page, '/leaderboards');
     await page.getByTestId('mythic-challenge').click();
     await page.waitForURL(/\/players\//);
     await expect(
@@ -158,14 +116,7 @@ test.describe('Leaderboards page', () => {
         new RegExp('^player-profile-' + page.url().split('/players/')[1] + '$'),
       ),
     ).toBeVisible();
-  });
 
-  test('player profile back button returns to leaderboard', async ({
-    page,
-  }) => {
-    await navigateTo(page, '/leaderboards');
-    await page.getByTestId('mythic-challenge').click();
-    await page.waitForURL(/\/players\//);
     await page.getByTestId('player-profile-back').click();
     await expect(page).toHaveURL(/\/leaderboards/);
   });

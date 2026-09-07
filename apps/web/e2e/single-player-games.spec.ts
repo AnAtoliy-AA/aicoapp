@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from './fixtures/test-utils';
 
 test.describe('Single Player Puzzle Games', () => {
-  test('Sudoku game renders HUD, grid, keypad, and handles notes toggle', async ({
+  test('Sudoku renders board, controls, and control panel', async ({
     page,
   }) => {
     await page.goto('/en/games/sudoku/play', {
@@ -22,9 +22,18 @@ test.describe('Single Player Puzzle Games', () => {
     await expect(notesBtn).toBeVisible();
     await notesBtn.click();
     await expect(notesBtn).toHaveAttribute('aria-pressed', 'true');
+
+    const controlPanel = page.getByTestId('solo-control-panel');
+    await expect(controlPanel).toBeVisible();
+    await expect(
+      controlPanel.getByTestId('solo-pause-button'),
+    ).toBeVisible();
+    await expect(
+      controlPanel.getByTestId('solo-autopause-control-button'),
+    ).toBeVisible();
   });
 
-  test('Minesweeper game renders HUD, smiley button, and board grid', async ({
+  test('Minesweeper renders board, handles expert/fullscreen, pause, sound, and switcher', async ({
     page,
   }) => {
     await page.goto('/en/games/minesweeper/play', {
@@ -38,15 +47,9 @@ test.describe('Single Player Puzzle Games', () => {
     await expect(flagBtn).toBeVisible();
     await flagBtn.click();
     await expect(flagBtn).toHaveAttribute('aria-pressed', 'true');
-  });
 
-  test('Minesweeper expert board fits horizontally without scroll on desktop', async ({
-    page,
-  }) => {
+    // Expert board fits horizontally without scroll
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto('/en/games/minesweeper/play', {
-      waitUntil: 'domcontentloaded',
-    });
 
     const diffTrigger = page.locator('#minesweeper-difficulty');
     await expect(diffTrigger).toBeVisible();
@@ -56,7 +59,6 @@ test.describe('Single Player Puzzle Games', () => {
     await expect(expertOption).toBeVisible();
     await expertOption.click();
 
-    const board = page.getByRole('grid');
     await expect(board).toBeVisible();
 
     const hasNoHorizontalScroll = await page.evaluate(() => {
@@ -65,59 +67,9 @@ test.describe('Single Player Puzzle Games', () => {
       return grid.scrollWidth <= grid.clientWidth;
     });
     expect(hasNoHorizontalScroll).toBe(true);
-  });
 
-  test('Solitaire game renders table, stock deck, and tableau piles', async ({
-    page,
-  }) => {
-    await page.goto('/en/games/solitaire/play', {
-      waitUntil: 'domcontentloaded',
-    });
-
-    const newGameBtn = page.getByTestId('solitaire-new-game-button');
-    await expect(newGameBtn).toBeVisible();
-
-    const drawBtn = page.getByRole('button', { name: /Draw/i });
-    await expect(drawBtn).toBeVisible();
-    await drawBtn.click();
-  });
-
-  test('Solitaire board cards overlap and avoid vertical scroll on desktop', async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 1280, height: 850 });
-    await page.goto('/en/games/solitaire/play', {
-      waitUntil: 'domcontentloaded',
-    });
-
-    const drawBtn = page.getByRole('button', { name: /Draw/i });
-    await expect(drawBtn).toBeVisible();
-
-    const timerCard = page.getByTestId('solitaire-timer');
-    await expect(timerCard).toBeVisible();
-
-    const bgImage = page.getByTestId('solo-theme-bg-image');
-    await expect(bgImage).toBeVisible();
-
-    const facedownFan = page.locator('[data-fan="facedown"]');
-    await expect(facedownFan.first()).toBeVisible();
-
-    const isBoardContained = await page.evaluate(() => {
-      const board = document.querySelector('[style*="--sol-table-bg"]');
-      if (!board) return false;
-      const rect = board.getBoundingClientRect();
-      return rect.bottom <= window.innerHeight;
-    });
-    expect(isBoardContained).toBe(true);
-  });
-
-  test('Solo game fullscreen isolates container and renders enlarged board with leaderboard on wide screens', async ({
-    page,
-  }) => {
+    // Fullscreen isolates container
     await page.setViewportSize({ width: 1512, height: 900 });
-    await page.goto('/en/games/minesweeper/play', {
-      waitUntil: 'domcontentloaded',
-    });
 
     const fullscreenBtn = page.getByTestId('solo-fullscreen-button');
     await expect(fullscreenBtn).toBeVisible();
@@ -143,15 +95,8 @@ test.describe('Single Player Puzzle Games', () => {
     await expect(container).not.toHaveAttribute('data-fullscreen', 'true');
     await expect(bgImage).toBeVisible();
     await expect(bgImage).toHaveClass(/opacity-40/);
-  });
 
-  test('Solo game supports manual pause, overlay display, keyboard shortcut, and auto-pause toggle', async ({
-    page,
-  }) => {
-    await page.goto('/en/games/minesweeper/play', {
-      waitUntil: 'domcontentloaded',
-    });
-
+    // Pause, overlay, keyboard shortcut, auto-pause toggle
     const pauseBtn = page.getByTestId('solo-pause-button');
     await expect(pauseBtn).toBeVisible();
 
@@ -211,15 +156,102 @@ test.describe('Single Player Puzzle Games', () => {
 
     await page.keyboard.press('p');
     await expect(overlay).not.toBeVisible();
+
+    // Sound, music, leaderboard toggles
+    const soundBtn = page.getByTestId('solo-sound-toggle-button');
+    await expect(soundBtn).toHaveAttribute('aria-pressed', /true|false/);
+    const initialSound = await soundBtn.getAttribute('aria-pressed');
+    const expectedSound = initialSound === 'true' ? 'false' : 'true';
+    await soundBtn.click();
+    await expect(
+      page.getByTestId('solo-sound-toggle-button'),
+    ).toHaveAttribute('aria-pressed', expectedSound);
+    await page.getByTestId('solo-sound-toggle-button').click();
+    await expect(
+      page.getByTestId('solo-sound-toggle-button'),
+    ).toHaveAttribute('aria-pressed', initialSound ?? 'true');
+
+    const musicBtn = page.getByTestId('solo-music-toggle-button');
+    await expect(musicBtn).toHaveAttribute('aria-pressed', /true|false/);
+    const initialMusic = await musicBtn.getAttribute('aria-pressed');
+    const expectedMusic = initialMusic === 'true' ? 'false' : 'true';
+    await musicBtn.click();
+    await expect(
+      page.getByTestId('solo-music-toggle-button'),
+    ).toHaveAttribute('aria-pressed', expectedMusic);
+    await page.getByTestId('solo-music-toggle-button').click();
+    await expect(
+      page.getByTestId('solo-music-toggle-button'),
+    ).toHaveAttribute('aria-pressed', initialMusic ?? 'true');
+
+    const leaderboardToggle = page.getByTestId(
+      'solo-leaderboard-toggle-button',
+    );
+    await expect(leaderboardToggle).toBeVisible();
+    await expect(leaderboard).toBeVisible();
+
+    await leaderboardToggle.click();
+    await expect(leaderboard).not.toBeVisible();
+
+    await leaderboardToggle.click();
+    await expect(leaderboard).toBeVisible();
+
+    // Game switcher dropdown
+    const switcherBtn = page.getByTestId('solo-game-switcher-button');
+    await expect(switcherBtn).toBeVisible();
+    await expect(switcherBtn).toHaveText(/Minesweeper/);
+
+    await switcherBtn.click();
+    const dropdown = page.getByTestId('solo-game-switcher-dropdown');
+    await expect(dropdown).toBeVisible();
+
+    const sudokuOpt = page.getByTestId('solo-game-option-sudoku');
+    await expect(sudokuOpt).toBeVisible();
+    await sudokuOpt.click();
+
+    await page.waitForURL('**/games/sudoku/play');
+    const newSwitcherBtn = page.getByTestId('solo-game-switcher-button');
+    await expect(newSwitcherBtn).toBeVisible();
+    await expect(newSwitcherBtn).toHaveText(/Sudoku/);
   });
 
-  test('SoloGameContainer provides control panel with pause and autopause in Solitaire', async ({
+  test('Solitaire renders board, handles card overlap, and control panel', async ({
     page,
   }) => {
     await page.goto('/en/games/solitaire/play', {
       waitUntil: 'domcontentloaded',
     });
 
+    const newGameBtn = page.getByTestId('solitaire-new-game-button');
+    await expect(newGameBtn).toBeVisible();
+
+    const drawBtn = page.getByRole('button', { name: /Draw/i });
+    await expect(drawBtn).toBeVisible();
+    await drawBtn.click();
+
+    // Board cards overlap and no vertical scroll on desktop
+    await page.setViewportSize({ width: 1280, height: 850 });
+
+    await expect(drawBtn).toBeVisible();
+
+    const timerCard = page.getByTestId('solitaire-timer');
+    await expect(timerCard).toBeVisible();
+
+    const bgImage = page.getByTestId('solo-theme-bg-image');
+    await expect(bgImage).toBeVisible();
+
+    const facedownFan = page.locator('[data-fan="facedown"]');
+    await expect(facedownFan.first()).toBeVisible();
+
+    const isBoardContained = await page.evaluate(() => {
+      const board = document.querySelector('[style*="--sol-table-bg"]');
+      if (!board) return false;
+      const rect = board.getBoundingClientRect();
+      return rect.bottom <= window.innerHeight;
+    });
+    expect(isBoardContained).toBe(true);
+
+    // Control panel with pause and autopause
     const controlPanel = page.getByTestId('solo-control-panel');
     await expect(controlPanel).toBeVisible();
 
@@ -239,7 +271,7 @@ test.describe('Single Player Puzzle Games', () => {
     await expect(overlay).not.toBeVisible();
   });
 
-  test('SoloControlPanel renders pause and autopause in Sudoku and 2048', async ({
+  test('2048 control panel, continue play after win, and mobile layout', async ({
     page,
   }) => {
     await page.goto('/en/games/sudoku/play', {
@@ -267,15 +299,8 @@ test.describe('Single Player Puzzle Games', () => {
     await expect(
       game2048ControlPanel.getByTestId('solo-autopause-control-button'),
     ).toBeVisible();
-  });
 
-  test('Game 2048 allows continuing play after win without re-opening modal on moves', async ({
-    page,
-  }) => {
-    await page.goto('/en/games/2048/play', {
-      waitUntil: 'domcontentloaded',
-    });
-
+    // Continue play after win
     const board = page.getByTestId('game-2048-board');
     await expect(board).toBeVisible();
 
@@ -330,18 +355,11 @@ test.describe('Single Player Puzzle Games', () => {
 
     await page.keyboard.press('ArrowRight');
     await expect(winModal).not.toBeVisible();
-  });
 
-  test('Solo game field occupies available width and renders compact controls on mobile', async ({
-    page,
-  }) => {
+    // Mobile layout
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/en/games/2048/play', {
-      waitUntil: 'domcontentloaded',
-    });
 
-    const controlPanel = page.getByTestId('solo-control-panel');
-    await expect(controlPanel).toBeVisible();
+    await expect(game2048ControlPanel).toBeVisible();
 
     const board2048 = page.getByTestId('game-2048-board');
     await expect(board2048).toBeVisible();
@@ -374,83 +392,9 @@ test.describe('Single Player Puzzle Games', () => {
     }
   });
 
-  test('Solo control panel supports sound, music, and leaderboard visibility toggles', async ({
+  test('Theme selector is horizontally scrollable with theme selection', async ({
     page,
   }) => {
-    await page.goto('/en/games/minesweeper/play', {
-      waitUntil: 'domcontentloaded',
-    });
-
-    const soundBtn = page.getByTestId('solo-sound-toggle-button');
-    await expect(soundBtn).toHaveAttribute('aria-pressed', /true|false/);
-    const initialSound = await soundBtn.getAttribute('aria-pressed');
-    const expectedSound = initialSound === 'true' ? 'false' : 'true';
-    await soundBtn.click();
-    await expect(page.getByTestId('solo-sound-toggle-button')).toHaveAttribute(
-      'aria-pressed',
-      expectedSound,
-    );
-    await page.getByTestId('solo-sound-toggle-button').click();
-    await expect(page.getByTestId('solo-sound-toggle-button')).toHaveAttribute(
-      'aria-pressed',
-      initialSound ?? 'true',
-    );
-
-    const musicBtn = page.getByTestId('solo-music-toggle-button');
-    await expect(musicBtn).toHaveAttribute('aria-pressed', /true|false/);
-    const initialMusic = await musicBtn.getAttribute('aria-pressed');
-    const expectedMusic = initialMusic === 'true' ? 'false' : 'true';
-    await musicBtn.click();
-    await expect(page.getByTestId('solo-music-toggle-button')).toHaveAttribute(
-      'aria-pressed',
-      expectedMusic,
-    );
-    await page.getByTestId('solo-music-toggle-button').click();
-    await expect(page.getByTestId('solo-music-toggle-button')).toHaveAttribute(
-      'aria-pressed',
-      initialMusic ?? 'true',
-    );
-
-    const leaderboardToggle = page.getByTestId(
-      'solo-leaderboard-toggle-button',
-    );
-    await expect(leaderboardToggle).toBeVisible();
-    const leaderboard = page.getByTestId('solo-leaderboard-toggle');
-    await expect(leaderboard).toBeVisible();
-
-    await leaderboardToggle.click();
-    await expect(leaderboard).not.toBeVisible();
-
-    await leaderboardToggle.click();
-    await expect(leaderboard).toBeVisible();
-  });
-
-  test('Solo game switcher dropdown lists games and navigates on selection', async ({
-    page,
-  }) => {
-    await page.goto('/en/games/minesweeper/play', {
-      waitUntil: 'domcontentloaded',
-    });
-
-    const switcherBtn = page.getByTestId('solo-game-switcher-button');
-    await expect(switcherBtn).toBeVisible();
-    await expect(switcherBtn).toHaveText(/Minesweeper/);
-
-    await switcherBtn.click();
-    const dropdown = page.getByTestId('solo-game-switcher-dropdown');
-    await expect(dropdown).toBeVisible();
-
-    const sudokuOpt = page.getByTestId('solo-game-option-sudoku');
-    await expect(sudokuOpt).toBeVisible();
-    await sudokuOpt.click();
-
-    await page.waitForURL('**/games/sudoku/play');
-    const newSwitcherBtn = page.getByTestId('solo-game-switcher-button');
-    await expect(newSwitcherBtn).toBeVisible();
-    await expect(newSwitcherBtn).toHaveText(/Sudoku/);
-  });
-
-  test('Solo themes selector is horizontally scrollable', async ({ page }) => {
     await page.goto('/en/games/minesweeper/play', {
       waitUntil: 'domcontentloaded',
     });
