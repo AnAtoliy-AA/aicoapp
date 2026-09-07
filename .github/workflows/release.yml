@@ -152,7 +152,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge Reports
-        run: pnpm --filter web exec playwright merge-reports all-reports/
+        run: pnpm --filter web exec playwright merge-reports $GITHUB_WORKSPACE/all-reports/
 
       - name: Upload Merged Report
         if: always()
