@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import { PostGameAnalysis } from './PostGameAnalysis';
 import type { TranslationKey } from '@/shared/lib/useTranslation';
+import * as stockfishApi from '../lib/stockfish-api';
 
 const t = (key: TranslationKey) => key;
 
@@ -33,5 +34,57 @@ describe('PostGameAnalysis', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('e4')).toBeInTheDocument();
     expect(screen.getByText('Qxd1')).toBeInTheDocument();
+  });
+
+  it('renders Stockfish player accuracy and grades when engine response is returned', async () => {
+    vi.spyOn(stockfishApi, 'analyzeGameWithStockfish').mockResolvedValueOnce({
+      evals: [0.2, 0.4, -9.5],
+      whiteAccuracy: 92.5,
+      blackAccuracy: 88.0,
+      summary: {
+        brilliant: 1,
+        great: 0,
+        good: 1,
+        inaccuracy: 0,
+        mistake: 0,
+        blunder: 1,
+      },
+      moves: [
+        {
+          quality: 'good',
+          move: 'e4',
+          evalAfter: 0.4,
+          mateAfter: null,
+          loss: 5,
+          bestMove: 'e4',
+          bestPv: ['e4', 'e5'],
+        },
+        {
+          quality: 'blunder',
+          move: 'Qxd1',
+          evalAfter: -9.5,
+          mateAfter: null,
+          loss: 990,
+          bestMove: 'Nf3',
+          bestPv: ['Nf3'],
+        },
+      ],
+    });
+
+    render(
+      <PostGameAnalysis
+        positionHistory={[START, AFTER_E4, WHITE_BLUNDERED_QUEEN]}
+        notations={['e4', 'Qxd1']}
+        t={t}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('White Accuracy')).toBeInTheDocument();
+      expect(screen.getByText('92.5')).toBeInTheDocument();
+      expect(screen.getByText('Black Accuracy')).toBeInTheDocument();
+      expect(screen.getByText('88.0')).toBeInTheDocument();
+      expect(screen.getByText('Stockfish 19 Evaluated')).toBeInTheDocument();
+    });
   });
 });

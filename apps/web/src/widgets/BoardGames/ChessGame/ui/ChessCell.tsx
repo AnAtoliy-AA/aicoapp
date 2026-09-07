@@ -1,13 +1,15 @@
 'use client';
 
 import { memo } from 'react';
-import { PIECE_SYMBOLS, type ChessPiece, type File, type Rank } from '../types';
-import { useChessTheme } from '../lib/ChessThemeContext';
+import type { ChessPiece, File, Rank } from '../types';
+import type { ChessPieceStyle } from '../lib/piece-style';
+import { ChessPieceIcon } from './ChessPieceIcon';
 
 export interface ChessCellProps {
   file: File;
   rank: Rank;
   piece: ChessPiece | null;
+  pieceStyle?: ChessPieceStyle;
   isLight: boolean;
   selected: boolean;
   legalTarget: boolean;
@@ -18,6 +20,7 @@ export interface ChessCellProps {
   hovered: boolean;
   isDragOver: boolean;
   isMyPiece: boolean;
+  isPremoveGhost?: boolean;
   canInteract: boolean;
   isLastFile: boolean;
   isBottomRank: boolean;
@@ -35,10 +38,26 @@ export interface ChessCellProps {
   animating: Map<string, { dx: number; dy: number }>;
 }
 
+const UNICODE_PIECES: Record<string, string> = {
+  'white-pawn': '♙',
+  'white-knight': '♘',
+  'white-bishop': '♗',
+  'white-rook': '♖',
+  'white-queen': '♕',
+  'white-king': '♔',
+  'black-pawn': '♟',
+  'black-knight': '♞',
+  'black-bishop': '♝',
+  'black-rook': '♜',
+  'black-queen': '♛',
+  'black-king': '♚',
+};
+
 function ChessCell({
   file,
   rank,
   piece,
+  pieceStyle = 'neo',
   isLight,
   selected,
   legalTarget,
@@ -49,6 +68,7 @@ function ChessCell({
   hovered,
   isDragOver,
   isMyPiece,
+  isPremoveGhost = false,
   canInteract,
   isLastFile,
   isBottomRank,
@@ -58,24 +78,39 @@ function ChessCell({
   onPieceDrop,
   onHover,
   onDragOver,
-  animating,
+  animating: _animating,
 }: ChessCellProps) {
-  const theme = useChessTheme();
   const square = `${file}-${rank}`;
-  const symbol = piece ? PIECE_SYMBOLS[piece.type][piece.color] : null;
 
-  let bgColor = isLight ? theme.lightSquare : theme.darkSquare;
-  if (selected) bgColor = theme.selectedSquare;
-  else if (kingCheck) bgColor = theme.checkSquare;
-  else if (pendingTarget) bgColor = 'rgba(251, 191, 36, 0.45)';
-  else if (hintMoved) bgColor = 'rgba(16, 185, 129, 0.38)';
-  else if (lastMoved) bgColor = theme.lastMoveSquare;
+  let bgClass = isLight
+    ? 'bg-[var(--chess-light-square)]'
+    : 'bg-[var(--chess-dark-square)]';
+  if (selected) {
+    bgClass =
+      'bg-[var(--chess-selected-square)] ring-2 ring-amber-400/80 inset-ring';
+  } else if (kingCheck) {
+    bgClass =
+      'bg-[var(--chess-check-square)] ring-2 ring-red-500 animate-pulse';
+  } else if (isPremoveGhost) {
+    bgClass = 'bg-amber-500/25 ring-2 ring-amber-400/70 inset-ring';
+  } else if (pendingTarget) {
+    bgClass = 'bg-amber-400/40';
+  } else if (hintMoved) {
+    bgClass = 'bg-emerald-500/35 ring-2 ring-emerald-400/70';
+  } else if (lastMoved) {
+    bgClass = 'bg-[var(--chess-last-move)]';
+  }
+
+  const pieceKey = piece ? `${piece.color}-${piece.type}` : '';
+  const unicodeSymbol = pieceKey ? UNICODE_PIECES[pieceKey] : '';
 
   return (
     <div
       role="gridcell"
       data-testid={`chess-${file}${rank}`}
-      className="focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--primary)]"
+      className={`flex-1 aspect-square relative flex items-center justify-center overflow-hidden select-none touch-manipulation transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--primary)] ${bgClass} ${
+        canInteract ? 'cursor-pointer' : 'cursor-default'
+      } ${legalTarget && (hovered || isDragOver) ? 'brightness-125' : ''}`}
       aria-label={`${file}${rank}${piece ? ` ${piece.color} ${piece.type}` : ''}${selected ? ' selected' : ''}${legalTarget ? ' legal move' : ''}${hintMoved ? ' suggested' : ''}`}
       {...cellFocusProps}
       draggable={isMyPiece && !disabled}
@@ -90,7 +125,6 @@ function ChessCell({
       }}
       onDragOver={(e) => {
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
         onDragOver(square);
       }}
       onDragLeave={() => onDragOver(null)}
@@ -98,117 +132,75 @@ function ChessCell({
         e.preventDefault();
         onDragOver(null);
         const data = e.dataTransfer.getData('text/plain');
-        if (data && onPieceDrop) {
-          const [fromFile, fromRank] = data.split('-');
-          onPieceDrop(fromFile as File, Number(fromRank) as Rank, file, rank);
+        if (data) {
+          const [f, r] = data.split('-');
+          if (f && r && onPieceDrop) {
+            onPieceDrop(f as File, parseInt(r, 10) as Rank, file, rank);
+          }
         }
       }}
-      style={{
-        flex: 1,
-        aspectRatio: '1 / 1',
-        backgroundColor:
-          legalTarget && (hovered || isDragOver)
-            ? 'rgba(167, 139, 250, 0.4)'
-            : bgColor,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: canInteract ? 'pointer' : 'default',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
     >
-      {legalTarget && !piece && (
-        <div
-          style={{
-            position: 'absolute',
-            width: '28%',
-            height: '28%',
-            borderRadius: '50%',
-            backgroundColor: 'rgba(167, 139, 250, 0.5)',
-          }}
-        />
-      )}
-      {legalTarget && piece && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 2,
-            borderRadius: '50%',
-            border: '3px solid rgba(239, 68, 68, 0.6)',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-      {hintMoved && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 2,
-            borderRadius: '50%',
-            border: '2px solid rgba(16, 185, 129, 0.8)',
-            boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
       {isLastFile && (
-        <span
-          style={{
-            position: 'absolute',
-            right: 4,
-            top: 3,
-            fontSize: 11,
-            fontWeight: 800,
-            color: isLight ? '#779952' : '#edeed1',
-            lineHeight: 1,
-            pointerEvents: 'none',
-          }}
-        >
+        <span className="pointer-events-none absolute top-0.5 right-0.5 text-[9px] sm:text-[11px] font-bold font-mono text-[var(--chess-coord)] opacity-70 leading-none">
           {rank}
         </span>
       )}
+
       {isBottomRank && (
-        <span
-          style={{
-            position: 'absolute',
-            left: 4,
-            bottom: 3,
-            fontSize: 11,
-            fontWeight: 800,
-            color: isLight ? '#779952' : '#edeed1',
-            lineHeight: 1,
-            pointerEvents: 'none',
-          }}
-        >
+        <span className="pointer-events-none absolute bottom-0.5 left-0.5 text-[9px] sm:text-[11px] font-bold font-mono text-[var(--chess-coord)] opacity-70 leading-none">
           {file}
         </span>
       )}
-      {symbol && (
-        <span
-          className="select-none transition-transform hover:scale-105"
-          style={{
-            fontSize: 'clamp(1.3rem, 11cqw, 3.4rem)',
-            lineHeight: 1,
-            color: piece?.color === 'white' ? '#ffffff' : '#18181b',
-            filter:
-              piece?.color === 'white'
-                ? 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.95))'
-                : 'drop-shadow(0 1px 2px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.9))',
-            userSelect: 'none',
-            position: 'relative',
-            zIndex: 2,
-            transition: 'transform 0.2s ease-out',
-            transform: animating.get(square)
-              ? `translate(${animating.get(square)!.dx}%, ${animating.get(square)!.dy}%)`
-              : undefined,
-          }}
+
+      {legalTarget && !piece && (
+        <div className="pointer-events-none absolute w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-[var(--chess-legal-dot)] shadow-sm" />
+      )}
+
+      {legalTarget && piece && (
+        <div className="pointer-events-none absolute inset-1 sm:inset-1.5 rounded-full ring-2 sm:ring-[3px] ring-[var(--chess-legal-dot)] ring-inset" />
+      )}
+
+      {piece && (
+        <div
+          className={`relative z-10 w-[82%] h-[82%] flex items-center justify-center transition-transform hover:scale-105 active:scale-95 ${
+            isPremoveGhost
+              ? 'opacity-70 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]'
+              : 'drop-shadow-md'
+          }`}
         >
-          {symbol}
-        </span>
+          <ChessPieceIcon piece={piece} pieceStyle={pieceStyle} />
+          <span className="sr-only">{unicodeSymbol}</span>
+        </div>
       )}
     </div>
   );
 }
 
-export const MemoizedChessCell = memo(ChessCell);
+function areChessCellPropsEqual(
+  prev: ChessCellProps,
+  next: ChessCellProps,
+): boolean {
+  if (prev.file !== next.file || prev.rank !== next.rank) return false;
+  if (prev.isLight !== next.isLight) return false;
+  if (prev.selected !== next.selected) return false;
+  if (prev.legalTarget !== next.legalTarget) return false;
+  if (prev.lastMoved !== next.lastMoved) return false;
+  if (prev.hintMoved !== next.hintMoved) return false;
+  if (prev.pendingTarget !== next.pendingTarget) return false;
+  if (prev.kingCheck !== next.kingCheck) return false;
+  if (prev.hovered !== next.hovered) return false;
+  if (prev.isDragOver !== next.isDragOver) return false;
+  if (prev.isMyPiece !== next.isMyPiece) return false;
+  if (prev.isPremoveGhost !== next.isPremoveGhost) return false;
+  if (prev.canInteract !== next.canInteract) return false;
+  if (prev.disabled !== next.disabled) return false;
+  if (prev.pieceStyle !== next.pieceStyle) return false;
+  if (prev.cellFocusProps?.tabIndex !== next.cellFocusProps?.tabIndex) {
+    return false;
+  }
+  if (prev.piece?.type !== next.piece?.type) return false;
+  if (prev.piece?.color !== next.piece?.color) return false;
+  return true;
+}
+
+export const MemoizedChessCell = memo(ChessCell, areChessCellPropsEqual);

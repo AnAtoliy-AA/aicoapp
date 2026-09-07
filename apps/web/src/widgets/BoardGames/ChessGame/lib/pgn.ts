@@ -30,16 +30,7 @@ export function generatePGN(state: ChessClientState): string {
 }
 
 export function generateMoveList(state: ChessClientState): string[] {
-  const moves: string[] = [];
-  for (let i = 0; i < state.moveHistory.length; i++) {
-    const move = state.moveHistory[i];
-    if (i % 2 === 0) {
-      moves.push(`${Math.floor(i / 2) + 1}. ${move.notation}`);
-    } else {
-      moves.push(move.notation);
-    }
-  }
-  return moves;
+  return state.moveHistory.map((m) => m.notation);
 }
 
 function getPlayerName(

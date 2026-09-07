@@ -108,4 +108,32 @@ describe('ChessBoard', () => {
       expect(screen.getAllByText(file).length).toBeGreaterThan(0);
     });
   });
+
+  it('does not render floating streamer buttons on the chessboard', () => {
+    const board = createEmptyBoard();
+    renderWithProvider(<ChessBoard {...defaultProps} board={board} />);
+
+    expect(screen.queryByTitle('Streamer Best Move Arrow')).toBeNull();
+    expect(screen.queryByTitle('Streamer Threats & Attacks')).toBeNull();
+  });
+
+  it('renders premove ghost pieces and queued indicators', () => {
+    const board = createBoardWithPawn('white');
+    renderWithProvider(
+      <ChessBoard
+        {...defaultProps}
+        board={board}
+        premoveQueue={[
+          {
+            from: { file: 'e', rank: 2 },
+            to: { file: 'e', rank: 4 },
+            piece: { type: 'pawn', color: 'white' },
+          },
+        ]}
+      />,
+    );
+
+    const targetCell = screen.getByTestId('chess-e4');
+    expect(targetCell.className).toContain('ring-amber-400/70');
+  });
 });
