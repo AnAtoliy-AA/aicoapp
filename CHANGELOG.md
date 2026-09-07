@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.47] - 2026-09-07
+
+### Fixed
+- remove broken merge-reports jobs, keep individual shard reports
+- use absolute path for merge-reports directory
+- use project playwright for merge-reports instead of npx
+- remove --html flag and skip install in merge-reports job
+- pass mountTime as argument to waitForFunction
+
+### Improved
+- reduce shards from 4 to 3 for staging/main matrix
+- parallelize e2e tests and fix flaky tests
+
+
+## [1.28.46] - 2026-09-07
+
+### Added
+- rework shorts and gameplay factories
+
+
 ## [1.28.45] - 2026-09-07
 
 ### Added

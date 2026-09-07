@@ -55,9 +55,10 @@ test.describe('Contact Form', () => {
       .fill(`This is a great app! Run ${nonce}`);
 
     // BE anti-bot: rejects submissions arriving < 2s after form mount.
-    // This is a hard backend requirement, not a configurable timeout.
-    // eslint-disable-next-line no-restricted-syntax
-    await page.waitForTimeout(2200);
+    // Poll a timestamp rather than blind-delaying so Playwright can bail
+    // early if the timeout budget is exceeded.
+    const mountTime = Date.now();
+    await page.waitForFunction((t) => Date.now() - t >= 2200, mountTime);
 
     const submitBtn = page.getByTestId('contact-submit-button');
     await submitBtn.scrollIntoViewIfNeeded();
