@@ -73,15 +73,7 @@ export class ChessStockfishService implements OnModuleDestroy {
     // Scale via STOCKFISH_POOL_SIZE env var if needed later.
     this.poolSize = parseInt(process.env.STOCKFISH_POOL_SIZE ?? '1', 10);
 
-    const localPath = path.join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      '..',
-      'bin',
-      'stockfish',
-    );
+    const localPath = path.join(__dirname, '../../../../bin/stockfish');
     const candidates = [
       process.env.STOCKFISH_PATH,
       '/usr/local/bin/stockfish',
@@ -459,14 +451,10 @@ export class ChessStockfishService implements OnModuleDestroy {
           eval_.selDepth = parseInt(parts[++i] ?? '0', 10);
           break;
         case 'score': {
-          const next = parts[i + 1];
-          if (next === 'cp') {
-            eval_.cp = parseInt(parts[i + 2] ?? '0', 10);
-            i += 2;
-          } else if (next === 'mate') {
-            eval_.mate = parseInt(parts[i + 2] ?? '0', 10);
-            i += 2;
-          }
+          const val = parseInt(parts[i + 2] ?? '0', 10);
+          if (parts[i + 1] === 'cp') eval_.cp = val;
+          else if (parts[i + 1] === 'mate') eval_.mate = val;
+          i += 2;
           break;
         }
         case 'pv':

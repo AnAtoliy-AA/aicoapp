@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback, useMemo } from 'react';
 import { cx } from '@arcadeum/ui/utils/cx';
 import { useWidgetFullscreen } from '@/features/games/ui/GameWidgetContainer';
 import { ChessBoard } from './ChessBoard';
@@ -112,6 +112,21 @@ function ChessBoardPanelImpl({
     setHoveredMoveIdx(idx);
   }, []);
 
+  const highlightMove = useMemo(() => {
+    if (hoveredMoveIdx !== null && snapshot?.moveHistory[hoveredMoveIdx]) {
+      return {
+        from: snapshot.moveHistory[hoveredMoveIdx].from,
+        to: snapshot.moveHistory[hoveredMoveIdx].to,
+      };
+    }
+    return lastMove;
+  }, [hoveredMoveIdx, snapshot?.moveHistory, lastMove]);
+
+  const hintMove = useMemo(
+    () => (coach.hint ? { from: coach.hint.from, to: coach.hint.to } : null),
+    [coach.hint],
+  );
+
   if (!snapshot) return null;
 
   const players = snapshot.players ?? [];
@@ -134,14 +149,6 @@ function ChessBoardPanelImpl({
     : bottomColor === 'white'
       ? 'White'
       : 'Black';
-
-  const highlightMove =
-    hoveredMoveIdx !== null && snapshot.moveHistory[hoveredMoveIdx]
-      ? {
-          from: snapshot.moveHistory[hoveredMoveIdx].from,
-          to: snapshot.moveHistory[hoveredMoveIdx].to,
-        }
-      : lastMove;
 
   const topPlayerHud = (
     <ChessPlayerHud
@@ -209,11 +216,7 @@ function ChessBoardPanelImpl({
                 selectedSquare={selectedSquare}
                 legalMoves={legalMoves}
                 lastMove={highlightMove}
-                hintMove={
-                  coach.hint
-                    ? { from: coach.hint.from, to: coach.hint.to }
-                    : null
-                }
+                hintMove={hintMove}
                 pendingMove={pendingMove}
                 isCheck={snapshot.isCheck}
                 kingPosition={kingPosition}

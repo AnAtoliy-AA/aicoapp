@@ -169,4 +169,30 @@ function ChessCell({
   );
 }
 
-export const MemoizedChessCell = memo(ChessCell);
+function areChessCellPropsEqual(
+  prev: ChessCellProps,
+  next: ChessCellProps,
+): boolean {
+  if (prev.file !== next.file || prev.rank !== next.rank) return false;
+  if (prev.isLight !== next.isLight) return false;
+  if (prev.selected !== next.selected) return false;
+  if (prev.legalTarget !== next.legalTarget) return false;
+  if (prev.lastMoved !== next.lastMoved) return false;
+  if (prev.hintMoved !== next.hintMoved) return false;
+  if (prev.pendingTarget !== next.pendingTarget) return false;
+  if (prev.kingCheck !== next.kingCheck) return false;
+  if (prev.hovered !== next.hovered) return false;
+  if (prev.isDragOver !== next.isDragOver) return false;
+  if (prev.isMyPiece !== next.isMyPiece) return false;
+  if (prev.canInteract !== next.canInteract) return false;
+  if (prev.disabled !== next.disabled) return false;
+  if (prev.pieceStyle !== next.pieceStyle) return false;
+  if (prev.cellFocusProps?.tabIndex !== next.cellFocusProps?.tabIndex) {
+    return false;
+  }
+  if (prev.piece?.type !== next.piece?.type) return false;
+  if (prev.piece?.color !== next.piece?.color) return false;
+  return true;
+}
+
+export const MemoizedChessCell = memo(ChessCell, areChessCellPropsEqual);
