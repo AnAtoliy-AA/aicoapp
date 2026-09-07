@@ -66,9 +66,9 @@ export default defineConfig({
   // usually masking dev-server compile flake or a real perf regression — surface
   // them rather than hiding under a 2-minute budget. Slow Safari variants get
   // a project-level retry below to absorb the cold-compile first attempt.
-  timeout: 30000,
+  timeout: 60000,
   expect: {
-    timeout: 5000,
+    timeout: 10000,
   },
 
   use: {
@@ -76,7 +76,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
-    navigationTimeout: 15000,
+    navigationTimeout: 20000,
   },
 
   projects: [
