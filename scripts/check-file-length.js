@@ -9,6 +9,10 @@ const ROOT_DIR = process.cwd();
 // exemption, add the path here and link the follow-up refactor ticket.
 const ALLOW_LIST = new Set([]);
 
+// Glob-like patterns for files exempt from the line limit (i18n dictionaries
+// are inherently long because Prettier wraps translated strings).
+const ALLOW_PATTERNS = ['shared/i18n/messages/games/shared/'];
+
 const IGNORE_DIRS = new Set([
   'node_modules',
   '.next',
@@ -55,6 +59,10 @@ function scanDirectory(dir) {
         const relativePath = path.relative(ROOT_DIR, fullPath);
 
         if (ALLOW_LIST.has(relativePath)) {
+          continue;
+        }
+
+        if (ALLOW_PATTERNS.some((pattern) => relativePath.includes(pattern))) {
           continue;
         }
 

@@ -6,7 +6,7 @@ test.describe('Solo Games Themes and Leaderboards', () => {
     page,
   }) => {
     await page.goto('/en/games/2048/play', {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     });
 
     const themeBtn = page.getByTestId('solo-theme-toggle-button');
@@ -27,7 +27,7 @@ test.describe('Solo Games Themes and Leaderboards', () => {
     page,
   }) => {
     await page.goto('/en/games/2048/play', {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     });
 
     const rulesBtn = page.getByTestId('solo-rules-button');
@@ -52,7 +52,7 @@ test.describe('Solo Games Themes and Leaderboards', () => {
     page,
   }) => {
     await page.goto('/en/games/minesweeper/play', {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     });
 
     const toggleBtn = page.getByTestId('solo-leaderboard-toggle');
@@ -78,7 +78,7 @@ test.describe('Solo Games Themes and Leaderboards', () => {
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/games/2048/play', {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     });
 
     const board = page.getByTestId('game-2048-board');
@@ -104,7 +104,7 @@ test.describe('Solo Games Themes and Leaderboards', () => {
     page,
   }) => {
     await page.goto('/en/leaderboards/solo', {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     });
 
     const minesweeperTab = page.getByTestId('solo-game-tab-minesweeper_v1');

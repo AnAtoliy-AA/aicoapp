@@ -57,7 +57,9 @@ export default defineConfig({
   // tests still need to fail twice in a row to mark the run red.
   retries: process.env.CI ? 1 : 1,
   workers: process.env.CI
-    ? 1
+    ? process.env.PLAYWRIGHT_WORKERS
+      ? parseInt(process.env.PLAYWRIGHT_WORKERS)
+      : 2
     : process.env.PLAYWRIGHT_WORKERS
       ? parseInt(process.env.PLAYWRIGHT_WORKERS)
       : 2,
