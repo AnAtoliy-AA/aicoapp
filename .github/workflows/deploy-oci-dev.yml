@@ -84,10 +84,11 @@ jobs:
               echo "==> Downloading Stockfish 19 (Linux x86-64)..."
               curl -L -o /tmp/sf19.tar.gz \
                 "https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-linux-x86-64-universal.tar.gz"
-              tar -xzf /tmp/sf19.tar.gz -C /tmp/
-              find /tmp -name "stockfish" -type f -executable -exec cp {} "$SF_BIN" \;
+              mkdir -p /tmp/sf19-extract
+              tar -xzf /tmp/sf19.tar.gz -C /tmp/sf19-extract
+              find /tmp/sf19-extract -name "stockfish" -type f -executable -exec cp {} "$SF_BIN" \;
               chmod +x "$SF_BIN"
-              rm -rf /tmp/sf19.tar.gz /tmp/stockfish
+              rm -rf /tmp/sf19.tar.gz /tmp/sf19-extract
               "$SF_BIN" <<< "uci" 2>/dev/null | head -1
               echo "==> Stockfish 19 installed."
             else
