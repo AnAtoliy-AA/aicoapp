@@ -382,7 +382,7 @@ test.describe('Single Player Puzzle Games', () => {
     });
 
     const soundBtn = page.getByTestId('solo-sound-toggle-button');
-    await expect(soundBtn).toBeVisible();
+    await expect(soundBtn).toHaveAttribute('aria-pressed', /true|false/);
     const initialSound = await soundBtn.getAttribute('aria-pressed');
     await soundBtn.click();
     await expect(soundBtn).toHaveAttribute(
@@ -396,7 +396,7 @@ test.describe('Single Player Puzzle Games', () => {
     );
 
     const musicBtn = page.getByTestId('solo-music-toggle-button');
-    await expect(musicBtn).toBeVisible();
+    await expect(musicBtn).toHaveAttribute('aria-pressed', /true|false/);
     const initialMusic = await musicBtn.getAttribute('aria-pressed');
     await musicBtn.click();
     await expect(musicBtn).toHaveAttribute(
