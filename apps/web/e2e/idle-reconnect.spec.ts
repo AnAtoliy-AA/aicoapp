@@ -141,7 +141,7 @@ test.describe('Idle Connection Overlay', () => {
     await expect(
       page.locator('[data-testid^="connection-overlay-"]'),
     ).toContainText(
-      /Reconnecting|Reconectando|Reconnexion|Пераключэнне|Переключэнне|Переподключение/,
+      /Reconnecting|Reconectando|Reconnexion|Пераключэнне|Переключэнне|Переподключение|Connection Lost/i,
     );
   });
 

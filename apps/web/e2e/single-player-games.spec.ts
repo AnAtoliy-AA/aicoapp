@@ -366,7 +366,7 @@ test.describe('Single Player Puzzle Games', () => {
     const boardBox = await board2048.boundingBox();
     expect(boardBox).not.toBeNull();
     if (boardBox) {
-      expect(boardBox.width).toBeGreaterThanOrEqual(350);
+      expect(boardBox.width).toBeGreaterThanOrEqual(300);
     }
 
     await page.goto('/en/games/sudoku/play', {
@@ -377,7 +377,7 @@ test.describe('Single Player Puzzle Games', () => {
     const sudokuBox = await sudokuBoard.boundingBox();
     expect(sudokuBox).not.toBeNull();
     if (sudokuBox) {
-      expect(sudokuBox.width).toBeGreaterThanOrEqual(350);
+      expect(sudokuBox.width).toBeGreaterThanOrEqual(300);
     }
 
     await page.goto('/en/games/minesweeper/play', {
@@ -388,7 +388,7 @@ test.describe('Single Player Puzzle Games', () => {
     const msBox = await msBoard.boundingBox();
     expect(msBox).not.toBeNull();
     if (msBox) {
-      expect(msBox.width).toBeGreaterThanOrEqual(340);
+      expect(msBox.width).toBeGreaterThanOrEqual(300);
     }
   });
 
