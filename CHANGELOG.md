@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.37] - 2026-09-07
+
+### Fixed
+- align env validator with actual env var names (MONGODB_OCI_URI, OAUTH_WEB_CLIENT_ID)
+
+
 ## [1.28.36] - 2026-09-07
 
 ### Fixed
