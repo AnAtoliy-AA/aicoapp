@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { File, Rank } from '@arcadeum/games-core/games/chess/chess.types';
 import { FILES, PIECE_SYMBOLS } from '@arcadeum/games-core/games/chess/chess.constants';
-import { useTranslation } from '@/shared/lib/useTranslation';
 
 type Mode = 'findSquare' | 'nameSquare';
 type Phase = 'menu' | 'playing' | 'gameover';
@@ -27,7 +26,6 @@ function randomPiece() {
 }
 
 export function CoordinateTrainer() {
-  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>('menu');
   const [mode, setMode] = useState<Mode>('findSquare');
   const [flipBoard, setFlipBoard] = useState(false);
