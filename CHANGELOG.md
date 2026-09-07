@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.43] - 2026-09-07
+
+### Fixed
+- scope stockfish find to extract dir to avoid /tmp permission errors
+
+
 ## [1.28.42] - 2026-09-07
 
 ### Added
