@@ -15,9 +15,8 @@ import type { GameSessionSummary } from '../../sessions/game-sessions.service';
 import { ChessBot } from '@arcadeum/games-core/games/chess/chess-bot';
 import {
   getBotPersonality,
-  type BotPersonality,
 } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
-import { getAiMoveDelayMs, isAiVsAiSession } from '../../common/ai-vs-ai';
+import { isAiVsAiSession } from '../../common/ai-vs-ai';
 import { ChessStockfishService } from '../../chess/engine/chess-stockfish.service';
 
 export interface ChessBotMovePayload {
@@ -61,27 +60,49 @@ export class ChessBotService extends ChessBot {
     return userId.startsWith('bot-');
   }
 
-  private computeMoveDelay(
-    personality: BotPersonality | null,
-    startTime: number,
-  ): number {
-    const elapsed = Date.now() - startTime;
-    if (!personality) {
-      return Math.max(300, Math.min(800, 1500 - elapsed));
+  private buildStockfishUciOptions(
+    personality: { style?: string; evaluationModifiers?: { attackWeight: number; safetyWeight: number; materialWeight: number } } | null,
+  ): { skillLevel?: number; contempt?: number; aggression?: number } | undefined {
+    if (!personality) return undefined;
+
+    const mods = personality.evaluationModifiers;
+    const style = personality.style;
+
+    let skillLevel = 20;
+    let contempt = 0;
+    let aggression = 100;
+
+    if (mods) {
+      aggression = Math.round((mods.attackWeight / 1.8) * 100);
+      contempt = Math.round((mods.attackWeight - mods.safetyWeight) * 40);
     }
-    switch (personality.timeManagement) {
-      case 'blitz':
-        return Math.max(200, Math.min(500, 800 - elapsed));
-      case 'thinker':
-        return Math.max(500, Math.min(2000, 3000 - elapsed));
-      case 'steady':
-      default:
-        return Math.max(300, Math.min(1000, 1500 - elapsed));
+
+    if (style === 'aggressive' || style === 'gambit') {
+      skillLevel = 18;
+      aggression = Math.max(aggression, 140);
+      contempt = Math.max(contempt, 40);
+    } else if (style === 'defensive' || style === 'fortress') {
+      skillLevel = 19;
+      aggression = Math.min(aggression, 60);
+      contempt = Math.min(contempt, -20);
+    } else if (style === 'positional') {
+      skillLevel = 20;
+      aggression = Math.min(aggression, 90);
+      contempt = 10;
+    } else if (style === 'greedy') {
+      skillLevel = 19;
+      aggression = Math.min(aggression, 50);
+      contempt = -30;
+    } else if (style === 'trickster') {
+      skillLevel = 18;
+      aggression = 110;
+      contempt = 20;
     }
+
+    return { skillLevel, contempt, aggression };
   }
 
   async checkAndPlay(session: GameSessionSummary): Promise<void> {
-    // Re-read session from DB to get the latest state (turn may have changed)
     const freshSession = await this.chessService.findSessionByRoom(
       session.roomId,
     );
@@ -140,7 +161,6 @@ export class ChessBotService extends ChessBot {
         session as unknown as { options?: Record<string, unknown> }
       ).options;
       let personalityId = state.botPersonality;
-      // AI vs AI: use per-color personalities if available
       if (options?.aiVsAi) {
         const perColorKey =
           currentColor === 'white'
@@ -153,15 +173,37 @@ export class ChessBotService extends ChessBot {
         : null;
       this.setPersonality(personality);
 
-      const isExpert = state.botDifficulty === 'expert';
+      const isStockfishDifficulty =
+        state.botDifficulty === 'hard' ||
+        state.botDifficulty === 'master' ||
+        state.botDifficulty === 'expert';
       let move: ChessMove | null = null;
-      const startTime = Date.now();
 
-      if (isExpert && this.stockfishService?.isReady()) {
+      if (isStockfishDifficulty && this.stockfishService?.isReady()) {
         const { toFen } =
           await import('@arcadeum/games-core/games/chess/chess-fen');
         const fen = toFen(state);
-        const sfResult = await this.stockfishService.getBestMove(fen, 20, 5000);
+
+        const depth =
+          state.botDifficulty === 'hard'
+            ? 8
+            : state.botDifficulty === 'master'
+              ? 12
+              : 15;
+        const timeMs =
+          state.botDifficulty === 'hard'
+            ? 1000
+            : state.botDifficulty === 'master'
+              ? 1500
+              : 2000;
+
+        const uciOptions = this.buildStockfishUciOptions(personality);
+        const sfResult = await this.stockfishService.getBestMove(
+          fen,
+          depth,
+          timeMs,
+          uciOptions,
+        );
         if (sfResult.bestMove) {
           const fromStr = sfResult.bestMove.slice(0, 2);
           const toStr = sfResult.bestMove.slice(2, 4);
@@ -189,15 +231,10 @@ export class ChessBotService extends ChessBot {
 
       if (!move) {
         const timeBudget = this.computeTimeBudget(state);
-        move = this.findBestMoveWithTimeBudget(state, timeBudget, startTime);
+        move = this.findBestMoveWithTimeBudget(state, timeBudget, Date.now());
       }
 
       if (!move) return;
-      const delay =
-        getAiMoveDelayMs(session) ??
-        this.computeMoveDelay(personality, startTime);
-      await new Promise((r) => setTimeout(r, delay));
-
       if (this.moveFn) {
         this.logger.log(
           `[Bot] ${currentId} moving ${state.currentTurnColor} in ${session.roomId}: ${move.from.file}${move.from.rank}-${move.to.file}${move.to.rank}`,

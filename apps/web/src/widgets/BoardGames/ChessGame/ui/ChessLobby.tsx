@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import {
   type GameLobbyTheme,
@@ -21,6 +21,7 @@ import { BotSelector, type BotPersonalityOption } from './BotSelector';
 import { PgnImportModal } from './PgnImportModal';
 import { MatchmakingButton } from './MatchmakingButton';
 import { BOT_PERSONALITIES } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
+import { apiClient } from '@/shared/lib/api-client';
 
 const LOBBY_THEME: GameLobbyTheme = {
   titleGradient: 'linear-gradient(90deg, var(--color) 0%, var(--primary) 100%)',
@@ -81,17 +82,40 @@ export function ChessLobby({
     null,
   );
   const [showPgnImport, setShowPgnImport] = useState(false);
+  const [availableDifficulties, setAvailableDifficulties] = useState<string[]>(
+    () => BOT_PERSONALITIES.map((p) => p.difficulty),
+  );
+
+  useEffect(() => {
+    apiClient
+      .get<{ settings: Record<string, Record<string, unknown>> }>(
+        '/admin/game-settings',
+      )
+      .then((data) => {
+        const chessSettings = data.settings?.chess_v1;
+        if (chessSettings?.availableDifficulties) {
+          setAvailableDifficulties(
+            chessSettings.availableDifficulties as string[],
+          );
+        }
+      })
+      .catch(() => {
+        // Use default (all difficulties)
+      });
+  }, []);
 
   const personalityOptions: BotPersonalityOption[] = useMemo(
     () =>
-      BOT_PERSONALITIES.map((p) => ({
+      BOT_PERSONALITIES.filter((p) =>
+        availableDifficulties.includes(p.difficulty),
+      ).map((p) => ({
         id: p.id,
         name: p.name,
         avatar: p.avatar,
         rating: p.rating,
         style: p.style,
       })),
-    [],
+    [availableDifficulties],
   );
 
   const options = useMemo(() => {

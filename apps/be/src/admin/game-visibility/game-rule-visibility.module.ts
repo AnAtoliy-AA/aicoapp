@@ -9,17 +9,24 @@ import {
 } from './game-rule-visibility.schema';
 import { GameRuleVisibilityService } from './game-rule-visibility.service';
 import { GameRuleVisibilityController } from './game-rule-visibility.controller';
+import {
+  GameSetting,
+  GameSettingSchema,
+} from './game-setting.schema';
+import { GameSettingService } from './game-setting.service';
+import { GameSettingController } from './game-setting.controller';
 
 @Module({
   imports: [
     AuthModule,
     MongooseModule.forFeature([
       { name: GameRuleVisibility.name, schema: GameRuleVisibilitySchema },
+      { name: GameSetting.name, schema: GameSettingSchema },
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [GameRuleVisibilityController],
-  providers: [GameRuleVisibilityService, RolesGuard],
-  exports: [GameRuleVisibilityService],
+  controllers: [GameRuleVisibilityController, GameSettingController],
+  providers: [GameRuleVisibilityService, GameSettingService, RolesGuard],
+  exports: [GameRuleVisibilityService, GameSettingService],
 })
 export class GameRuleVisibilityModule {}

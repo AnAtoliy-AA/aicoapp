@@ -220,16 +220,32 @@ export class ChessStockfishService implements OnModuleDestroy {
 
   /**
    * Get the best move for a position (used by bot upgrade).
+   * Optionally apply UCI options (Skill Level, Contempt, Aggression) for personality.
    */
   async getBestMove(
     fen: string,
-    depth: number = 20,
-    timeMs: number = 5000,
+    depth: number = 15,
+    timeMs: number = 2000,
+    uciOptions?: { skillLevel?: number; contempt?: number; aggression?: number },
   ): Promise<{ bestMove: string; ponder: string }> {
-    const result = await this.sendCommands(
-      [`position fen ${fen}`, `go depth ${depth} movetime ${timeMs}`],
-      timeMs + 10000,
-    );
+    const commands: string[] = [];
+
+    if (uciOptions) {
+      if (uciOptions.skillLevel !== undefined) {
+        commands.push(`setoption name Skill Level value ${uciOptions.skillLevel}`);
+      }
+      if (uciOptions.contempt !== undefined) {
+        commands.push(`setoption name Contempt value ${uciOptions.contempt}`);
+      }
+      if (uciOptions.aggression !== undefined) {
+        commands.push(`setoption name Aggression value ${uciOptions.aggression}`);
+      }
+    }
+
+    commands.push(`position fen ${fen}`);
+    commands.push(`go depth ${depth} movetime ${timeMs}`);
+
+    const result = await this.sendCommands(commands, timeMs + 10000);
 
     return {
       bestMove: result.pv[0] ?? '',

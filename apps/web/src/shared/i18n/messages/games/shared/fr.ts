@@ -233,6 +233,16 @@ export const frMessages = {
     difficultyMediumDesc: 'Ciblage intelligent avec stratégie verrouillée',
     difficultyHardDesc: 'Ciblage de précision basé sur la probabilité',
     difficultyExpertDesc: 'Recherche en profondeur maximale, sans erreur',
+    difficultyBeginner: 'Débutant',
+    difficultyIntermediate: 'Intermédiaire',
+    difficultyAdvanced: 'Avancé',
+    difficultyStrong: 'Fort',
+    difficultyMaster: 'Maître',
+    difficultyBeginnerDesc: 'Niveau le plus facile pour les novices',
+    difficultyIntermediateDesc: 'Stratégie et tactique de base',
+    difficultyAdvancedDesc: 'Méthodes de jeu avancées',
+    difficultyStrongDesc: 'Niveau de compétence élevé',
+    difficultyMasterDesc: "Niveau de jeu d'élite",
   },
   shared: {
     rules: {

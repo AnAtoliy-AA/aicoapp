@@ -1,4 +1,14 @@
-export const AI_DIFFICULTIES = ['easy', 'medium', 'hard', 'expert'] as const;
+export const AI_DIFFICULTIES = [
+  'beginner',
+  'easy',
+  'intermediate',
+  'medium',
+  'advanced',
+  'strong',
+  'hard',
+  'master',
+  'expert',
+] as const;
 
 export type AiDifficulty = (typeof AI_DIFFICULTIES)[number];
 
