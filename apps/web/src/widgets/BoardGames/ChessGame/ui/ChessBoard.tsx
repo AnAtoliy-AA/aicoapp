@@ -40,6 +40,14 @@ interface ChessBoardProps {
   kingPosition: BoardPosition | null;
   ariaLabel?: string;
   pieceStyle?: ChessPieceStyle;
+  premoveQueue?: import('../hooks/usePremoveQueue').PremoveStep[];
+  onCancelPremoves?: () => void;
+  bestMoveArrow?: import('../hooks/useBoardDrawings').Arrow | null;
+  threatArrows?: import('../hooks/useBoardDrawings').Arrow[];
+  showBestMove?: boolean;
+  showThreats?: boolean;
+  onToggleBestMove?: () => void;
+  onToggleThreats?: () => void;
   onSquareClick: (file: File, rank: Rank) => void;
   onDeselectSquare?: () => void;
   onPieceDrop?: (
@@ -68,6 +76,14 @@ function ChessBoardImpl({
   isCheck,
   kingPosition,
   ariaLabel,
+  premoveQueue = [],
+  onCancelPremoves,
+  bestMoveArrow,
+  threatArrows = [],
+  showBestMove = false,
+  showThreats = false,
+  onToggleBestMove,
+  onToggleThreats,
   onSquareClick,
   onDeselectSquare,
   onPieceDrop,
@@ -125,7 +141,7 @@ function ChessBoardImpl({
     }
   }, [board]);
 
-  const { arrows, circles, addArrow, addCircle, clearDrawings } =
+  const { arrows, circles, addArrow, toggleCircle, clearDrawings } =
     useBoardDrawings();
 
   const handleCellClick = useCallback(
@@ -215,9 +231,18 @@ function ChessBoardImpl({
       <BoardOverlay
         arrows={arrows}
         circles={circles}
+        isFlipped={isFlipped}
+        premoveQueue={premoveQueue}
+        bestMoveArrow={bestMoveArrow}
+        threatArrows={threatArrows}
+        showBestMove={showBestMove}
+        showThreats={showThreats}
+        onToggleBestMove={onToggleBestMove}
+        onToggleThreats={onToggleThreats}
         onAddArrow={addArrow}
-        onAddCircle={addCircle}
+        onToggleCircle={toggleCircle}
         onClear={clearDrawings}
+        onCancelPremoves={onCancelPremoves}
       >
         <div className="relative z-10 w-full h-full aspect-square rounded-xl overflow-hidden shadow-inner border border-white/10 flex flex-col">
           {rows.ranks.map((rank) => (
@@ -236,7 +261,11 @@ function ChessBoardImpl({
                 const kingCheck = isKingInCheck(file, rank);
                 const hovered = hoveredSquare === `${file}-${rank}`;
                 const isMyPiece = piece?.color === myColor;
-                const canInteract = !disabled && (isMyPiece || legalTarget);
+                const isPremoveGhost = premoveQueue.some(
+                  (p) => p.to.file === file && p.to.rank === rank,
+                );
+                const canInteract =
+                  !disabled && (isMyPiece || legalTarget || isPremoveGhost);
                 const isDragOver = dragOverSquare === `${file}-${rank}`;
                 const isLastFile = rows.files[rows.files.length - 1] === file;
                 const navRow = rows.ranks.indexOf(rank);
@@ -258,6 +287,7 @@ function ChessBoardImpl({
                     hovered={hovered}
                     isDragOver={isDragOver}
                     isMyPiece={isMyPiece}
+                    isPremoveGhost={isPremoveGhost}
                     canInteract={canInteract}
                     isLastFile={isLastFile}
                     isBottomRank={rows.ranks[rows.ranks.length - 1] === rank}

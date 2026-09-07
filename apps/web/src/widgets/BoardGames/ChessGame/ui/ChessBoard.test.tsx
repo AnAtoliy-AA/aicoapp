@@ -108,4 +108,51 @@ describe('ChessBoard', () => {
       expect(screen.getAllByText(file).length).toBeGreaterThan(0);
     });
   });
+
+  it('renders streamer controls and handles best move and threat toggles', () => {
+    const board = createEmptyBoard();
+    const onToggleBestMove = vi.fn();
+    const onToggleThreats = vi.fn();
+
+    renderWithProvider(
+      <ChessBoard
+        {...defaultProps}
+        board={board}
+        onToggleBestMove={onToggleBestMove}
+        onToggleThreats={onToggleThreats}
+      />,
+    );
+
+    const bestBtn = screen.getByTitle('Streamer Best Move Arrow');
+    const threatsBtn = screen.getByTitle('Streamer Threats & Attacks');
+
+    expect(bestBtn).toBeDefined();
+    expect(threatsBtn).toBeDefined();
+
+    bestBtn.click();
+    expect(onToggleBestMove).toHaveBeenCalledTimes(1);
+
+    threatsBtn.click();
+    expect(onToggleThreats).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders premove ghost pieces and queued indicators', () => {
+    const board = createBoardWithPawn('white');
+    renderWithProvider(
+      <ChessBoard
+        {...defaultProps}
+        board={board}
+        premoveQueue={[
+          {
+            from: { file: 'e', rank: 2 },
+            to: { file: 'e', rank: 4 },
+            piece: { type: 'pawn', color: 'white' },
+          },
+        ]}
+      />,
+    );
+
+    const targetCell = screen.getByTestId('chess-e4');
+    expect(targetCell.className).toContain('ring-amber-400/70');
+  });
 });

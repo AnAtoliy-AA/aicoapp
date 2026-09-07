@@ -26,6 +26,9 @@ import { useChessSounds } from '../hooks/useChessSounds';
 import { useChessCoach } from '../hooks/useChessCoach';
 import { useStockfishAnalysis } from '../hooks/useStockfishAnalysis';
 import { useSquareClick } from '../hooks/useSquareClick';
+import { useChessPremoves } from '../hooks/useChessPremoves';
+import { useChessStreamerOverlays } from '../hooks/useChessStreamerOverlays';
+import { useChessGameSounds } from '../hooks/useChessGameSounds';
 import { calculateOptimisticChessState } from '../lib/optimisticMove';
 import { getChessA11yAnnouncement } from '../lib/a11yAnnouncement';
 import { downloadPGN } from '../lib/pgn';
@@ -199,7 +202,32 @@ function ChessGameImpl({
       displaySnapshot.moveHistory[displaySnapshot.moveHistory.length - 1];
     return { from: last.from, to: last.to };
   }, [displaySnapshot?.moveHistory]);
-  const legalMoves = useMemo(() => {
+  const streamer = useChessStreamerOverlays({
+    board: displaySnapshot?.board,
+    myColor,
+    bestMoveUci: liveEval?.pv?.[0],
+  });
+
+  const premoves = useChessPremoves({
+    snapshot: displaySnapshot,
+    myColor,
+    displayMyTurn,
+    isGameOver,
+    movePiece,
+    applyOptimisticMove,
+    playSound,
+    selectedSquare,
+    setSelectedSquare,
+  });
+  const { handlePremoveSquareClick, handlePremovePieceDrop } = premoves;
+
+  useChessGameSounds({
+    displaySnapshot,
+    isGameOver,
+    playSound,
+  });
+
+  const regularLegalMoves = useMemo(() => {
     if (!selectedSquare || !displaySnapshot) return [];
     return (displaySnapshot.legalMovesForCurrentPlayer ?? [])
       .filter(
@@ -209,6 +237,11 @@ function ChessGameImpl({
       )
       .map((m) => m.to);
   }, [selectedSquare, displaySnapshot]);
+
+  const activeLegalMoves = displayMyTurn
+    ? regularLegalMoves
+    : premoves.premoveLegalMoves;
+
   const kingPosition = displaySnapshot
     ? findKingPosition(displaySnapshot)
     : null;
@@ -217,7 +250,7 @@ function ChessGameImpl({
     displaySnapshot,
     myColor,
     selectedSquare,
-    legalMoves,
+    legalMoves: activeLegalMoves,
     isGameOver,
     movePiece,
     applyOptimisticMove,
@@ -228,6 +261,17 @@ function ChessGameImpl({
     setSelectedSquare,
     setPendingPromotion,
   });
+
+  const onSquareClick = useCallback(
+    (file: File, rank: Rank) => {
+      if (displayMyTurn) {
+        handleSquareClick(file, rank);
+      } else {
+        handlePremoveSquareClick(file, rank);
+      }
+    },
+    [displayMyTurn, handleSquareClick, handlePremoveSquareClick],
+  );
 
   const handlePromotionSelect = useCallback(
     (pieceType: PieceType) => {
@@ -250,9 +294,14 @@ function ChessGameImpl({
     },
     [pendingPromotion, movePiece, applyOptimisticMove],
   );
+
   const handlePieceDrop = useCallback(
     (fromFile: File, fromRank: Rank, toFile: File, toRank: Rank) => {
-      if (!displayMyTurn || isGameOver || !myColor || !displaySnapshot) return;
+      if (isGameOver || !myColor || !displaySnapshot) return;
+      if (!displayMyTurn) {
+        handlePremovePieceDrop(fromFile, fromRank, toFile, toRank);
+        return;
+      }
       const piece =
         displaySnapshot.board[8 - fromRank]?.[FILES.indexOf(fromFile)];
       if (!piece || piece.color !== myColor) return;
@@ -281,6 +330,7 @@ function ChessGameImpl({
       myColor,
       applyOptimisticMove,
       movePiece,
+      handlePremovePieceDrop,
     ],
   );
   const onRematchClick = useCallback(() => {
@@ -334,14 +384,14 @@ function ChessGameImpl({
       isGameOver={isGameOver}
       isSpectator={isSpectator}
       selectedSquare={selectedSquare}
-      legalMoves={legalMoves}
+      legalMoves={activeLegalMoves}
       lastMove={lastMove}
       kingPosition={kingPosition}
       coach={coach}
       currentUserId={currentUserId}
       resolveName={resolveDisplayNameBound}
       t={t}
-      onSquareClick={handleSquareClick}
+      onSquareClick={onSquareClick}
       onDeselectSquare={() => {
         setSelectedSquare(null);
         setPendingMove(null);
@@ -366,6 +416,15 @@ function ChessGameImpl({
       confirmMoves={confirmMoves}
       moveCandidates={liveAlternatives}
       pendingMove={pendingMove}
+      premoveQueue={premoves.premoveQueue}
+      virtualBoard={premoves.virtualBoard}
+      onCancelPremoves={premoves.cancelPremoves}
+      bestMoveArrow={streamer.bestMoveArrow}
+      threatArrows={streamer.threatArrows}
+      showBestMove={streamer.showBestMove}
+      showThreats={streamer.showThreats}
+      onToggleBestMove={streamer.toggleBestMove}
+      onToggleThreats={streamer.toggleThreats}
     />
   );
   const themeVariant =

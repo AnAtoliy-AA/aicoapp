@@ -69,13 +69,22 @@ interface ChessBoardPanelProps {
     pv: string[];
   }> | null;
   pendingMove?: { from: BoardPosition; to: BoardPosition } | null;
+  premoveQueue?: import('../hooks/usePremoveQueue').PremoveStep[];
+  virtualBoard?: import('../types').Board | null;
+  onCancelPremoves?: () => void;
+  bestMoveArrow?: import('../hooks/useBoardDrawings').Arrow | null;
+  threatArrows?: import('../hooks/useBoardDrawings').Arrow[];
+  showBestMove?: boolean;
+  showThreats?: boolean;
+  onToggleBestMove?: () => void;
+  onToggleThreats?: () => void;
 }
 
 function ChessBoardPanelImpl({
   snapshot,
   myColor,
   isFlipped,
-  displayMyTurn,
+  displayMyTurn: _displayMyTurn,
   isGameOver,
   isSpectator,
   selectedSquare,
@@ -103,6 +112,15 @@ function ChessBoardPanelImpl({
   confirmMoves,
   moveCandidates,
   pendingMove,
+  premoveQueue = [],
+  virtualBoard,
+  onCancelPremoves,
+  bestMoveArrow,
+  threatArrows = [],
+  showBestMove = false,
+  showThreats = false,
+  onToggleBestMove,
+  onToggleThreats,
 }: ChessBoardPanelProps) {
   const [hoveredMoveIdx, setHoveredMoveIdx] = useState<number | null>(null);
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
@@ -207,12 +225,31 @@ function ChessBoardPanelImpl({
               />
             </div>
 
-            <div className="chess-board-grid-wrapper">
+            <div className="chess-board-grid-wrapper relative">
+              {premoveQueue.length > 0 && (
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 backdrop-blur-md shadow-lg text-amber-300 text-xs font-semibold select-none pointer-events-auto">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span>Premove ({premoveQueue.length} queued)</span>
+                  {onCancelPremoves && (
+                    <button
+                      type="button"
+                      onClick={onCancelPremoves}
+                      className="ml-1 text-[11px] text-amber-200 hover:text-white underline cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              )}
               <ChessBoard
-                board={snapshot.board}
+                board={
+                  premoveQueue.length > 0 && virtualBoard
+                    ? virtualBoard
+                    : snapshot.board
+                }
                 myColor={myColor}
                 isFlipped={isFlipped}
-                disabled={!displayMyTurn || isGameOver || isSpectator}
+                disabled={isGameOver || isSpectator}
                 selectedSquare={selectedSquare}
                 legalMoves={legalMoves}
                 lastMove={highlightMove}
@@ -221,6 +258,14 @@ function ChessBoardPanelImpl({
                 isCheck={snapshot.isCheck}
                 kingPosition={kingPosition}
                 pieceStyle={pieceStyle}
+                premoveQueue={premoveQueue}
+                onCancelPremoves={onCancelPremoves}
+                bestMoveArrow={bestMoveArrow}
+                threatArrows={threatArrows}
+                showBestMove={showBestMove}
+                showThreats={showThreats}
+                onToggleBestMove={onToggleBestMove}
+                onToggleThreats={onToggleThreats}
                 ariaLabel={t('games.chess_v1.status.boardLabel', {
                   color:
                     snapshot.currentTurnColor === 'white'
