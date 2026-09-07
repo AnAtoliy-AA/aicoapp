@@ -76,6 +76,24 @@ jobs:
             pnpm --filter @arcadeum/games-core build && pnpm --filter be build
             pnpm --filter tg-bot build
 
+            # Stockfish 19 — skip download if binary already present
+            # Service checks /usr/local/bin/stockfish first (Docker path),
+            # then falls back to apps/be/bin/stockfish (local dev path).
+            SF_BIN="/usr/local/bin/stockfish"
+            if [ ! -x "$SF_BIN" ]; then
+              echo "==> Downloading Stockfish 19 (Linux x86-64)..."
+              curl -L -o /tmp/sf19.tar.gz \
+                "https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-linux-x86-64-universal.tar.gz"
+              tar -xzf /tmp/sf19.tar.gz -C /tmp/
+              find /tmp -name "stockfish" -type f -executable -exec cp {} "$SF_BIN" \;
+              chmod +x "$SF_BIN"
+              rm -rf /tmp/sf19.tar.gz /tmp/stockfish
+              "$SF_BIN" <<< "uci" 2>/dev/null | head -1
+              echo "==> Stockfish 19 installed."
+            else
+              echo "==> Stockfish 19 binary already present, skipping download."
+            fi
+
             mkdir -p "${DEPLOY_DIR}/scripts"
 
             printf '#!/usr/bin/env bash\nset -a\nsource /opt/arcadeum-dev/apps/be/.env.dev\nset +a\ncd /opt/arcadeum-dev\nexec node apps/be/dist/src/main.js\n' > "${DEPLOY_DIR}/scripts/start-be-dev.sh"
