@@ -17,7 +17,7 @@ export class ChessSubscriptionUser {
   @Prop({ default: () => new Date() })
   startedAt!: Date;
 
-  @Prop({ default: null })
+  @Prop({ type: Date, default: null })
   expiresAt!: Date | null;
 
   @Prop({ type: Object, default: {} })
