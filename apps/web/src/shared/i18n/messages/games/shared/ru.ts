@@ -2,6 +2,7 @@ import { themesRu } from './themes';
 import { tableRu } from './table-ru';
 import { replayRu } from './replay-ru';
 import { soloLeaderboardRu } from './solo-leaderboard-ru';
+import { soloControlsRu } from './solo-controls-ru';
 
 export const ruMessages = {
   coup: { name: 'Coup' },
@@ -485,21 +486,6 @@ export const ruMessages = {
       ' {{appName}} и подтверждаете, что вам исполнилось 18 лет.',
   },
   soloLeaderboard: soloLeaderboardRu,
-  soloControls: {
-    play: 'Играть',
-    pause: 'Пауза',
-    gameOver: 'Игра окончена',
-    autoPause: 'Авто-пауза:',
-    auto: 'Авто:',
-    on: 'ВКЛ',
-    off: 'ВЫКЛ',
-    leaderboard: 'Лидерборд',
-    rules: 'Правила',
-    objective: 'Цель',
-    howToPlay: 'Как играть',
-    scoring: 'Очки',
-    newGame: 'Новая игра',
-    results: 'Результаты',
-  },
+  soloControls: soloControlsRu,
   themes: themesRu,
 };

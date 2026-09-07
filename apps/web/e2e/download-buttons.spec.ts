@@ -32,7 +32,7 @@ test.describe('Download Buttons', () => {
             } else if (listener && 'handleEvent' in listener) {
               listener.handleEvent(event);
             }
-          }, 500);
+          }, 0);
         }
         return originalAddEventListener.call(this, type, listener, options);
       };

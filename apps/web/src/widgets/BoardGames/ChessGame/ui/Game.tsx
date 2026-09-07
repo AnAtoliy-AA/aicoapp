@@ -1,5 +1,4 @@
 'use client';
-
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { GameWidgetContainer } from '@/features/games/ui/GameWidgetContainer';
 import {
@@ -26,6 +25,11 @@ import { useChessSounds } from '../hooks/useChessSounds';
 import { useChessCoach } from '../hooks/useChessCoach';
 import { useStockfishAnalysis } from '../hooks/useStockfishAnalysis';
 import { useSquareClick } from '../hooks/useSquareClick';
+import { useChessPremoves } from '../hooks/useChessPremoves';
+import { useChessStreamerOverlays } from '../hooks/useChessStreamerOverlays';
+import { useChessGameSounds } from '../hooks/useChessGameSounds';
+import { useKeyboardMoveInput } from '../hooks/useKeyboardMoveInput';
+import { useStreamerMode } from '../lib/streamer-mode';
 import { calculateOptimisticChessState } from '../lib/optimisticMove';
 import { getChessA11yAnnouncement } from '../lib/a11yAnnouncement';
 import { downloadPGN } from '../lib/pgn';
@@ -34,8 +38,8 @@ import { createDisplayNameResolver } from '../lib/displayNameResolver';
 import { ChessLobby } from './ChessLobby';
 import { ChessBoardPanel } from './ChessBoardPanel';
 import { ChessGameModals } from './ChessGameModals';
+import { ChessKeyboardInput } from './ChessKeyboardInput';
 import { ChessThemeProvider } from '../lib/ChessThemeContext';
-
 function ChessGameImpl({
   roomId,
   room: initialRoom,
@@ -105,12 +109,12 @@ function ChessGameImpl({
         p.color === displaySnapshot.currentTurnColor,
     )
   );
-
   const coach = useChessCoach({ room, currentUserId, displaySnapshot });
   const { eval: liveEval, analyzing: liveEvalAnalyzing } = useStockfishAnalysis(
     {
       roomId,
       enabled: !isGameOver && !isLobby,
+      board: displaySnapshot?.board,
     },
   );
   const applyOptimisticMove = useCallback(
@@ -198,7 +202,30 @@ function ChessGameImpl({
       displaySnapshot.moveHistory[displaySnapshot.moveHistory.length - 1];
     return { from: last.from, to: last.to };
   }, [displaySnapshot?.moveHistory]);
-  const legalMoves = useMemo(() => {
+  const streamer = useChessStreamerOverlays({
+    board: displaySnapshot?.board,
+    myColor,
+    bestMoveUci: liveEval?.pv?.[0],
+  });
+  const streamerMode = useStreamerMode();
+  const premoves = useChessPremoves({
+    snapshot: displaySnapshot,
+    myColor,
+    displayMyTurn,
+    isGameOver,
+    movePiece,
+    applyOptimisticMove,
+    playSound,
+    selectedSquare,
+    setSelectedSquare,
+  });
+  const { handlePremoveSquareClick, handlePremovePieceDrop } = premoves;
+  useChessGameSounds({
+    displaySnapshot,
+    isGameOver,
+    playSound,
+  });
+  const regularLegalMoves = useMemo(() => {
     if (!selectedSquare || !displaySnapshot) return [];
     return (displaySnapshot.legalMovesForCurrentPlayer ?? [])
       .filter(
@@ -208,15 +235,23 @@ function ChessGameImpl({
       )
       .map((m) => m.to);
   }, [selectedSquare, displaySnapshot]);
+  const activeLegalMoves = displayMyTurn
+    ? regularLegalMoves
+    : premoves.premoveLegalMoves;
+  const spectatorCount =
+    room?.members && displaySnapshot?.players
+      ? room.members.filter(
+          (m) => !displaySnapshot.players.map((p) => p.playerId).includes(m.id),
+        ).length
+      : 0;
   const kingPosition = displaySnapshot
     ? findKingPosition(displaySnapshot)
     : null;
-
   const handleSquareClick = useSquareClick({
     displaySnapshot,
     myColor,
     selectedSquare,
-    legalMoves,
+    legalMoves: activeLegalMoves,
     isGameOver,
     movePiece,
     applyOptimisticMove,
@@ -227,7 +262,27 @@ function ChessGameImpl({
     setSelectedSquare,
     setPendingPromotion,
   });
-
+  const onSquareClick = useCallback(
+    (file: File, rank: Rank) => {
+      if (displayMyTurn) {
+        handleSquareClick(file, rank);
+      } else {
+        handlePremoveSquareClick(file, rank);
+      }
+    },
+    [displayMyTurn, handleSquareClick, handlePremoveSquareClick],
+  );
+  const keyboardInput = useKeyboardMoveInput({
+    enabled: displayMyTurn && !isGameOver,
+    legalMoves: displaySnapshot?.legalMovesForCurrentPlayer ?? [],
+    onMove: useCallback(
+      (fromFile: File, fromRank: Rank, toFile: File, toRank: Rank) => {
+        applyOptimisticMove(fromFile, fromRank, toFile, toRank);
+        movePiece(fromFile, fromRank, toFile, toRank);
+      },
+      [applyOptimisticMove, movePiece],
+    ),
+  });
   const handlePromotionSelect = useCallback(
     (pieceType: PieceType) => {
       if (!pendingPromotion) return;
@@ -251,7 +306,11 @@ function ChessGameImpl({
   );
   const handlePieceDrop = useCallback(
     (fromFile: File, fromRank: Rank, toFile: File, toRank: Rank) => {
-      if (!displayMyTurn || isGameOver || !myColor || !displaySnapshot) return;
+      if (isGameOver || !myColor || !displaySnapshot) return;
+      if (!displayMyTurn) {
+        handlePremovePieceDrop(fromFile, fromRank, toFile, toRank);
+        return;
+      }
       const piece =
         displaySnapshot.board[8 - fromRank]?.[FILES.indexOf(fromFile)];
       if (!piece || piece.color !== myColor) return;
@@ -280,6 +339,7 @@ function ChessGameImpl({
       myColor,
       applyOptimisticMove,
       movePiece,
+      handlePremovePieceDrop,
     ],
   );
   const onRematchClick = useCallback(() => {
@@ -297,13 +357,7 @@ function ChessGameImpl({
     [displaySnapshot, isGameOver, currentUserId, resolveDisplayNameBound, t],
   );
   const liveAlternatives = useMemo(() => {
-    if (!liveEval || !('alternatives' in liveEval)) return null;
-    return (liveEval as Record<string, unknown>).alternatives as Array<{
-      move: string;
-      cp: number | null;
-      mate: number | null;
-      pv: string[];
-    }> | null;
+    return liveEval?.alternatives ?? null;
   }, [liveEval]);
   if (!room) return null;
   if (isLobby)
@@ -339,14 +393,14 @@ function ChessGameImpl({
       isGameOver={isGameOver}
       isSpectator={isSpectator}
       selectedSquare={selectedSquare}
-      legalMoves={legalMoves}
+      legalMoves={activeLegalMoves}
       lastMove={lastMove}
       kingPosition={kingPosition}
       coach={coach}
       currentUserId={currentUserId}
       resolveName={resolveDisplayNameBound}
       t={t}
-      onSquareClick={handleSquareClick}
+      onSquareClick={onSquareClick}
       onDeselectSquare={() => {
         setSelectedSquare(null);
         setPendingMove(null);
@@ -371,6 +425,16 @@ function ChessGameImpl({
       confirmMoves={confirmMoves}
       moveCandidates={liveAlternatives}
       pendingMove={pendingMove}
+      premoveQueue={premoves.premoveQueue}
+      virtualBoard={premoves.virtualBoard}
+      onCancelPremoves={premoves.cancelPremoves}
+      bestMoveArrow={streamer.bestMoveArrow}
+      threatArrows={streamer.threatArrows}
+      showBestMove={streamerMode.enabled || streamer.showBestMove}
+      showThreats={streamerMode.enabled || streamer.showThreats}
+      onToggleBestMove={streamer.toggleBestMove}
+      onToggleThreats={streamer.toggleThreats}
+      spectatorCount={spectatorCount}
     />
   );
   const themeVariant =
@@ -378,7 +442,6 @@ function ChessGameImpl({
     (room?.gameOptions?.cardVariant as string | undefined) ??
     (room?.gameOptions?.variant as string | undefined) ??
     'cyberpunk';
-
   const modals = (
     <ChessGameModals
       showResultModal={showResultModal}
@@ -429,6 +492,7 @@ function ChessGameImpl({
           },
         }}
       />
+      <ChessKeyboardInput keyboardInput={keyboardInput} />
     </ChessThemeProvider>
   );
 }

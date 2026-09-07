@@ -74,7 +74,7 @@ const CHESS_SOUNDS: Record<string, GameSoundEntry> = {
     file: `${SOUND_BASE}/board/piece-capture.wav`,
     volume: 0.35,
   },
-  chess_check: { file: `${SOUND_BASE}/shared/notification.wav`, volume: 0.35 },
+  chess_check: { file: `${SOUND_BASE}/shared/ding.wav`, volume: 0.35 },
   chess_castle: { file: `${SOUND_BASE}/board/piece-move.wav`, volume: 0.3 },
   chess_promotion: { file: `${SOUND_BASE}/shared/success.wav`, volume: 0.4 },
   chess_game_start: { file: `${SOUND_BASE}/shared/confirm.wav`, volume: 0.3 },

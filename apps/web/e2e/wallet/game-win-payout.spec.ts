@@ -222,12 +222,11 @@ test.describe('Game-win wallet payout (live backend)', () => {
     // Balance should increase by the reward
     await expect(page.getByTestId('balance-coins-value')).toContainText(
       String(initialCoins + reward),
-      { timeout: 5000 },
     );
 
     // The transaction list should show a game_win row
     await expect(
       page.getByTestId('transactions-table').locator('tbody tr').first(),
-    ).toContainText('game_win', { timeout: 3000 });
+    ).toContainText('game_win');
   });
 });

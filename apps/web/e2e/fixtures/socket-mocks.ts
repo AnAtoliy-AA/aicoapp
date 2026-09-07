@@ -119,7 +119,7 @@ export async function mockGameSocket(
           });
           s.connect = () => {
             isConnected = true;
-            setTimeout(() => s.trigger('connect'), 500);
+            setTimeout(() => s.trigger('connect'), 50);
             return s;
           };
           s.disconnect = () => {
@@ -162,7 +162,7 @@ export async function mockGameSocket(
                     : (mocks as PlaywrightMocks).lastSession,
               };
 
-              setTimeout(() => s.trigger('games.room.joined', p), 500);
+              setTimeout(() => s.trigger('games.room.joined', p), 50);
               return s;
             }
             if (mocks?.handlers && mocks.handlers[event]) {
@@ -308,7 +308,7 @@ export async function mockAllOnPage(page: Page): Promise<void> {
                   ? joinedPayload.session
                   : (mocks as PlaywrightMocks).lastSession,
             };
-            setTimeout(() => s.trigger('games.room.joined', p), 500);
+            setTimeout(() => s.trigger('games.room.joined', p), 50);
             return s;
           }
           if (mocks?.handlers && mocks.handlers[event]) {

@@ -1,64 +1,46 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { chessSounds, type SoundType } from '../lib/sounds';
+import { useCallback, useEffect } from 'react';
+import { useGameSound, gameSounds } from '@/shared/lib/game-sounds';
+import type { GameSoundId } from '@/shared/lib/game-sounds';
+import type { SoundType } from '../lib/sounds';
+import { useSoundPreferences } from '../lib/sound-preferences';
 
-const STORAGE_KEY = 'chess-sound-settings';
+const SOUND_MAP: Record<SoundType, GameSoundId> = {
+  move: 'chess_move',
+  capture: 'chess_capture',
+  check: 'chess_check',
+  castle: 'chess_castle',
+  promotion: 'chess_promotion',
+  gameStart: 'chess_game_start',
+  gameEnd: 'chess_game_end',
+  drawOffer: 'chess_draw_offer',
+  notification: 'chess_notification',
+  error: 'chess_error',
+  illegal: 'chess_error',
+};
 
-interface SoundSettings {
-  muted: boolean;
-  volume: number;
-}
-
-function loadSettings(): SoundSettings {
-  if (typeof window === 'undefined') return { muted: false, volume: 0.5 };
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored) as SoundSettings;
-  } catch {}
-  return { muted: false, volume: 0.5 };
-}
-
-function saveSettings(settings: SoundSettings): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  } catch {}
-}
+const MINIMAL_SOUNDS = new Set<SoundType>(['capture', 'check', 'gameEnd']);
 
 export function useChessSounds() {
-  const [settings, setSettings] = useState<SoundSettings>(loadSettings);
+  const { play } = useGameSound('chess_v1');
+  const { volume, soundPack } = useSoundPreferences();
 
   useEffect(() => {
-    chessSounds.setMuted(settings.muted);
-    chessSounds.setVolume(settings.volume);
-    saveSettings(settings);
-  }, [settings]);
-
-  useEffect(() => {
-    void chessSounds.loadAll();
-  }, []);
+    gameSounds.setVolume(volume);
+  }, [volume]);
 
   const playSound = useCallback(
     (type: SoundType) => {
-      chessSounds.play(type);
+      if (soundPack === 'off') return;
+      if (soundPack === 'minimal' && !MINIMAL_SOUNDS.has(type)) return;
+      const soundId = SOUND_MAP[type];
+      if (soundId) {
+        play(soundId);
+      }
     },
-    [],
+    [play, soundPack],
   );
 
-  const toggleMute = useCallback(() => {
-    setSettings((prev) => ({ ...prev, muted: !prev.muted }));
-  }, []);
-
-  const setVolume = useCallback((volume: number) => {
-    setSettings((prev) => ({ ...prev, volume }));
-  }, []);
-
-  return {
-    muted: settings.muted,
-    volume: settings.volume,
-    playSound,
-    toggleMute,
-    setVolume,
-  };
+  return { playSound };
 }

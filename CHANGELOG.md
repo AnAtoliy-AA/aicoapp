@@ -7,6 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.48] - 2026-09-07
+
+### Added
+- add board themes, opening display, move analysis, sound prefs, rating HUD, spectator count, share links, quick-play lobby, keyboard input, and streamer mode
+
+### Fixed
+- remove nested button assertion from E2E quick-play test — card IS the button
+- wire sound preferences to playback, add rating to ChessPlayer type, and connect streamer mode URL param to game rendering
+
+
+## [1.28.47] - 2026-09-07
+
+### Fixed
+- remove broken merge-reports jobs, keep individual shard reports
+- use absolute path for merge-reports directory
+- use project playwright for merge-reports instead of npx
+- remove --html flag and skip install in merge-reports job
+- pass mountTime as argument to waitForFunction
+
+### Improved
+- reduce shards from 4 to 3 for staging/main matrix
+- parallelize e2e tests and fix flaky tests
+
+
+## [1.28.46] - 2026-09-07
+
+### Added
+- rework shorts and gameplay factories
+
+
+## [1.28.45] - 2026-09-07
+
+### Added
+- move streamer assists to admin console, fix bot takeback/draw, and clean up board overlay
+- add desktop streamer arrows, threat overlays, multi-move premoves, and game sound integration
+- modernize arena UI, sprite piece set, and responsive mobile layouts
+
+### Fixed
+- streamline landscape console layout and declutter mobile telemetry
+- optimize portrait and landscape mobile layouts with responsive eval bar
+
+### Improved
+- eliminate redundant cell re-renders with custom memo comparator and memoized board props
+
+
+## [1.28.44] - 2026-09-07
+
+### Fixed
+- fix CI failures in idle-reconnect and single-player-games
+
+### Improved
+- consolidate e2e tests to reduce navigations and wall time
+- tune Playwright config timeouts for faster failure
+- remove all timeouts and delays from e2e and unit tests
+
+
 ## [1.28.43] - 2026-09-07
 
 ### Fixed

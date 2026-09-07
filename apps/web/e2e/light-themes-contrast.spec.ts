@@ -44,11 +44,10 @@ async function setTheme(page: Page, theme: string) {
 }
 
 test.describe('Light Themes Contrast and Usability', () => {
-  for (const theme of LIGHT_THEMES) {
-    test(`renders readable text and visible buttons in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games');
+  test('games page — contrast, cards, and controls', async ({ page }) => {
+    await navigateTo(page, '/games');
+
+    for (const theme of LIGHT_THEMES) {
       await setTheme(page, theme);
 
       const bodyColors = await page.evaluate(() => {
@@ -74,12 +73,16 @@ test.describe('Light Themes Contrast and Usability', () => {
       if ((await gameCards.count()) > 0) {
         await expect(gameCards).toBeVisible();
       }
-    });
 
-    test(`sudoku board and controls are visible and readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/en/games/sudoku/play');
+      const gamesHeader = page.locator('h1');
+      await expect(gamesHeader).toBeVisible();
+    }
+  });
+
+  test('sudoku — board, controls, and notes', async ({ page }) => {
+    await navigateTo(page, '/en/games/sudoku/play');
+
+    for (const theme of LIGHT_THEMES) {
       await setTheme(page, theme);
 
       const sudokuBoard = page.getByRole('grid', { name: 'Sudoku' });
@@ -92,12 +95,15 @@ test.describe('Light Themes Contrast and Usability', () => {
         name: /notes/i,
       });
       await expect(notesBtn).toBeVisible();
-    });
+    }
+  });
 
-    test(`download buttons and coming soon text are visible in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/');
+  test('home — download buttons, profile menu, online badge', async ({
+    page,
+  }) => {
+    await navigateTo(page, '/');
+
+    for (const theme of LIGHT_THEMES) {
       await setTheme(page, theme);
 
       const downloadSection = page.locator(
@@ -110,50 +116,56 @@ test.describe('Light Themes Contrast and Usability', () => {
           .first();
         await expect(appStoreBtn).toBeVisible();
       }
-    });
-
-    test(`shop cards are visible with readable item names in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/shop');
-      await setTheme(page, theme);
-
-      const shopCards = page.locator('[data-testid^="shop-card-"]').first();
-      if ((await shopCards.count()) > 0) {
-        await expect(shopCards).toBeVisible();
-      }
-    });
-
-    test(`main content pages have readable contrast in ${theme} mode`, async ({
-      page,
-    }) => {
-      const routes = ['/features', '/leaderboards', '/roadmap', '/help'];
-      for (const route of routes) {
-        await navigateTo(page, route);
-        await setTheme(page, theme);
-        const main = page.locator('main').first();
-        await expect(main).toBeVisible();
-      }
-    });
-
-    test(`profile menu dropdown is readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/');
-      await setTheme(page, theme);
 
       const profileBtn = page.getByTestId('profile-menu-button');
       if ((await profileBtn.count()) > 0) {
         await profileBtn.click();
         const dropdown = page.getByTestId('profile-dropdown');
         await expect(dropdown).toBeVisible();
+        await profileBtn.click();
       }
-    });
 
-    test(`chess board is visible and readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games/chess');
+      const onlineBadge = page.getByTestId('header-live-pulse-badge');
+      if ((await onlineBadge.count()) > 0) {
+        await expect(onlineBadge).toBeVisible();
+      }
+    }
+  });
+
+  test('shop cards are visible with readable item names', async ({ page }) => {
+    await navigateTo(page, '/shop');
+
+    for (const theme of LIGHT_THEMES) {
+      await setTheme(page, theme);
+
+      const shopCards = page.locator('[data-testid^="shop-card-"]').first();
+      if ((await shopCards.count()) > 0) {
+        await expect(shopCards).toBeVisible();
+      }
+    }
+  });
+
+  test('main content pages have readable contrast', async ({ page }) => {
+    const routes = ['/features', '/leaderboards', '/roadmap', '/help'];
+
+    for (const route of routes) {
+      await navigateTo(page, route);
+
+      for (const theme of LIGHT_THEMES) {
+        await setTheme(page, theme);
+
+        const main = page.locator('main').first();
+        await expect(main).toBeVisible();
+      }
+    }
+  });
+
+  test('chess — board, rules modal, game result, share dropdown', async ({
+    page,
+  }) => {
+    await navigateTo(page, '/games/chess');
+
+    for (const theme of LIGHT_THEMES) {
       await setTheme(page, theme);
 
       const board = page.locator('[role="grid"]');
@@ -162,49 +174,6 @@ test.describe('Light Themes Contrast and Usability', () => {
         const cell = page.locator('[role="gridcell"]').first();
         await expect(cell).toBeVisible();
       }
-    });
-
-    test(`rooms and games lounge are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/rooms');
-      await setTheme(page, theme);
-
-      const roomCard = page.locator('[data-testid="room-card"]').first();
-      if ((await roomCard.count()) > 0) {
-        await expect(roomCard).toBeVisible();
-      }
-    });
-
-    test(`online counter badge in header is readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/');
-      await setTheme(page, theme);
-
-      const onlineBadge = page.getByTestId('header-live-pulse-badge');
-      if ((await onlineBadge.count()) > 0) {
-        await expect(onlineBadge).toBeVisible();
-      }
-    });
-
-    test(`rooms filters are readable and visible in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/rooms');
-      await setTheme(page, theme);
-
-      const filters = page.getByTestId('games-filters-container');
-      if ((await filters.count()) > 0) {
-        await expect(filters).toBeVisible();
-      }
-    });
-
-    test(`game rules modal and close button are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games/chess');
-      await setTheme(page, theme);
 
       const rulesButton = page.getByTestId('view-rules-button');
       if ((await rulesButton.count()) > 0) {
@@ -213,110 +182,104 @@ test.describe('Light Themes Contrast and Usability', () => {
         await expect(modal).toBeVisible();
         const closeBtn = page.getByTestId('modal-close-button');
         await expect(closeBtn).toBeVisible();
+        await closeBtn.click();
       }
-    });
-
-    test(`game result and modal styling are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games/chess');
-      await setTheme(page, theme);
 
       const resultModal = page.getByTestId('game-result-modal');
       if ((await resultModal.count()) > 0) {
         await expect(resultModal).toBeVisible();
       }
-    });
-
-    test(`share dropdown and popover menu are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games/chess');
-      await setTheme(page, theme);
 
       const shareBtn = page.getByTestId('share-game-button');
       if ((await shareBtn.count()) > 0) {
         await shareBtn.click();
         const popover = page.getByTestId('share-game-popover');
         await expect(popover).toBeVisible();
+        await page.keyboard.press('Escape');
       }
-    });
+    }
+  });
 
-    test(`minesweeper board and HUD are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games/minesweeper');
+  test('rooms — cards and filters', async ({ page }) => {
+    await navigateTo(page, '/rooms');
+
+    for (const theme of LIGHT_THEMES) {
+      await setTheme(page, theme);
+
+      const roomCard = page.locator('[data-testid="room-card"]').first();
+      if ((await roomCard.count()) > 0) {
+        await expect(roomCard).toBeVisible();
+      }
+
+      const filters = page.getByTestId('games-filters-container');
+      if ((await filters.count()) > 0) {
+        await expect(filters).toBeVisible();
+      }
+    }
+  });
+
+  test('token page heading is readable', async ({ page }) => {
+    await navigateTo(page, '/token');
+
+    for (const theme of LIGHT_THEMES) {
+      await setTheme(page, theme);
+
+      const heading = page.locator('h1');
+      await expect(heading).toBeVisible();
+    }
+  });
+
+  test('policy pages are readable', async ({ page }) => {
+    const routes = ['/privacy', '/terms', '/cookies'];
+
+    for (const route of routes) {
+      await navigateTo(page, route);
+
+      for (const theme of LIGHT_THEMES) {
+        await setTheme(page, theme);
+
+        const testId = `${route.replace('/', '')}-page-wrapper`;
+        await expect(page.getByTestId(testId)).toBeVisible();
+      }
+    }
+  });
+
+  test('contact page header stays correctly stacked on scroll', async ({
+    page,
+  }) => {
+    await navigateTo(page, '/contact');
+
+    for (const theme of LIGHT_THEMES) {
+      await setTheme(page, theme);
+
+      const header = page.locator('header.header-outer');
+      await expect(header).toBeVisible();
+      await page.evaluate(() => window.scrollTo(0, 300));
+      await expect(header).toBeVisible();
+    }
+  });
+
+  test('cascade landing heading is readable', async ({ page }) => {
+    await navigateTo(page, '/games/cascade');
+
+    for (const theme of LIGHT_THEMES) {
+      await setTheme(page, theme);
+
+      const heading = page.locator('h1');
+      await expect(heading).toBeVisible();
+    }
+  });
+
+  test('minesweeper board and HUD are readable', async ({ page }) => {
+    await navigateTo(page, '/games/minesweeper');
+
+    for (const theme of LIGHT_THEMES) {
       await setTheme(page, theme);
 
       const board = page.getByRole('grid');
       if ((await board.count()) > 0) {
         await expect(board).toBeVisible();
       }
-    });
-
-    test(`token page and stats are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/token');
-      await setTheme(page, theme);
-
-      const heading = page.locator('h1');
-      await expect(heading).toBeVisible();
-    });
-
-    test(`help center FAQ and topics are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/help');
-      await setTheme(page, theme);
-
-      const faq = page.locator('#faq');
-      await expect(faq).toBeVisible();
-    });
-
-    test(`privacy, terms, and cookies policies are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/privacy');
-      await setTheme(page, theme);
-      await expect(page.getByTestId('privacy-page-wrapper')).toBeVisible();
-
-      await navigateTo(page, '/terms');
-      await setTheme(page, theme);
-      await expect(page.getByTestId('terms-page-wrapper')).toBeVisible();
-
-      await navigateTo(page, '/cookies');
-      await setTheme(page, theme);
-      await expect(page.getByTestId('cookies-page-wrapper')).toBeVisible();
-    });
-
-    test(`contact page hero and header stay correctly stacked on scroll in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/contact');
-      await setTheme(page, theme);
-      const header = page.locator('header.header-outer');
-      await expect(header).toBeVisible();
-      await page.evaluate(() => window.scrollTo(0, 300));
-      await expect(header).toBeVisible();
-    });
-
-    test(`cascade landing and preview are readable in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games/cascade');
-      await setTheme(page, theme);
-      const heading = page.locator('h1');
-      await expect(heading).toBeVisible();
-    });
-
-    test(`game controls panel is present and properly stacked in ${theme} mode`, async ({
-      page,
-    }) => {
-      await navigateTo(page, '/games');
-      await setTheme(page, theme);
-      const gamesHeader = page.locator('h1');
-      await expect(gamesHeader).toBeVisible();
-    });
-  }
+    }
+  });
 });

@@ -1,0 +1,16 @@
+export const soloControlsRu = {
+  play: 'Играть',
+  pause: 'Пауза',
+  gameOver: 'Игра окончена',
+  autoPause: 'Авто-пауза:',
+  auto: 'Авто:',
+  on: 'ВКЛ',
+  off: 'ВЫКЛ',
+  leaderboard: 'Лидерборд',
+  rules: 'Правила',
+  objective: 'Цель',
+  howToPlay: 'Как играть',
+  scoring: 'Очки',
+  newGame: 'Новая игра',
+  results: 'Результаты',
+};

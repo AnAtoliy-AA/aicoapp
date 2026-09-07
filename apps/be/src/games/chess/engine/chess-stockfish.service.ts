@@ -73,19 +73,15 @@ export class ChessStockfishService implements OnModuleDestroy {
     // Scale via STOCKFISH_POOL_SIZE env var if needed later.
     this.poolSize = parseInt(process.env.STOCKFISH_POOL_SIZE ?? '1', 10);
 
-    // Binary location: Docker installs to /usr/local/bin, local dev uses bin/
-    // Note: __dirname in compiled code points to dist/, so go up to project root
-    const dockerPath = '/usr/local/bin/stockfish';
-    const localPath = path.join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      '..',
-      'bin',
-      'stockfish',
-    );
-    this.binaryPath = fs.existsSync(dockerPath) ? dockerPath : localPath;
+    const localPath = path.join(__dirname, '../../../../bin/stockfish');
+    const candidates = [
+      process.env.STOCKFISH_PATH,
+      '/usr/local/bin/stockfish',
+      '/opt/homebrew/bin/stockfish',
+      localPath,
+    ];
+    this.binaryPath =
+      candidates.find((p): p is string => !!p && fs.existsSync(p)) ?? localPath;
   }
 
   async onModuleInit(): Promise<void> {
@@ -93,14 +89,15 @@ export class ChessStockfishService implements OnModuleDestroy {
       `[Stockfish] onModuleInit called. Binary: ${this.binaryPath}`,
     );
     if (!fs.existsSync(this.binaryPath)) {
-      if (process.env.E2E === 'true') {
-        this.logger.debug(
-          `Stockfish 19 binary not found at ${this.binaryPath} (expected in E2E)`,
-        );
+      const msg = `Stockfish 19 binary not found at ${this.binaryPath}`;
+      if (
+        process.env.E2E === 'true' ||
+        process.env.NEXT_PUBLIC_E2E === 'true'
+      ) {
+        this.logger.debug(`${msg} (expected in E2E)`);
       } else {
-        this.logger.error(
-          `Stockfish 19 binary not found at ${this.binaryPath}. ` +
-            'Run: bash apps/be/bin/scripts/setup-stockfish.sh',
+        this.logger.warn(
+          `${msg}. Run: bash apps/be/bin/scripts/setup-stockfish.sh`,
         );
       }
       return;
@@ -454,14 +451,10 @@ export class ChessStockfishService implements OnModuleDestroy {
           eval_.selDepth = parseInt(parts[++i] ?? '0', 10);
           break;
         case 'score': {
-          const next = parts[i + 1];
-          if (next === 'cp') {
-            eval_.cp = parseInt(parts[i + 2] ?? '0', 10);
-            i += 2;
-          } else if (next === 'mate') {
-            eval_.mate = parseInt(parts[i + 2] ?? '0', 10);
-            i += 2;
-          }
+          const val = parseInt(parts[i + 2] ?? '0', 10);
+          if (parts[i + 1] === 'cp') eval_.cp = val;
+          else if (parts[i + 1] === 'mate') eval_.mate = val;
+          i += 2;
           break;
         }
         case 'pv':

@@ -26,10 +26,7 @@ export async function closeGameRulesModal(page: Page): Promise<void> {
 
   // 1. Wait for modal to be visible or return if it's not there
   try {
-    await page.waitForSelector(modalSelector, {
-      state: 'visible',
-      timeout: 2000,
-    });
+    await page.waitForSelector(modalSelector, { state: 'visible' });
   } catch (_e) {
     // Modal not visible, nothing to close
     return;
@@ -39,9 +36,9 @@ export async function closeGameRulesModal(page: Page): Promise<void> {
   const closeButton = page.locator(closeBtnSelector).first();
   if (await closeButton.isVisible()) {
     // Standard click first, it should trigger React state change
-    await closeButton.click({ timeout: 5000 }).catch(async () => {
+    await closeButton.click().catch(async () => {
       // Fallback to force click if intercepted
-      await closeButton.click({ force: true, timeout: 5000 }).catch(() => {});
+      await closeButton.click({ force: true }).catch(() => {});
     });
   }
 
@@ -51,7 +48,7 @@ export async function closeGameRulesModal(page: Page): Promise<void> {
   // instead of throwing here.
   await page
     .locator(modalSelector)
-    .waitFor({ state: 'hidden', timeout: 10000 })
+    .waitFor({ state: 'hidden' })
     .catch(() => {});
 
   // 4. Final check: if it's STILL in the DOM (e.g. detached or ghost), then and only then remove it

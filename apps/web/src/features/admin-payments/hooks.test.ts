@@ -53,8 +53,7 @@ describe('useAdminPaymentNotes', () => {
     const { result } = renderHook(() =>
       useAdminPaymentNotes({ page: 1, pageSize: 50 }),
     );
-    await new Promise((r) => setTimeout(r, 50));
-    expect(apiGetMock).not.toHaveBeenCalled();
+    await waitFor(() => expect(apiGetMock).not.toHaveBeenCalled());
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeNull();
   });

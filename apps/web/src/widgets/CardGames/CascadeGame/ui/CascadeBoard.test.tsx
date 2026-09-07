@@ -102,7 +102,7 @@ function renderBoard(props: React.ComponentProps<typeof CascadeBoard>) {
 
 describe('CascadeBoard', () => {
   // First render pays a one-time setup cost — give it room.
-  it('renders my hand and the discard top card', { timeout: 20000 }, () => {
+  it('renders my hand and the discard top card', () => {
     const snapshot = makeSnapshot();
     renderBoard({
       snapshot,

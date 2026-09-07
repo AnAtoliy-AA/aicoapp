@@ -6,6 +6,8 @@ function createMockChessService() {
   return {
     findSessionByRoom: jest.fn(),
     completeSession: jest.fn(),
+    takebackAccept: jest.fn().mockResolvedValue({}),
+    drawAccept: jest.fn().mockResolvedValue({}),
   } as never;
 }
 
@@ -148,6 +150,52 @@ describe('ChessBotService', () => {
       );
       await bot.checkAndPlay(session);
       expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('should accept takeback offer from opponent human player', async () => {
+      const state = engine.initializeState(['p1', 'bot-1']);
+      state.takebackOfferedBy = 'p1';
+      const session: GameSessionSummary = {
+        id: 'session-1',
+        roomId: 'room-1',
+        gameId: 'chess_v1',
+        status: 'active',
+        state: state,
+        playerIds: ['p1', 'bot-1'],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      (mockChessService.findSessionByRoom as jest.Mock).mockResolvedValue(
+        session,
+      );
+      await bot.checkAndPlay(session);
+      expect(mockChessService.takebackAccept).toHaveBeenCalledWith(
+        'bot-1',
+        'room-1',
+      );
+    });
+
+    it('should accept draw offer from opponent human player', async () => {
+      const state = engine.initializeState(['p1', 'bot-1']);
+      state.drawOfferedBy = 'p1';
+      const session: GameSessionSummary = {
+        id: 'session-1',
+        roomId: 'room-1',
+        gameId: 'chess_v1',
+        status: 'active',
+        state: state,
+        playerIds: ['p1', 'bot-1'],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      (mockChessService.findSessionByRoom as jest.Mock).mockResolvedValue(
+        session,
+      );
+      await bot.checkAndPlay(session);
+      expect(mockChessService.drawAccept).toHaveBeenCalledWith(
+        'bot-1',
+        'room-1',
+      );
     });
   });
 });

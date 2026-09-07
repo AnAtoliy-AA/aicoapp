@@ -67,7 +67,6 @@ test.describe('Sea Battle widget fullscreen auto-exit on finish', () => {
           !!socket._mockListeners?.['games.session.snapshot']
         );
       },
-      { timeout: 60000 },
     );
 
     const widget = page.locator('.game-widget-container');
@@ -95,6 +94,6 @@ test.describe('Sea Battle widget fullscreen auto-exit on finish', () => {
     );
 
     // Auto-exit fires after the delay (~1.5s).
-    await expect(widget).not.toHaveClass(/is-fullscreen/, { timeout: 5000 });
+    await expect(widget).not.toHaveClass(/is-fullscreen/);
   });
 });

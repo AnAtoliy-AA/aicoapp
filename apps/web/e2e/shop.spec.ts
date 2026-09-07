@@ -83,7 +83,7 @@ test.describe('Shop redesign · Showcase Locker', () => {
     // the avatar disc — dev-server compile can push this past Playwright's
     // default 15s expect timeout.
     const firstAvatar = page.getByTestId('leaderboard-row-1-avatar');
-    await expect(firstAvatar).toBeVisible({ timeout: 30000 });
+    await expect(firstAvatar).toBeVisible();
 
     // EquippedPlayerAvatar renders the circular disc as the
     // `${testid}-disc` element (see packages/ui PlayerAvatar).

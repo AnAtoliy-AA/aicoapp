@@ -4,9 +4,9 @@ permissions: read-all
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, staging ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, staging ]
     types: [opened, synchronize, reopened]
 
 concurrency:
@@ -152,15 +152,15 @@ jobs:
         run: pnpm exec turbo run test --filter mobile --log-order=stream -- --passWithNoTests
 
   web-e2e:
-    name: Web E2E (${{ matrix.project }}, Shard ${{ matrix.shard }}/2)
+    name: Web E2E (${{ matrix.project }}, Shard ${{ matrix.shard }}/3)
     needs: build
     if: "${{ github.event_name != 'push' || (!startsWith(github.event.head_commit.message, 'chore: bump version') && !startsWith(github.event.head_commit.message, 'chore: start next minor version')) }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium, firefox, webkit, "Mobile Chrome", "Mobile Safari", "Tablet Safari"]
-        shard: [1, 2]
+        project: ${{ fromJSON(github.event_name == 'pull_request' && !(github.base_ref == 'staging' || github.base_ref == 'main') && '["chromium"]' || '["chromium", "firefox", "webkit", "Mobile Chrome", "Mobile Safari", "Tablet Safari"]') }}
+        shard: [1, 2, 3]
     services:
       mongodb:
         image: mongo:latest
@@ -229,7 +229,7 @@ jobs:
         run: pnpm --filter web exec playwright install ${{ steps.engine.outputs.browser }}
 
       - name: Run Web E2E Tests
-        run: pnpm --filter web test:e2e --project="${{ matrix.project }}" --shard=${{ matrix.shard }}/2
+        run: pnpm --filter web test:e2e --project="${{ matrix.project }}" --shard=${{ matrix.shard }}/3
 
       - name: Upload Test Report
         if: always()

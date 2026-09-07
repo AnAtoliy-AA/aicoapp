@@ -1,18 +1,21 @@
 'use client';
 
 import { memo, useState, useCallback, useMemo } from 'react';
+import type { CSSProperties } from 'react';
+import { cx } from '@arcadeum/ui/utils/cx';
+import { useWidgetFullscreen } from '@/features/games/ui/GameWidgetContainer';
+import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { ChessBoard } from './ChessBoard';
-import { MoveList } from './MoveList';
+import { EvalBar } from './EvalBar';
+import { ChessPlayerHud } from './ChessPlayerHud';
+import { ChessGameConsole } from './ChessGameConsole';
+import { useChessPieceStylePreference } from '../lib/piece-style';
 import {
-  TurnBar,
-  PlayerCards,
-  GameInfoPanel,
-  ActionsBar,
-} from './ChessPanelComponents';
-import { CoachControls } from '@/features/coach/ui/CoachControls';
-import { LiveEvalDisplay } from './LiveEvalDisplay';
-import { OpeningExplorer } from '@/features/analysis/ui/OpeningExplorer';
+  useBoardThemePreference,
+  getBoardThemeCssVars,
+} from '../lib/board-theme';
 import type { UseChessCoachResult } from '../hooks/useChessCoach';
+import './styles/chess-arena.scss';
 import type { ChessClientState, BoardPosition, File, Rank } from '../types';
 import type { TranslationKey } from '@/shared/lib/useTranslation';
 
@@ -72,13 +75,23 @@ interface ChessBoardPanelProps {
     pv: string[];
   }> | null;
   pendingMove?: { from: BoardPosition; to: BoardPosition } | null;
+  premoveQueue?: import('../hooks/usePremoveQueue').PremoveStep[];
+  virtualBoard?: import('../types').Board | null;
+  onCancelPremoves?: () => void;
+  bestMoveArrow?: import('../hooks/useBoardDrawings').Arrow | null;
+  threatArrows?: import('../hooks/useBoardDrawings').Arrow[];
+  showBestMove?: boolean;
+  showThreats?: boolean;
+  onToggleBestMove?: () => void;
+  onToggleThreats?: () => void;
+  spectatorCount?: number;
 }
 
 function ChessBoardPanelImpl({
   snapshot,
   myColor,
   isFlipped,
-  displayMyTurn,
+  displayMyTurn: _displayMyTurn,
   isGameOver,
   isSpectator,
   selectedSquare,
@@ -106,22 +119,43 @@ function ChessBoardPanelImpl({
   confirmMoves,
   moveCandidates,
   pendingMove,
+  premoveQueue = [],
+  virtualBoard,
+  onCancelPremoves,
+  bestMoveArrow,
+  threatArrows = [],
+  showBestMove = false,
+  showThreats = false,
+  onToggleBestMove,
+  onToggleThreats,
+  spectatorCount = 0,
 }: ChessBoardPanelProps) {
   const [hoveredMoveIdx, setHoveredMoveIdx] = useState<number | null>(null);
-  const [spectatorPerspective, setSpectatorPerspective] = useState<
-    'white' | 'black'
-  >('white');
+  const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
+  const { activeBoardTheme } = useBoardThemePreference();
+  const isFullscreen = useWidgetFullscreen();
+
+  const { snapshot: sessionSnapshot } = useSessionTokens();
+  const isAdmin = sessionSnapshot.role === 'admin';
+
   const handleMoveHover = useCallback((idx: number | null) => {
     setHoveredMoveIdx(idx);
   }, []);
-  const togglePerspective = useCallback(() => {
-    setSpectatorPerspective((p) => (p === 'white' ? 'black' : 'white'));
-  }, []);
 
-  const currentFen = useMemo(() => {
-    if (!snapshot?.positionHistory?.length) return null;
-    return snapshot.positionHistory[snapshot.positionHistory.length - 1];
-  }, [snapshot]);
+  const highlightMove = useMemo(() => {
+    if (hoveredMoveIdx !== null && snapshot?.moveHistory[hoveredMoveIdx]) {
+      return {
+        from: snapshot.moveHistory[hoveredMoveIdx].from,
+        to: snapshot.moveHistory[hoveredMoveIdx].to,
+      };
+    }
+    return lastMove;
+  }, [hoveredMoveIdx, snapshot?.moveHistory, lastMove]);
+
+  const hintMove = useMemo(
+    () => (coach.hint ? { from: coach.hint.from, to: coach.hint.to } : null),
+    [coach.hint],
+  );
 
   if (!snapshot) return null;
 
@@ -129,182 +163,186 @@ function ChessBoardPanelImpl({
   const whitePlayer = players.find((p) => p.color === 'white');
   const blackPlayer = players.find((p) => p.color === 'black');
 
-  const whiteName = whitePlayer?.playerId
-    ? resolveName(whitePlayer.playerId)
-    : 'White';
-  const blackName = blackPlayer?.playerId
-    ? resolveName(blackPlayer.playerId)
-    : 'Black';
+  const topPlayer = isFlipped ? whitePlayer : blackPlayer;
+  const bottomPlayer = isFlipped ? blackPlayer : whitePlayer;
 
-  const hasDrawOffer = !!snapshot?.drawOfferedBy;
-  const isMyDrawOffer = snapshot?.drawOfferedBy === currentUserId;
+  const topColor = isFlipped ? 'white' : 'black';
+  const bottomColor = isFlipped ? 'black' : 'white';
 
-  const highlightMove =
-    hoveredMoveIdx !== null && snapshot.moveHistory[hoveredMoveIdx]
-      ? {
-          from: snapshot.moveHistory[hoveredMoveIdx].from,
-          to: snapshot.moveHistory[hoveredMoveIdx].to,
-        }
-      : lastMove;
+  const topName = topPlayer?.playerId
+    ? resolveName(topPlayer.playerId)
+    : topColor === 'white'
+      ? 'White'
+      : 'Black';
+  const bottomName = bottomPlayer?.playerId
+    ? resolveName(bottomPlayer.playerId)
+    : bottomColor === 'white'
+      ? 'White'
+      : 'Black';
 
-  const coachVisible = coach.visible;
+  const boardThemeVars = getBoardThemeCssVars(activeBoardTheme);
+
+  const topPlayerHud = (
+    <ChessPlayerHud
+      playerId={topPlayer?.playerId ?? ''}
+      name={topName}
+      color={topColor}
+      isActive={snapshot.currentTurnColor === topColor}
+      isGameOver={isGameOver}
+      remainingSeconds={snapshot.clocks?.[topColor]?.remainingSeconds ?? null}
+      incrementSeconds={snapshot.timeControl?.incrementSeconds}
+      board={snapshot.board}
+      pieceStyle={pieceStyle}
+      rating={topPlayer?.rating}
+    />
+  );
+
+  const bottomPlayerHud = (
+    <ChessPlayerHud
+      playerId={bottomPlayer?.playerId ?? ''}
+      name={bottomName}
+      color={bottomColor}
+      isActive={snapshot.currentTurnColor === bottomColor}
+      isGameOver={isGameOver}
+      remainingSeconds={
+        snapshot.clocks?.[bottomColor]?.remainingSeconds ?? null
+      }
+      incrementSeconds={snapshot.timeControl?.incrementSeconds}
+      board={snapshot.board}
+      pieceStyle={pieceStyle}
+      rating={bottomPlayer?.rating}
+    />
+  );
 
   return (
-    <div className="flex flex-col md:flex-row md:items-start gap-3 w-full max-w-[900px] mx-auto p-3">
-      <div className="flex flex-col gap-2 md:flex-none md:w-[min(70vmin,560px)] md:sticky md:top-3">
-        <TurnBar
-          currentTurnColor={snapshot.currentTurnColor}
-          isCheck={snapshot.isCheck}
-          isCheckmate={snapshot.isCheckmate}
-          fullMoveNumber={snapshot.fullMoveNumber}
-          t={t}
-        />
+    <div className={cx('chess-arena-root', isFullscreen && 'is-fullscreen')}>
+      <div
+        className={cx('chess-board-column', isFullscreen && 'is-fullscreen')}
+        style={boardThemeVars as CSSProperties}
+      >
+        <div className="chess-hud-row">{topPlayerHud}</div>
 
-        <ChessBoard
-          board={snapshot.board}
-          myColor={myColor}
-          isFlipped={isFlipped}
-          disabled={!displayMyTurn || isGameOver || isSpectator}
-          selectedSquare={selectedSquare}
-          legalMoves={legalMoves}
-          lastMove={highlightMove}
-          hintMove={
-            coach.hint ? { from: coach.hint.from, to: coach.hint.to } : null
-          }
-          pendingMove={pendingMove}
-          isCheck={snapshot.isCheck}
-          kingPosition={kingPosition}
-          ariaLabel={t('games.chess_v1.status.boardLabel', {
-            color:
-              snapshot.currentTurnColor === 'white'
-                ? t('games.chess_v1.status.white')
-                : t('games.chess_v1.status.black'),
-          })}
-          onSquareClick={onSquareClick}
-          onDeselectSquare={onDeselectSquare}
-          onPieceDrop={onPieceDrop}
-        />
-      </div>
-
-      <div className="flex flex-col gap-3 flex-1 min-w-0 md:max-w-[280px]">
-        <PlayerCards
-          whiteId={whitePlayer?.playerId ?? ''}
-          blackId={blackPlayer?.playerId ?? ''}
-          whiteName={whiteName}
-          blackName={blackName}
-          currentTurnColor={snapshot.currentTurnColor}
-          isGameOver={isGameOver}
-          clocks={snapshot.clocks}
-          timeControl={snapshot.timeControl}
-        />
-
-        <GameInfoPanel
-          snapshot={snapshot}
-          liveEval={liveEval}
-          analyzing={liveEvalAnalyzing}
-          myColor={myColor}
-          isSpectator={isSpectator}
-          spectatorPerspective={isSpectator ? spectatorPerspective : undefined}
-          onTogglePerspective={isSpectator ? togglePerspective : undefined}
-          t={t}
-        />
-
-        <LiveEvalDisplay
-          eval_={liveEval ?? null}
-          analyzing={!!liveEvalAnalyzing}
-          myColor={myColor}
-          isSpectator={isSpectator}
-          spectatorPerspective={isSpectator ? spectatorPerspective : undefined}
-          onTogglePerspective={isSpectator ? togglePerspective : undefined}
-        />
-
-        {moveCandidates && moveCandidates.length > 0 && (
-          <div className="bg-[var(--glassBg)] border border-[var(--glassBorder)] rounded-lg p-2">
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--textSecondary)] mb-1">
-              Move Candidates
-            </div>
-            {moveCandidates.map((alt, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between text-xs py-0.5"
-              >
-                <span className="font-mono text-[var(--color)]">
-                  {alt.move}
-                </span>
-                <span className="text-[var(--textSecondary)]">
-                  {alt.mate !== null
-                    ? `M${alt.mate}`
-                    : alt.cp !== null
-                      ? `${(alt.cp / 100).toFixed(1)}`
-                      : '—'}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex gap-1.5">
-          {onFlipBoard && (
-            <button
-              onClick={onFlipBoard}
-              className="flex-1 text-[10px] py-1.5 px-2 rounded bg-[var(--glassBg)] border border-[var(--glassBorder)] text-[var(--textSecondary)] hover:text-[var(--color)] transition-colors"
-            >
-              ↻ Flip
-            </button>
-          )}
-          {onExportPgn && (
-            <button
-              onClick={onExportPgn}
-              className="flex-1 text-[10px] py-1.5 px-2 rounded bg-[var(--glassBg)] border border-[var(--glassBorder)] text-[var(--textSecondary)] hover:text-[var(--color)] transition-colors"
-            >
-              ↓ PGN
-            </button>
-          )}
-          {onToggleConfirmMoves && (
-            <button
-              onClick={onToggleConfirmMoves}
-              className={`flex-1 text-[10px] py-1.5 px-2 rounded border transition-colors ${
-                confirmMoves
-                  ? 'bg-[var(--primary)]/15 border-[var(--primary)] text-[var(--primary)]'
-                  : 'bg-[var(--glassBg)] border-[var(--glassBorder)] text-[var(--textSecondary)] hover:text-[var(--color)]'
-              }`}
-            >
-              {confirmMoves ? '✓ Confirm' : 'Confirm'}
-            </button>
-          )}
+        <div className="chess-eval-horizontal">
+          <EvalBar
+            evalScore={liveEval?.cp ?? null}
+            mateScore={liveEval?.mate ?? null}
+            isFlipped={isFlipped}
+            orientation="horizontal"
+          />
         </div>
 
-        {currentFen && <OpeningExplorer fen={currentFen} />}
+        <div className="chess-board-stage-wrapper">
+          <div className="chess-board-stage">
+            <div className="chess-eval-container">
+              <EvalBar
+                evalScore={liveEval?.cp ?? null}
+                mateScore={liveEval?.mate ?? null}
+                isFlipped={isFlipped}
+                orientation="vertical"
+              />
+            </div>
 
-        <MoveList state={snapshot} t={t} onMoveHover={handleMoveHover} />
+            <div className="chess-board-grid-wrapper relative">
+              {spectatorCount > 0 && (
+                <div className="absolute top-2 right-2 z-30 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md text-white/70 text-[10px] font-semibold select-none pointer-events-none">
+                  <span>👁</span>
+                  <span>{spectatorCount}</span>
+                </div>
+              )}
+              {premoveQueue.length > 0 && (
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 backdrop-blur-md shadow-lg text-amber-300 text-xs font-semibold select-none pointer-events-auto">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span>Premove ({premoveQueue.length} queued)</span>
+                  {onCancelPremoves && (
+                    <button
+                      type="button"
+                      onClick={onCancelPremoves}
+                      className="ml-1 text-[11px] text-amber-200 hover:text-white underline cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              )}
+              <ChessBoard
+                board={
+                  premoveQueue.length > 0 && virtualBoard
+                    ? virtualBoard
+                    : snapshot.board
+                }
+                myColor={myColor}
+                isFlipped={isFlipped}
+                disabled={isGameOver || isSpectator}
+                selectedSquare={selectedSquare}
+                legalMoves={legalMoves}
+                lastMove={highlightMove}
+                hintMove={hintMove}
+                pendingMove={pendingMove}
+                isCheck={snapshot.isCheck}
+                kingPosition={kingPosition}
+                pieceStyle={pieceStyle}
+                premoveQueue={premoveQueue}
+                onCancelPremoves={onCancelPremoves}
+                bestMoveArrow={bestMoveArrow}
+                threatArrows={threatArrows}
+                showBestMove={showBestMove}
+                showThreats={showThreats}
+                ariaLabel={t('games.chess_v1.status.boardLabel', {
+                  color:
+                    snapshot.currentTurnColor === 'white'
+                      ? t('games.chess_v1.status.white')
+                      : t('games.chess_v1.status.black'),
+                })}
+                onSquareClick={onSquareClick}
+                onDeselectSquare={onDeselectSquare}
+                onPieceDrop={onPieceDrop}
+              />
+            </div>
+          </div>
+        </div>
 
-        <ActionsBar
-          hasDrawOffer={hasDrawOffer}
-          isMyDrawOffer={isMyDrawOffer}
-          hasTakebackOffer={!!snapshot?.takebackOfferedBy}
-          isMyTakebackOffer={snapshot?.takebackOfferedBy === currentUserId}
+        <div className="chess-hud-row">{bottomPlayerHud}</div>
+      </div>
+
+      <div className="chess-console-column">
+        <div className="chess-landscape-hud chess-landscape-hud-top">
+          {topPlayerHud}
+        </div>
+
+        <ChessGameConsole
+          snapshot={snapshot}
+          myColor={myColor}
           isGameOver={isGameOver}
           isSpectator={isSpectator}
           currentUserId={currentUserId}
-          onResign={onResign}
+          coach={coach}
+          pieceStyle={pieceStyle}
+          onSelectPieceStyle={setPieceStyle}
+          liveEval={liveEval}
+          liveEvalAnalyzing={liveEvalAnalyzing}
+          moveCandidates={moveCandidates}
+          confirmMoves={confirmMoves}
+          t={t}
+          onMoveHover={handleMoveHover}
           onOfferDraw={onOfferDraw}
+          onResign={onResign}
           onAcceptDraw={onAcceptDraw}
           onOfferTakeback={onOfferTakeback}
           onAcceptTakeback={onAcceptTakeback}
           onDeclineTakeback={onDeclineTakeback}
-          t={t}
+          onFlipBoard={onFlipBoard}
+          onExportPgn={onExportPgn}
+          onToggleConfirmMoves={onToggleConfirmMoves}
+          isAdmin={isAdmin}
+          showBestMove={showBestMove}
+          showThreats={showThreats}
+          onToggleBestMove={onToggleBestMove}
+          onToggleThreats={onToggleThreats}
         />
 
-        {coachVisible && (
-          <CoachControls
-            enabled={coach.enabled}
-            hintAvailable={coach.hintAvailable}
-            hint={coach.hint}
-            t={t}
-            onToggle={coach.toggleEnabled}
-            onHint={coach.requestHint}
-          />
-        )}
+        <div className="chess-landscape-hud chess-landscape-hud-bottom">
+          {bottomPlayerHud}
+        </div>
       </div>
     </div>
   );

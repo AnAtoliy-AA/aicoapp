@@ -56,70 +56,38 @@ test.describe('Payment Notes Page', () => {
     });
   });
 
-  test('should display notes page with title and subtitle', async ({
+  test('should display notes page with supporters, amounts, and dates', async ({
     page,
   }) => {
     await navigateTo(page, '/notes');
 
-    // Check for page title
     await expect(
       page.getByRole('heading', { name: /supporter notes/i }),
     ).toBeVisible();
-
-    // Check for subtitle (scoped to main content; the footer also links to
-    // /community which would match a looser regex).
     await expect(
       page.locator('main').getByText(/messages of support/i),
     ).toBeVisible();
-  });
 
-  test('should display notes from supporters', async ({ page }) => {
-    await navigateTo(page, '/notes');
-
-    // Check for John Doe's note with toPass for robustness
+    // Verify supporter notes with amounts and dates
     await expect(async () => {
       await expect(page.getByText('John Doe')).toBeVisible();
       await expect(
         page.getByText('Great project! Keep up the amazing work!'),
       ).toBeVisible();
       await expect(page.getByText('$25')).toBeVisible();
-    }).toPass({});
-
-    // Check for anonymous supporter note
-    await expect(
-      page.getByText('Love this application, happy to support!'),
-    ).toBeVisible();
-    await expect(page.getByText(/anonymous supporter/i)).toBeVisible();
-
-    // Check for Jane Smith's note
-    await expect(page.getByText('Thanks for building this!')).toBeVisible();
-    await expect(page.getByText('Jane Smith')).toBeVisible();
-  });
-
-  test('should display note amounts with currency formatting', async ({
-    page,
-  }) => {
-    await navigateTo(page, '/notes');
-
-    // Wait for notes to load with toPass
-    await expect(async () => {
-      await expect(page.getByText('John Doe')).toBeVisible();
-      await expect(page.getByText('$25')).toBeVisible();
       await expect(page.getByText('$50')).toBeVisible();
       await expect(page.getByText('$10')).toBeVisible();
-    }).toPass({});
-  });
-
-  test('should display dates for notes', async ({ page }) => {
-    await navigateTo(page, '/notes');
-
-    // Wait for notes to load and check date
-    await expect(async () => {
-      await expect(page.getByText('John Doe')).toBeVisible();
       await expect(
         page.getByText(/jan.*15.*2026|15.*jan.*2026/i),
       ).toBeVisible();
     }).toPass({});
+
+    await expect(
+      page.getByText('Love this application, happy to support!'),
+    ).toBeVisible();
+    await expect(page.getByText(/anonymous supporter/i)).toBeVisible();
+    await expect(page.getByText('Thanks for building this!')).toBeVisible();
+    await expect(page.getByText('Jane Smith')).toBeVisible();
   });
 
   test('should show empty state when no notes exist', async ({ page }) => {

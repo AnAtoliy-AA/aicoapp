@@ -659,8 +659,11 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
     if (lastFen) {
       const restored = parseFen(lastFen);
       newState.board = restored;
+      const fenTurn = lastFen.split(' ')[1];
+      if (fenTurn === 'w' || fenTurn === 'b') {
+        newState.currentTurnColor = fenTurn === 'w' ? 'white' : 'black';
+      }
     }
-    newState.currentTurnColor = state.currentTurnColor === 'white' ? 'black' : 'white';
     newState.takebackOfferedBy = null;
     newState.takebackMoveIndex = null;
     newState.isCheck = false;
