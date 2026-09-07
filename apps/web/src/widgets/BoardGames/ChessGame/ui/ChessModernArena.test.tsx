@@ -70,6 +70,14 @@ describe('ChessModernArena Components', () => {
     expect(screen.getByText('M3')).toBeDefined();
   });
 
+  it('renders EvalBar in horizontal orientation', () => {
+    render(
+      <EvalBar evalScore={210} isFlipped={false} orientation="horizontal" />,
+    );
+    expect(screen.getByLabelText('Evaluation: +2.1')).toBeDefined();
+    expect(screen.getByText('+2.1')).toBeDefined();
+  });
+
   it('renders ChessPlayerHud with player info, clock, and material diff', () => {
     const board = createBoard();
     render(

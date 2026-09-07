@@ -6,12 +6,14 @@ interface EvalBarProps {
   evalScore: number | null;
   mateScore?: number | null;
   isFlipped?: boolean;
+  orientation?: 'vertical' | 'horizontal';
 }
 
 export function EvalBar({
   evalScore,
   mateScore,
   isFlipped = false,
+  orientation = 'vertical',
 }: EvalBarProps) {
   const isWhiteWinning = useMemo(() => {
     if (mateScore != null) return mateScore > 0;
@@ -40,21 +42,54 @@ export function EvalBar({
   }, [evalScore, mateScore]);
 
   const clampedHeight = Math.max(2, Math.min(98, Math.round(bottomHeight)));
-  const badgePosition = Math.max(10, Math.min(90, clampedHeight));
+  const badgePosition = Math.max(12, Math.min(88, clampedHeight));
+
+  if (orientation === 'horizontal') {
+    return (
+      <div
+        className="w-full flex items-center gap-2 select-none px-1 py-0.5"
+        title={`Evaluation: ${evalLabel}`}
+        aria-label={`Evaluation: ${evalLabel}`}
+      >
+        <span
+          className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[11px] font-black font-mono leading-none tracking-tight tabular-nums shadow-sm border shrink-0 whitespace-nowrap ${
+            isWhiteWinning
+              ? 'bg-white text-zinc-950 border-black/20 shadow-black/25'
+              : 'bg-zinc-950 text-white border-white/30 shadow-black/50'
+          }`}
+        >
+          {evalLabel}
+        </span>
+
+        <div
+          className={`relative flex-1 h-2 rounded-full overflow-hidden border border-[var(--glassBorder)] shadow-inner transition-all duration-300 ${
+            isFlipped ? 'bg-slate-100' : 'bg-zinc-800'
+          }`}
+        >
+          <div
+            className={`h-full transition-all duration-500 ease-out rounded-full ${
+              isFlipped ? 'bg-zinc-800' : 'bg-slate-100'
+            }`}
+            style={{ width: `${clampedHeight}%` }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
-      className="relative h-full flex items-center select-none py-0.5"
+      className="relative h-full flex items-center select-none py-0.5 overflow-visible"
       title={`Evaluation: ${evalLabel}`}
       aria-label={`Evaluation: ${evalLabel}`}
     >
-      <div className="relative h-full w-6 sm:w-10 shrink-0">
+      <div className="relative h-full w-10 sm:w-11 shrink-0 overflow-visible">
         <div
-          className="absolute right-0.5 sm:right-1 -translate-y-1/2 transition-all duration-500 ease-out pointer-events-none z-20"
+          className="absolute right-1 -translate-y-1/2 transition-all duration-500 ease-out pointer-events-none z-20"
           style={{ bottom: `${badgePosition}%` }}
         >
           <span
-            className={`inline-flex items-center justify-center px-1 sm:px-1.5 py-0.5 rounded-md text-[10px] sm:text-[13px] font-black font-mono leading-none tracking-tight tabular-nums shadow-md border whitespace-nowrap ${
+            className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[11px] sm:text-[13px] font-black font-mono leading-none tracking-tight tabular-nums shadow-md border whitespace-nowrap ${
               isWhiteWinning
                 ? 'bg-white text-zinc-950 border-black/20 shadow-black/25'
                 : 'bg-zinc-950 text-white border-white/30 shadow-black/50'

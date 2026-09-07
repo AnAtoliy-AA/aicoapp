@@ -143,24 +143,49 @@ function ChessBoardPanelImpl({
         }
       : lastMove;
 
+  const topPlayerHud = (
+    <ChessPlayerHud
+      playerId={topPlayer?.playerId ?? ''}
+      name={topName}
+      color={topColor}
+      isActive={snapshot.currentTurnColor === topColor}
+      isGameOver={isGameOver}
+      remainingSeconds={snapshot.clocks?.[topColor]?.remainingSeconds ?? null}
+      incrementSeconds={snapshot.timeControl?.incrementSeconds}
+      board={snapshot.board}
+      pieceStyle={pieceStyle}
+    />
+  );
+
+  const bottomPlayerHud = (
+    <ChessPlayerHud
+      playerId={bottomPlayer?.playerId ?? ''}
+      name={bottomName}
+      color={bottomColor}
+      isActive={snapshot.currentTurnColor === bottomColor}
+      isGameOver={isGameOver}
+      remainingSeconds={
+        snapshot.clocks?.[bottomColor]?.remainingSeconds ?? null
+      }
+      incrementSeconds={snapshot.timeControl?.incrementSeconds}
+      board={snapshot.board}
+      pieceStyle={pieceStyle}
+    />
+  );
+
   return (
     <div className={cx('chess-arena-root', isFullscreen && 'is-fullscreen')}>
       <div
         className={cx('chess-board-column', isFullscreen && 'is-fullscreen')}
       >
-        <div className="chess-hud-row">
-          <ChessPlayerHud
-            playerId={topPlayer?.playerId ?? ''}
-            name={topName}
-            color={topColor}
-            isActive={snapshot.currentTurnColor === topColor}
-            isGameOver={isGameOver}
-            remainingSeconds={
-              snapshot.clocks?.[topColor]?.remainingSeconds ?? null
-            }
-            incrementSeconds={snapshot.timeControl?.incrementSeconds}
-            board={snapshot.board}
-            pieceStyle={pieceStyle}
+        <div className="chess-hud-row">{topPlayerHud}</div>
+
+        <div className="chess-eval-horizontal">
+          <EvalBar
+            evalScore={liveEval?.cp ?? null}
+            mateScore={liveEval?.mate ?? null}
+            isFlipped={isFlipped}
+            orientation="horizontal"
           />
         </div>
 
@@ -171,6 +196,7 @@ function ChessBoardPanelImpl({
                 evalScore={liveEval?.cp ?? null}
                 mateScore={liveEval?.mate ?? null}
                 isFlipped={isFlipped}
+                orientation="vertical"
               />
             </div>
 
@@ -206,24 +232,14 @@ function ChessBoardPanelImpl({
           </div>
         </div>
 
-        <div className="chess-hud-row">
-          <ChessPlayerHud
-            playerId={bottomPlayer?.playerId ?? ''}
-            name={bottomName}
-            color={bottomColor}
-            isActive={snapshot.currentTurnColor === bottomColor}
-            isGameOver={isGameOver}
-            remainingSeconds={
-              snapshot.clocks?.[bottomColor]?.remainingSeconds ?? null
-            }
-            incrementSeconds={snapshot.timeControl?.incrementSeconds}
-            board={snapshot.board}
-            pieceStyle={pieceStyle}
-          />
-        </div>
+        <div className="chess-hud-row">{bottomPlayerHud}</div>
       </div>
 
       <div className="chess-console-column">
+        <div className="chess-landscape-hud chess-landscape-hud-top">
+          {topPlayerHud}
+        </div>
+
         <ChessGameConsole
           snapshot={snapshot}
           myColor={myColor}
@@ -249,6 +265,10 @@ function ChessBoardPanelImpl({
           onExportPgn={onExportPgn}
           onToggleConfirmMoves={onToggleConfirmMoves}
         />
+
+        <div className="chess-landscape-hud chess-landscape-hud-bottom">
+          {bottomPlayerHud}
+        </div>
       </div>
     </div>
   );
