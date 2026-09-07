@@ -173,6 +173,7 @@ export const frMessages = {
       atomicDesc: 'Les captures font exploser les pièces',
       noClock: 'Sans horloge',
       unlimitedTime: 'Temps illimité',
+      bullet: 'Bullet',
       blitz: 'Blitz',
       rapid: 'Rapide',
       classical: 'Classique',
@@ -180,6 +181,7 @@ export const frMessages = {
       medium: 'Moyen',
       hard: 'Difficile',
       botPersonality: 'Personnalité du Bot',
+      selectBot: 'Sélectionner un bot',
     },
     profile: {
       notFound: 'Profil non trouvé',

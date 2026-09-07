@@ -340,6 +340,15 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const currentClock = state.clocks[state.currentTurnColor];
     if (!currentClock) return;
 
+    // First move not made yet — check 20s abort window
+    if (currentClock.lastMoveTimestamp === 0) {
+      if (Date.now() - state.gameCreatedAt >= 20_000) {
+        const p = state.players.find((p) => p.color === state.currentTurnColor);
+        if (p) await this.runAction(p.playerId, session.roomId, 'forfeit', {});
+      }
+      return;
+    }
+
     const elapsedMs = Date.now() - currentClock.lastMoveTimestamp;
 
     if (isDaily) {

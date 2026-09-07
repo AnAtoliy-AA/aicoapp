@@ -52,7 +52,7 @@ export interface ChessOptions {
 }
 
 export type TimeControlType = 'bullet' | 'blitz' | 'rapid' | 'classical' | 'daily';
-export type TimeIncrement = 0 | 1 | 3 | 5 | 10 | 15 | 30;
+export type TimeIncrement = 0 | 1 | 2 | 3 | 5 | 10 | 15 | 30;
 
 export interface TimeControl {
   type: TimeControlType;
@@ -74,6 +74,7 @@ export interface LegalMove {
 
 export interface ChessState extends BaseGameState {
   variant: ChessVariant;
+  gameCreatedAt: number;
   timeControl: TimeControl | null;
   botDifficulty?: AiDifficulty;
   botPersonality?: string;

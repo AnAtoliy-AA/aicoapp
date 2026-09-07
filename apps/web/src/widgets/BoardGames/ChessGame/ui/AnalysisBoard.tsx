@@ -31,6 +31,7 @@ function parseFullFen(fen: string): ChessState | null {
     const castling = parts[2] ?? '-';
     return {
       variant: 'standard',
+      gameCreatedAt: Date.now(),
       timeControl: null,
       board,
       currentTurnColor: turn,

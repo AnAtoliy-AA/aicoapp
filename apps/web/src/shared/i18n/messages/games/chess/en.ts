@@ -182,6 +182,7 @@ export const enMessages = {
       medium: 'Medium',
       hard: 'Hard',
       botPersonality: 'Bot Personality',
+      selectBot: 'Select a bot',
     },
     profile: {
       notFound: 'Profile not found',

@@ -5,6 +5,7 @@ import type { ChessClientState } from '../types';
 describe('calculateOptimisticChessState', () => {
   const baseSnapshot: ChessClientState = {
     phase: 'playing',
+    gameCreatedAt: Date.now(),
     variant: 'standard',
     timeControl: null,
     board: [

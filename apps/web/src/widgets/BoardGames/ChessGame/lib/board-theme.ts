@@ -138,12 +138,12 @@ export function useBoardThemePreference() {
 export function getBoardThemeCssVars(
   theme: BoardThemeOption | null,
 ): Record<string, string> {
-  if (!theme) return {};
+  const t = theme ?? BOARD_THEME_OPTIONS[0];
   return {
-    '--chess-light-square': theme.lightSquare,
-    '--chess-dark-square': theme.darkSquare,
-    '--chess-legal-dot': theme.legalDot,
-    '--chess-last-move': theme.lastMove,
-    '--chess-coord': theme.coord,
+    '--chess-light-square': t.lightSquare,
+    '--chess-dark-square': t.darkSquare,
+    '--chess-legal-dot': t.legalDot,
+    '--chess-last-move': t.lastMove,
+    '--chess-coord': t.coord,
   };
 }

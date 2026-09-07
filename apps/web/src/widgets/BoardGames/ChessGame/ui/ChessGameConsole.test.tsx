@@ -6,6 +6,7 @@ import type { ChessClientState } from '../types';
 describe('ChessGameConsole', () => {
   const defaultSnapshot: ChessClientState = {
     phase: 'playing',
+    gameCreatedAt: Date.now(),
     variant: 'standard',
     timeControl: null,
     board: Array.from({ length: 8 }, () => Array(8).fill(null)),

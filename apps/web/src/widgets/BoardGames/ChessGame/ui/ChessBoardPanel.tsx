@@ -15,6 +15,7 @@ import {
   getBoardThemeCssVars,
 } from '../lib/board-theme';
 import type { UseChessCoachResult } from '../hooks/useChessCoach';
+import { useClockCountdown } from '../hooks/useClockCountdown';
 import './styles/chess-arena.scss';
 import type { ChessClientState, BoardPosition, File, Rank } from '../types';
 import type { TranslationKey } from '@/shared/lib/useTranslation';
@@ -134,6 +135,12 @@ function ChessBoardPanelImpl({
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
   const { activeBoardTheme } = useBoardThemePreference();
   const isFullscreen = useWidgetFullscreen();
+  const liveClocks = useClockCountdown({
+    clocks: snapshot?.clocks ?? null,
+    currentTurnColor: snapshot?.currentTurnColor ?? 'white',
+    isGameOver,
+    gameCreatedAt: snapshot?.gameCreatedAt ?? Date.now(),
+  });
 
   const { snapshot: sessionSnapshot } = useSessionTokens();
   const isAdmin = sessionSnapshot.role === 'admin';
@@ -189,7 +196,11 @@ function ChessBoardPanelImpl({
       color={topColor}
       isActive={snapshot.currentTurnColor === topColor}
       isGameOver={isGameOver}
-      remainingSeconds={snapshot.clocks?.[topColor]?.remainingSeconds ?? null}
+      remainingSeconds={
+        liveClocks?.[topColor] ??
+        snapshot.clocks?.[topColor]?.remainingSeconds ??
+        null
+      }
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
@@ -205,7 +216,9 @@ function ChessBoardPanelImpl({
       isActive={snapshot.currentTurnColor === bottomColor}
       isGameOver={isGameOver}
       remainingSeconds={
-        snapshot.clocks?.[bottomColor]?.remainingSeconds ?? null
+        liveClocks?.[bottomColor] ??
+        snapshot.clocks?.[bottomColor]?.remainingSeconds ??
+        null
       }
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
