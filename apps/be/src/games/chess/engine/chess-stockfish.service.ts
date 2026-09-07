@@ -233,32 +233,18 @@ export class ChessStockfishService implements OnModuleDestroy {
     },
   ): Promise<{ bestMove: string; ponder: string }> {
     const commands: string[] = [];
-
-    if (uciOptions) {
-      if (uciOptions.skillLevel !== undefined) {
-        commands.push(
-          `setoption name Skill Level value ${uciOptions.skillLevel}`,
-        );
-      }
-      if (uciOptions.contempt !== undefined) {
-        commands.push(`setoption name Contempt value ${uciOptions.contempt}`);
-      }
-      if (uciOptions.aggression !== undefined) {
-        commands.push(
-          `setoption name Aggression value ${uciOptions.aggression}`,
-        );
-      }
-    }
-
+    if (uciOptions?.skillLevel !== undefined)
+      commands.push(
+        `setoption name Skill Level value ${uciOptions.skillLevel}`,
+      );
+    if (uciOptions?.contempt !== undefined)
+      commands.push(`setoption name Contempt value ${uciOptions.contempt}`);
+    if (uciOptions?.aggression !== undefined)
+      commands.push(`setoption name Aggression value ${uciOptions.aggression}`);
     commands.push(`position fen ${fen}`);
     commands.push(`go depth ${depth} movetime ${timeMs}`);
-
     const result = await this.sendCommands(commands, timeMs + 10000);
-
-    return {
-      bestMove: result.pv[0] ?? '',
-      ponder: result.pv[1] ?? '',
-    };
+    return { bestMove: result.pv[0] ?? '', ponder: result.pv[1] ?? '' };
   }
 
   /**

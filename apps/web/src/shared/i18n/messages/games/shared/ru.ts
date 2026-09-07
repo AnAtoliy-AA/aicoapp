@@ -379,11 +379,7 @@ export const ruMessages = {
       race: 'Гонка',
       puzzle: 'Головоломка',
     },
-    tags: {
-      strategy: 'Стратегия',
-      cards: 'Карты',
-      action: 'Экшн',
-    },
+    tags: { strategy: 'Стратегия', cards: 'Карты', action: 'Экшн' },
   },
   connectionOverlay: {
     title: 'Соединение потеряно',
