@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.45] - 2026-09-07
+
+### Added
+- move streamer assists to admin console, fix bot takeback/draw, and clean up board overlay
+- add desktop streamer arrows, threat overlays, multi-move premoves, and game sound integration
+- modernize arena UI, sprite piece set, and responsive mobile layouts
+
+### Fixed
+- streamline landscape console layout and declutter mobile telemetry
+- optimize portrait and landscape mobile layouts with responsive eval bar
+
+### Improved
+- eliminate redundant cell re-renders with custom memo comparator and memoized board props
+
+
 ## [1.28.44] - 2026-09-07
 
 ### Fixed
