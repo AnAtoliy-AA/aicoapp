@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.41] - 2026-09-07
+
+### Added
+- add sound effects to all 17 games
+
+### Fixed
+- prevent GameMusic crash from destroying page layout
+- fix flaky solo control panel E2E test
+
+
 ## [1.28.40] - 2026-09-07
 
 ### Added
