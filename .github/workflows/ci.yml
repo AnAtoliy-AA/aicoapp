@@ -246,20 +246,10 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '24'
-          cache: 'pnpm'
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Download All Shard Reports
         uses: actions/download-artifact@v8
@@ -269,7 +259,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge Reports
-        run: pnpm --filter web exec playwright merge-reports --html all-reports/
+        run: npx playwright merge-reports all-reports/
 
       - name: Upload Merged Report
         if: always()
