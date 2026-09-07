@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.39] - 2026-09-07
+
+### Fixed
+- deduplicate emotes and enforce auth for guest users
+
+
 ## [1.28.38] - 2026-09-07
 
 ### Added
