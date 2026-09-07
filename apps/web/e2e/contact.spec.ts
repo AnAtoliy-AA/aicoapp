@@ -58,7 +58,7 @@ test.describe('Contact Form', () => {
     // Poll a timestamp rather than blind-delaying so Playwright can bail
     // early if the timeout budget is exceeded.
     const mountTime = Date.now();
-    await page.waitForFunction(() => Date.now() - mountTime >= 2200);
+    await page.waitForFunction((t) => Date.now() - t >= 2200, mountTime);
 
     const submitBtn = page.getByTestId('contact-submit-button');
     await submitBtn.scrollIntoViewIfNeeded();
