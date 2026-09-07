@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.38] - 2026-09-07
+
+### Added
+- add Stockfish 19 to dev environment on OCI
+- add coordinate trainer, improve landing page, add opening explorer
+- comprehensive improvements to beat competitors
+
+### Fixed
+- remove unused useMemo and useTranslation from CoordinateTrainer
+- type-annotate client.data access in matchmaking gateway
+- revert handleError change that broke gateway tests
+
+
 ## [1.28.37] - 2026-09-07
 
 ### Fixed
