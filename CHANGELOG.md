@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.42] - 2026-09-07
+
+### Added
+- 40 bots, 9 difficulty levels, Stockfish personality, admin config
+
+### Fixed
+- reduce chess-stockfish.service.ts and ru.ts under 500 lines
+- resolve all ESLint warnings
+- sanitize game settings to prevent NoSQL injection
+- update test files for 9 difficulty levels and admin config
+
+
 ## [1.28.41] - 2026-09-07
 
 ### Added
