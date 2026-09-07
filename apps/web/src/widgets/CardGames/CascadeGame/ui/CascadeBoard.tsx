@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { Card } from './Card';
 import { ColorPicker } from './ColorPicker';
 import { useCascadeTheme } from '../lib/CascadeThemeContext';
@@ -52,6 +53,7 @@ export function CascadeBoard({
   const discardRef = useRef<HTMLDivElement | null>(null);
   const { node: flyNode, launch: launchFly } = useCardFly();
   const toasts = useActionToasts(snapshot.topCard, theme.symbols);
+  const { play } = useGameSound('cascade_v1');
 
   const cascadeOpen =
     snapshot.options.lastCardCallEnabled && !!snapshot.lastCardWindow;
@@ -94,10 +96,11 @@ export function CascadeBoard({
         setPendingWildCard(card.id);
         return;
       }
+      play('play');
       flyToDiscard(card.id, card);
       onPlayCard(card.id);
     },
-    [myTurn, disabled, playableIds, flyToDiscard, onPlayCard],
+    [myTurn, disabled, playableIds, flyToDiscard, onPlayCard, play],
   );
 
   const handlePickColor = (color: ActiveColor) => {

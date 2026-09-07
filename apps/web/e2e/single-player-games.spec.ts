@@ -382,29 +382,31 @@ test.describe('Single Player Puzzle Games', () => {
     });
 
     const soundBtn = page.getByTestId('solo-sound-toggle-button');
-    await expect(soundBtn).toBeVisible();
+    await expect(soundBtn).toHaveAttribute('aria-pressed', /true|false/);
     const initialSound = await soundBtn.getAttribute('aria-pressed');
+    const expectedSound = initialSound === 'true' ? 'false' : 'true';
     await soundBtn.click();
-    await expect(soundBtn).toHaveAttribute(
+    await expect(page.getByTestId('solo-sound-toggle-button')).toHaveAttribute(
       'aria-pressed',
-      initialSound === 'true' ? 'false' : 'true',
+      expectedSound,
     );
-    await soundBtn.click();
-    await expect(soundBtn).toHaveAttribute(
+    await page.getByTestId('solo-sound-toggle-button').click();
+    await expect(page.getByTestId('solo-sound-toggle-button')).toHaveAttribute(
       'aria-pressed',
       initialSound ?? 'true',
     );
 
     const musicBtn = page.getByTestId('solo-music-toggle-button');
-    await expect(musicBtn).toBeVisible();
+    await expect(musicBtn).toHaveAttribute('aria-pressed', /true|false/);
     const initialMusic = await musicBtn.getAttribute('aria-pressed');
+    const expectedMusic = initialMusic === 'true' ? 'false' : 'true';
     await musicBtn.click();
-    await expect(musicBtn).toHaveAttribute(
+    await expect(page.getByTestId('solo-music-toggle-button')).toHaveAttribute(
       'aria-pressed',
-      initialMusic === 'true' ? 'false' : 'true',
+      expectedMusic,
     );
-    await musicBtn.click();
-    await expect(musicBtn).toHaveAttribute(
+    await page.getByTestId('solo-music-toggle-button').click();
+    await expect(page.getByTestId('solo-music-toggle-button')).toHaveAttribute(
       'aria-pressed',
       initialMusic ?? 'true',
     );

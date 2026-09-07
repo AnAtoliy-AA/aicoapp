@@ -15,6 +15,7 @@ import { usePostGameAnalytics } from '@/features/games/hooks/usePostGameAnalytic
 import { PostGameAnalytics } from '@/features/games/ui/PostGameAnalytics';
 import { resolveDisplayName } from '@/features/games/lib/resolveDisplayName';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { GoGameProps } from '../types';
 import { useGoState } from '../hooks/useGoState';
 import { useGoActions } from '../hooks/useGoActions';
@@ -51,6 +52,16 @@ function GoGameImpl({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('go_v1');
+
+  const handlePlaceStone = useCallback(
+    (...args: Parameters<typeof placeStone>) => {
+      play('place');
+      return placeStone(...args);
+    },
+    [placeStone, play],
+  );
 
   const myColor = useMemo(() => {
     if (!snapshot || !currentUserId) return null;
@@ -127,8 +138,9 @@ function GoGameImpl({
   }, [snapshot, isGameOver, result, myTurn, t]);
 
   const handlePass = useCallback(() => {
+    play('click');
     passTurn();
-  }, [passTurn]);
+  }, [passTurn, play]);
 
   if (!room) return null;
 
@@ -181,7 +193,7 @@ function GoGameImpl({
               ariaLabel={t('games.go_v1.board.ariaLabel', {
                 size: snapshot.boardSize ?? snapshot.options.boardSize ?? 9,
               })}
-              onCellClick={placeStone}
+              onCellClick={handlePlaceStone}
             />
             {!isGameOver && myTurn ? (
               <Button

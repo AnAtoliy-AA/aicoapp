@@ -14,6 +14,7 @@ import { usePostGameAnalytics } from '@/features/games/hooks/usePostGameAnalytic
 import { PostGameAnalytics } from '@/features/games/ui/PostGameAnalytics';
 import { resolveDisplayName } from '@/features/games/lib/resolveDisplayName';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { reorderRoomParticipants } from '@/shared/api/gamesApi';
 import type {
   BackgammonGameProps,
@@ -80,6 +81,21 @@ function BackgammonGameImpl({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('backgammon_v1');
+
+  const handleRoll = useCallback(() => {
+    play('roll');
+    rollDice();
+  }, [rollDice, play]);
+
+  const handleMove = useCallback(
+    (...args: Parameters<typeof moveChecker>) => {
+      play('move');
+      return moveChecker(...args);
+    },
+    [moveChecker, play],
+  );
 
   const resolveDisplayNameBound = useCallback(
     (id?: string | null) =>
@@ -203,8 +219,8 @@ function BackgammonGameImpl({
         <BackgammonBoard
           currentUserId={currentUserId}
           myTurn={myTurn}
-          onMove={moveChecker}
-          onRoll={rollDice}
+          onMove={handleMove}
+          onRoll={handleRoll}
           snapshot={snapshot}
         />
       ) : null}

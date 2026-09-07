@@ -15,6 +15,7 @@ import { usePostGameAnalytics } from '@/features/games/hooks/usePostGameAnalytic
 import { PostGameAnalytics } from '@/features/games/ui/PostGameAnalytics';
 import { resolveDisplayName } from '@/features/games/lib/resolveDisplayName';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { HeartsGameProps } from '../types';
 import { useHeartsState } from '../hooks/useHeartsState';
 import { useHeartsActions } from '../hooks/useHeartsActions';
@@ -57,6 +58,8 @@ function HeartsGameImpl({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('hearts_v1');
 
   const { pendingStart, markPendingStart, clearPendingStart } = usePendingStart(
     session?.id,
@@ -166,16 +169,18 @@ function HeartsGameImpl({
 
   const handleConfirmPass = useCallback(() => {
     if (selectedPassCards.length === 3) {
+      play('deal');
       passCards(selectedPassCards);
       setSelectedPassCards([]);
     }
-  }, [selectedPassCards, passCards]);
+  }, [selectedPassCards, passCards, play]);
 
   const handlePlayCard = useCallback(
     (card: string) => {
+      play('play');
       playCard(card);
     },
-    [playCard],
+    [playCard, play],
   );
 
   const players = useMemo(

@@ -38,6 +38,7 @@ import type { GameVariant } from '@arcadeum/ui';
 import type { UseGameActionsReturn } from '@/features/games/hooks/useGameActions';
 import type { RematchInvitation } from '@/features/games/hooks/useRematch';
 import { useMediaQuery } from '@/shared/hooks/useMediaQuery';
+import { useGameSound } from '@/shared/lib/game-sounds';
 
 interface ActiveGameViewProps {
   currentUserId: string | null;
@@ -138,6 +139,7 @@ export function ActiveGameView({
 
   const showResultModal = isGameOver && !modalDismissed && hasSeenActiveGame;
   useWebGameHaptics(isMyTurn);
+  const { play } = useGameSound('critical_v1');
 
   // Record game result to local stats
   const criticalResult = useMemo(() => {
@@ -265,12 +267,20 @@ export function ActiveGameView({
     handleConfirmStash,
     handleConfirmMark,
     handleConfirmStealDraw,
-    handlePlayActionCard,
+    handlePlayActionCard: _handlePlayActionCard,
     handleCloseTargetedAttackModal,
     handleConfirmTargetedAttack,
     handleConfirmAlterFuture,
     handleConfirmSmite,
   } = gameHandlers;
+
+  const handlePlayActionCard = useCallback(
+    (...args: Parameters<typeof _handlePlayActionCard>) => {
+      play('play');
+      return _handlePlayActionCard(...args);
+    },
+    [_handlePlayActionCard, play],
+  );
 
   // Autoplay hook integration
   const {

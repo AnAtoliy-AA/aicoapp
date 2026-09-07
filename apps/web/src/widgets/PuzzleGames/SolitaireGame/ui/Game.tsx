@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { useTrackSoloGameStarted } from '@/shared/analytics/useTrackSoloGameStarted';
 import type { GameResultStats } from '@/features/games/ui/GameResultStatsGrid';
@@ -12,9 +12,10 @@ import {
   SoloActionButton,
 } from '@/features/games/ui/SoloGameContainer';
 import { useSoloTheme } from '@/features/games/store/soloThemeStore';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { SolitaireThemeProvider } from '../lib/SolitaireThemeContext';
 import { useSolitaireStore } from '../store/solitaireStore';
-import type { MoveSource } from '../types';
+import type { MoveSource, MoveTarget } from '../types';
 import { SolitaireBoard } from './SolitaireBoard';
 
 export default function SolitaireGame() {
@@ -38,10 +39,26 @@ function SolitaireTable() {
   const move = useSolitaireStore((state) => state.move);
   const newGame = useSolitaireStore((state) => state.newGame);
 
+  const { play } = useGameSound('solitaire_v1');
   const [selection, setSelection] = useState<MoveSource | null>(null);
   const isRunning = finishedAt === null;
   const pause = useSoloPause(isRunning, finishedAt);
   const timer = useSoloTimer(isRunning, startedAt, pause.isPaused);
+
+  const handleDraw = useCallback(() => {
+    if (pause.isPaused) return;
+    play('card_flip');
+    draw();
+  }, [draw, pause.isPaused, play]);
+
+  const handleMove = useCallback(
+    (source: MoveSource, target: MoveTarget) => {
+      if (pause.isPaused) return;
+      play('card_place');
+      move(source, target);
+    },
+    [move, pause.isPaused, play],
+  );
 
   const stats: GameResultStats | null = useMemo(() => {
     if (!finished) return null;
@@ -135,8 +152,8 @@ function SolitaireTable() {
         game={game}
         selection={selection}
         onSelect={pause.isPaused ? () => undefined : setSelection}
-        onDraw={pause.isPaused ? () => undefined : draw}
-        onMove={pause.isPaused ? () => undefined : move}
+        onDraw={handleDraw}
+        onMove={handleMove}
       />
     </SoloGameContainer>
   );

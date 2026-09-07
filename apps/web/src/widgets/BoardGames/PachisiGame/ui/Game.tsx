@@ -14,6 +14,7 @@ import { usePostGameAnalytics } from '@/features/games/hooks/usePostGameAnalytic
 import { PostGameAnalytics } from '@/features/games/ui/PostGameAnalytics';
 import { resolveDisplayName } from '@/features/games/lib/resolveDisplayName';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { reorderRoomParticipants } from '@/shared/api/gamesApi';
 import type { PachisiGameProps, PachisiOptions, PachisiTheme } from '../types';
 import { usePachisiState } from '../hooks/usePachisiState';
@@ -75,6 +76,26 @@ function PachisiGameImpl({
     userId: currentUserId,
     onActionStart: (action) => setActionBusy(action),
   });
+
+  const { play } = useGameSound('pachisi_v1');
+
+  const handleRoll = useCallback(() => {
+    play('roll');
+    rollDice();
+  }, [rollDice, play]);
+
+  const handleMove = useCallback(
+    (...args: Parameters<typeof moveToken>) => {
+      play('move');
+      return moveToken(...args);
+    },
+    [moveToken, play],
+  );
+
+  const handlePass = useCallback(() => {
+    play('click');
+    passTurn();
+  }, [passTurn, play]);
 
   const resolveDisplayNameBound = useCallback(
     (id?: string | null) =>
@@ -194,9 +215,9 @@ function PachisiGameImpl({
           actionBusy={Boolean(actionBusy)}
           currentUserId={currentUserId}
           myTurn={myTurn}
-          onMove={moveToken}
-          onPassTurn={passTurn}
-          onRoll={rollDice}
+          onMove={handleMove}
+          onPassTurn={handlePass}
+          onRoll={handleRoll}
           snapshot={snapshot}
         />
       ) : null}

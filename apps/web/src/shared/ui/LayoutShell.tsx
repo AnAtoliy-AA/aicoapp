@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { MusicErrorBoundary } from './GuardedGameMusic';
 
 const ConnectionBanner = dynamic(
   () => import('./ConnectionBanner').then((m) => m.ConnectionBanner),
@@ -64,7 +65,9 @@ export function LayoutShell({ children }: { children: ReactNode }) {
       <ConnectionBanner />
       <RouteChangeAnnouncer />
       {children}
-      <GameMusic />
+      <MusicErrorBoundary>
+        <GameMusic />
+      </MusicErrorBoundary>
     </>
   );
 }

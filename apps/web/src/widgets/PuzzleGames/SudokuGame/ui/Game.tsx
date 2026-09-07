@@ -16,6 +16,7 @@ import {
   useSoloFullscreen,
 } from '@/features/games/ui/SoloGameContainer';
 import { useSoloTheme } from '@/features/games/store/soloThemeStore';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { SudokuThemeProvider } from '../lib/SudokuThemeContext';
 import { useSudokuStore } from '../store/sudokuStore';
 import type { Difficulty } from '../types';
@@ -56,6 +57,7 @@ function SudokuTable() {
   const isRunning = finishedAt === null;
   const pause = useSoloPause(isRunning, finishedAt);
   const timer = useSoloTimer(isRunning, startedAt, pause.isPaused);
+  const { play } = useGameSound('sudoku_v1');
 
   const digitCounts = useMemo(() => {
     const counts: Record<number, number> = {
@@ -80,16 +82,18 @@ function SudokuTable() {
   const applyDigit = useCallback(
     (digit: number) => {
       if (selected === null || pause.isPaused) return;
+      play('place_digit');
       if (notesMode) note(selected, digit);
       else setCell(selected, digit);
     },
-    [selected, pause.isPaused, notesMode, note, setCell],
+    [selected, pause.isPaused, notesMode, note, setCell, play],
   );
 
   const erase = useCallback(() => {
     if (selected === null || pause.isPaused) return;
+    play('click');
     setCell(selected, 0);
-  }, [selected, pause.isPaused, setCell]);
+  }, [selected, pause.isPaused, setCell, play]);
 
   const moveSelection = useCallback((deltaRow: number, deltaCol: number) => {
     setSelected((current) => {

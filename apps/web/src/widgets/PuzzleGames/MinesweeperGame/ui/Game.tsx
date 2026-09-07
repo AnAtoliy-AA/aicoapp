@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Button, Select } from '@arcadeum/ui';
 import { cx } from '@arcadeum/ui/utils/cx';
 import { useTranslation } from '@/shared/lib/useTranslation';
@@ -15,6 +15,7 @@ import {
   SoloActionButton,
 } from '@/features/games/ui/SoloGameContainer';
 import { useSoloTheme } from '@/features/games/store/soloThemeStore';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { MinesweeperThemeProvider } from '../lib/MinesweeperThemeContext';
 import { useMinesweeperStore } from '../store/minesweeperStore';
 import type { Difficulty } from '../types';
@@ -63,6 +64,7 @@ function MinesweeperTable() {
 
   const [flagMode, setFlagMode] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
+  const { play } = useGameSound('minesweeper_v1');
 
   const isRunning = startedAt !== null && finishedAt === null;
   const isGameOver = game.status === 'won' || game.status === 'lost';
@@ -72,6 +74,24 @@ function MinesweeperTable() {
   const elapsedSeconds =
     finished?.durationSeconds ??
     (startedAt !== null ? Math.floor(timer.elapsedMs / 1000) : 0);
+
+  const handleReveal = useCallback(
+    (index: number) => {
+      if (game.status !== 'playing') return;
+      play('reveal');
+      reveal(index);
+    },
+    [reveal, game.status, play],
+  );
+
+  const handleFlag = useCallback(
+    (index: number) => {
+      if (game.status !== 'playing') return;
+      play('flag');
+      flag(index);
+    },
+    [flag, game.status, play],
+  );
 
   const faceIcon =
     game.status === 'won'
@@ -236,8 +256,8 @@ function MinesweeperTable() {
       <MinesweeperBoard
         game={game}
         flagMode={flagMode}
-        onReveal={reveal}
-        onFlag={flag}
+        onReveal={handleReveal}
+        onFlag={handleFlag}
         onPressingChange={setIsPressing}
       />
     </SoloGameContainer>
