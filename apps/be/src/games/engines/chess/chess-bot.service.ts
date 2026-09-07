@@ -15,9 +15,8 @@ import type { GameSessionSummary } from '../../sessions/game-sessions.service';
 import { ChessBot } from '@arcadeum/games-core/games/chess/chess-bot';
 import {
   getBotPersonality,
-  type BotPersonality,
 } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
-import { getAiMoveDelayMs, isAiVsAiSession } from '../../common/ai-vs-ai';
+import { isAiVsAiSession } from '../../common/ai-vs-ai';
 import { ChessStockfishService } from '../../chess/engine/chess-stockfish.service';
 
 export interface ChessBotMovePayload {
@@ -59,25 +58,6 @@ export class ChessBotService extends ChessBot {
   }
   isBot(userId: string): boolean {
     return userId.startsWith('bot-');
-  }
-
-  private computeMoveDelay(
-    personality: BotPersonality | null,
-    startTime: number,
-  ): number {
-    const elapsed = Date.now() - startTime;
-    if (!personality) {
-      return Math.max(300, Math.min(800, 1500 - elapsed));
-    }
-    switch (personality.timeManagement) {
-      case 'blitz':
-        return Math.max(200, Math.min(500, 800 - elapsed));
-      case 'thinker':
-        return Math.max(500, Math.min(2000, 3000 - elapsed));
-      case 'steady':
-      default:
-        return Math.max(300, Math.min(1000, 1500 - elapsed));
-    }
   }
 
   async checkAndPlay(session: GameSessionSummary): Promise<void> {
@@ -155,13 +135,12 @@ export class ChessBotService extends ChessBot {
 
       const isExpert = state.botDifficulty === 'expert';
       let move: ChessMove | null = null;
-      const startTime = Date.now();
 
       if (isExpert && this.stockfishService?.isReady()) {
         const { toFen } =
           await import('@arcadeum/games-core/games/chess/chess-fen');
         const fen = toFen(state);
-        const sfResult = await this.stockfishService.getBestMove(fen, 20, 5000);
+        const sfResult = await this.stockfishService.getBestMove(fen, 15, 2000);
         if (sfResult.bestMove) {
           const fromStr = sfResult.bestMove.slice(0, 2);
           const toStr = sfResult.bestMove.slice(2, 4);
@@ -189,15 +168,10 @@ export class ChessBotService extends ChessBot {
 
       if (!move) {
         const timeBudget = this.computeTimeBudget(state);
-        move = this.findBestMoveWithTimeBudget(state, timeBudget, startTime);
+        move = this.findBestMoveWithTimeBudget(state, timeBudget);
       }
 
       if (!move) return;
-      const delay =
-        getAiMoveDelayMs(session) ??
-        this.computeMoveDelay(personality, startTime);
-      await new Promise((r) => setTimeout(r, delay));
-
       if (this.moveFn) {
         this.logger.log(
           `[Bot] ${currentId} moving ${state.currentTurnColor} in ${session.roomId}: ${move.from.file}${move.from.rank}-${move.to.file}${move.to.rank}`,

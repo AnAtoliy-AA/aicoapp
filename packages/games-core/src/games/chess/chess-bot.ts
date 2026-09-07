@@ -166,7 +166,7 @@ export class ChessBot {
   protected findBestMoveWithTimeBudget(
     state: ChessState,
     timeBudgetMs: number,
-    startTime: number,
+    startTime: number = Date.now(),
   ): ChessMove | null {
     const personality = this.currentPersonality;
     const difficulty = state.botDifficulty ?? this.currentDifficulty;
