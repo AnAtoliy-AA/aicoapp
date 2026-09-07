@@ -35,7 +35,7 @@ test.describe('Chat Interactions', () => {
       /Send a note to everyone|сообщение|message/i,
     );
 
-    await expect(input).toBeVisible({ timeout: 10000 });
+    await expect(input).toBeVisible();
     await expect(input).toBeEnabled();
 
     // For mobile chrome/webkit, standard click can be intercepted by scroll view overlaps
@@ -140,7 +140,7 @@ test.describe('Chat Interactions', () => {
 
     // Wait for the loading spinner to disappear to ensure messages are rendered
     const spinner = page.getByTestId('chat-loading-spinner');
-    await expect(spinner).not.toBeVisible({ timeout: 10000 });
+    await expect(spinner).not.toBeVisible();
 
     // Ensure the chat input is visible
     const input = page.getByPlaceholder(/message|сообщение|Type a message/i);
@@ -152,7 +152,7 @@ test.describe('Chat Interactions', () => {
 
     // Wait for messages to be loaded. We expect "Message 1" to be in the list.
     const firstMessage = page.getByText('Message 1').first();
-    await expect(firstMessage).toBeAttached({ timeout: 15000 });
+    await expect(firstMessage).toBeAttached();
 
     // Wait for the newest message to appear in the DOM
     const newestMessage = page

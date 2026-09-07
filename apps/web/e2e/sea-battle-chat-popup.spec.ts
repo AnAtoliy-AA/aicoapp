@@ -124,7 +124,6 @@ test.describe('Sea Battle Chat Message Popup', () => {
           !!store
         );
       },
-      { timeout: 60000 },
     );
 
     // On wide viewports GamePageLayout auto-opens the chat panel, which now
@@ -170,7 +169,7 @@ test.describe('Sea Battle Chat Message Popup', () => {
             return store?.getState().logs.some((l) => l.message === msg);
           }, expectedMsg);
         },
-        { timeout: 30000, intervals: [1000] },
+        { intervals: [1000] },
       )
       .toBe(true);
 
@@ -242,7 +241,6 @@ test.describe('Sea Battle Chat Message Popup', () => {
           !!store
         );
       },
-      { timeout: 60000 },
     );
 
     // On wide viewports GamePageLayout auto-opens the chat panel, which now
@@ -288,7 +286,7 @@ test.describe('Sea Battle Chat Message Popup', () => {
             return store?.getState().logs.some((l) => l.message === msg);
           }, expectedMsg);
         },
-        { timeout: 30000, intervals: [1000] },
+        { intervals: [1000] },
       )
       .toBe(true);
 
@@ -297,9 +295,7 @@ test.describe('Sea Battle Chat Message Popup', () => {
     await expect(popup).toBeVisible();
 
     // Wait for the auto-dismiss animation to complete (we set it to 30s in init script for stability, but Playwright will wait)
-    await expect(page.getByTestId('chat-message-popup')).not.toBeVisible({
-      timeout: 45000,
-    });
+    await expect(page.getByTestId('chat-message-popup')).not.toBeVisible();
   });
 
   test('should also show popup for own messages', async ({ page }) => {
@@ -363,7 +359,6 @@ test.describe('Sea Battle Chat Message Popup', () => {
           !!store
         );
       },
-      { timeout: 60000 },
     );
 
     // On wide viewports GamePageLayout auto-opens the chat panel, which now
@@ -409,7 +404,7 @@ test.describe('Sea Battle Chat Message Popup', () => {
             return store?.getState().logs.some((l) => l.message === msg);
           }, expectedMsg);
         },
-        { timeout: 30000, intervals: [1000] },
+        { intervals: [1000] },
       )
       .toBe(true);
 

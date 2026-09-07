@@ -66,17 +66,17 @@ export default defineConfig({
   // usually masking dev-server compile flake or a real perf regression — surface
   // them rather than hiding under a 2-minute budget. Slow Safari variants get
   // a project-level retry below to absorb the cold-compile first attempt.
-  timeout: 60000,
+  timeout: 30000,
   expect: {
-    timeout: 15000,
+    timeout: 5000,
   },
 
   use: {
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    actionTimeout: 10000,
+    navigationTimeout: 15000,
   },
 
   projects: [
@@ -109,11 +109,8 @@ export default defineConfig({
       name: 'webkit',
       // Safari + Next.js 16 dev server cold compile is reliably slow on the
       // first navigation. A second attempt against the now-warm cache passes
-      // — same pattern as the CI-wide retries=1. Bumping the per-test timeout
-      // gives the cold compile enough headroom that the retry isn't burnt on
-      // first-hit compilation either.
+      // — same pattern as the CI-wide retries=1.
       retries: 1,
-      timeout: 120_000,
       use: { ...devices['Desktop Safari'] },
     },
     {
@@ -130,13 +127,11 @@ export default defineConfig({
     {
       name: 'Mobile Safari',
       retries: 1,
-      timeout: 120_000,
       use: { ...devices['iPhone 12'] },
     },
     {
       name: 'Tablet Safari',
       retries: 1,
-      timeout: 120_000,
       use: { ...devices['iPad Pro 11'] },
     },
   ],
@@ -149,7 +144,7 @@ export default defineConfig({
           : 'pnpm --filter be dev',
       url: `${BE_URL}/health`,
       reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
+      timeout: 60 * 1000,
       env: {
         WEB_PORT: WEB_PORT,
         BE_PORT: BE_PORT,
@@ -190,7 +185,7 @@ export default defineConfig({
           : 'NEXT_PUBLIC_E2E=true pnpm run dev:next',
       url: BASE_URL,
       reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
+      timeout: 60 * 1000,
       env: {
         WEB_PORT: WEB_PORT,
         BE_PORT: BE_PORT,

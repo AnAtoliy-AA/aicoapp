@@ -54,17 +54,16 @@ test.describe('Contact Form', () => {
       .getByTestId('contact-message-textarea')
       .fill(`This is a great app! Run ${nonce}`);
 
-    // BE rejects submissions arriving < 2s after the form mount as bot
-    // pace. Wait past that bar before submitting.
+    // BE anti-bot: rejects submissions arriving < 2s after form mount.
+    // This is a hard backend requirement, not a configurable timeout.
+    // eslint-disable-next-line no-restricted-syntax
     await page.waitForTimeout(2200);
 
     const submitBtn = page.getByTestId('contact-submit-button');
     await submitBtn.scrollIntoViewIfNeeded();
     await submitBtn.click({ force: true });
 
-    await expect(page.getByTestId('contact-success-message')).toBeVisible({
-      timeout: 15000,
-    });
+    await expect(page.getByTestId('contact-success-message')).toBeVisible();
     await expect(page.locator('form')).not.toBeVisible({});
   });
 

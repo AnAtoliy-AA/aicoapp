@@ -78,7 +78,7 @@ test.describe('/wallet daily-reward card — DOM (mocked session)', () => {
     // skip if the card never appears (BE unreachable from SSR).
     const card = page.getByTestId('daily-reward-card');
     const cardVisible = await card
-      .waitFor({ state: 'visible', timeout: 4000 })
+      .waitFor({ state: 'visible' })
       .then(() => true)
       .catch(() => false);
 
@@ -112,7 +112,7 @@ test.describe('/wallet daily-reward card — DOM (mocked session)', () => {
 
     const cardVisible = await page
       .getByTestId('daily-reward-card')
-      .waitFor({ state: 'visible', timeout: 4000 })
+      .waitFor({ state: 'visible' })
       .then(() => true)
       .catch(() => false);
     if (!cardVisible) {
@@ -219,9 +219,7 @@ test.describe('Daily rewards — full interactive flow (live backend)', () => {
     await page.waitForURL(/\/(wallet|home|$)/);
 
     await page.goto('/wallet');
-    await expect(page.getByTestId('daily-reward-card')).toBeVisible({
-      timeout: 10000,
-    });
+    await expect(page.getByTestId('daily-reward-card')).toBeVisible();
 
     for (let i = 1; i <= 7; i++) {
       await expect(page.getByTestId(`daily-reward-stamp-${i}`)).toBeVisible();
@@ -231,17 +229,13 @@ test.describe('Daily rewards — full interactive flow (live backend)', () => {
     const balanceBefore = (await balanceLocator.textContent()) ?? '';
 
     await page.getByTestId('daily-reward-claim-btn').click();
-    await expect(page.getByTestId('daily-reward-success')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.getByTestId('daily-reward-success')).toBeVisible();
 
     await expect
       .poll(async () => (await balanceLocator.textContent()) !== balanceBefore)
       .toBe(true);
 
     await page.getByTestId('daily-reward-claim-btn').click();
-    await expect(page.getByTestId('daily-reward-error')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.getByTestId('daily-reward-error')).toBeVisible();
   });
 });

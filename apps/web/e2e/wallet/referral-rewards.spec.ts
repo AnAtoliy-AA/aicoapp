@@ -176,15 +176,13 @@ test.describe('Referral coin rewards (live backend)', () => {
         .fill(process.env.E2E_REFEREE_PASSWORD ?? 'password');
       // If the registration form has a referral code field, fill it
       const referralInput = refereePage.getByLabel(/referral code/i);
-      if (await referralInput.isVisible({ timeout: 500 }).catch(() => false)) {
+      if (await referralInput.isVisible().catch(() => false)) {
         await referralInput.fill(process.env.E2E_REFERRER_CODE ?? 'TESTCODE');
       }
       await refereePage
         .getByRole('button', { name: /register|sign up/i })
         .click();
-      await refereePage.waitForURL(/\/(dashboard|referrals|wallet|\/)/, {
-        timeout: 10_000,
-      });
+      await refereePage.waitForURL(/\/(dashboard|referrals|wallet|\/)/);
 
       // Referrer checks their wallet
       await referrerPage.goto('/auth');
@@ -197,7 +195,7 @@ test.describe('Referral coin rewards (live backend)', () => {
       await referrerPage
         .getByRole('button', { name: /login|sign in/i })
         .click();
-      await referrerPage.waitForURL(/\//, { timeout: 10_000 });
+      await referrerPage.waitForURL(/\//);
 
       await referrerPage.goto('/wallet');
 
@@ -206,7 +204,7 @@ test.describe('Referral coin rewards (live backend)', () => {
           .getByTestId('transaction-row')
           .filter({ hasText: /referral bonus/i })
           .first(),
-      ).toBeVisible({ timeout: 10_000 });
+      ).toBeVisible();
 
       // Balance should include +50 coins
       const balanceEl = referrerPage.getByTestId('balance-coins-value');

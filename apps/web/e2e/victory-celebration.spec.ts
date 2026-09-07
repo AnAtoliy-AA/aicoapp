@@ -64,8 +64,6 @@ test.describe('Victory celebration', () => {
     await waitForRoomReady(page);
 
     // Entering an already-completed game should NOT auto-show the result modal.
-    await expect(page.getByTestId('game-result-title')).not.toBeVisible({
-      timeout: 3000,
-    });
+    await expect(page.getByTestId('game-result-title')).not.toBeVisible();
   });
 });

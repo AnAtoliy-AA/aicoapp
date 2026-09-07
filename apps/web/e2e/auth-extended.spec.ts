@@ -32,7 +32,7 @@ test.describe('Auth Extended', () => {
       .catch(() => null);
 
     // Use domcontentloaded to avoid hanging on ChunkLoadError in slow CI.
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/settings/);
 
     // Wait for the background fetches to settle

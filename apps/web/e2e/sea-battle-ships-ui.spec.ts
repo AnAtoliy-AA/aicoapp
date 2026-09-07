@@ -24,7 +24,7 @@ test.describe('Sea Battle Ships Remaining UI', () => {
     // the click actually lands inside an active game.
     const gameMain = page.locator('[data-testid="game-main-area"]').first();
     try {
-      await gameMain.waitFor({ state: 'visible', timeout: 3000 });
+      await gameMain.waitFor({ state: 'visible' });
     } catch {
       test.info().annotations.push({
         type: 'skipped',

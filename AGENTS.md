@@ -67,6 +67,7 @@
 ### Tests
 
 - **Write unit tests** (Vitest for web, Jest for BE/mobile) and **Playwright e2e tests** for all user-facing features. Cover: happy path, edge cases, and error states.
+- **No timeouts or delays in tests** — `waitForTimeout`, `test.setTimeout`, `jest.setTimeout`, `vi.setTimeout`, `setTimeout(r, N)` delays, and `{ timeout: N }` overrides are all forbidden. Use `expect.poll()`, `waitFor()`, or fake timers instead. ESLint enforces this.
 
 ## Commit Convention
 

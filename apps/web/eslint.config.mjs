@@ -48,6 +48,35 @@ const eslintConfig = defineConfig([
       'max-lines': 'off',
     },
   },
+  // Forbid timeouts and delays in test files
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx', 'e2e/**/*.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.property.name='waitForTimeout']",
+          message: 'page.waitForTimeout() wastes wall-clock time. Use expect.poll() or waitFor() instead.',
+        },
+        {
+          selector: "CallExpression[callee.object.name='test'][callee.property.name='setTimeout']",
+          message: 'test.setTimeout() is forbidden. Fix the test to run within default timeout.',
+        },
+        {
+          selector: "CallExpression[callee.object.name='jest'][callee.property.name='setTimeout']",
+          message: 'jest.setTimeout() is forbidden. Fix the test to run within default timeout.',
+        },
+        {
+          selector: "CallExpression[callee.object.name='vi'][callee.property.name='setTimeout']",
+          message: 'vi.setTimeout() is forbidden. Fix the test to run within default timeout.',
+        },
+        {
+          selector: "CallExpression[callee.object.name='page'][callee.property.name='waitForFunction'][arguments.length>1] Property[key.name='timeout']",
+          message: 'Remove the custom timeout. Use Playwright defaults.',
+        },
+      ],
+    },
+  },
   // i18n data dictionaries — inherently line-heavy because prettier wraps
   // long translated strings onto their own lines. Exempt from max-lines
   // (ARC-916: extract shared messages into focused modules).
