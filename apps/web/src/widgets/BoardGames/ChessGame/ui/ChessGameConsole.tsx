@@ -131,7 +131,7 @@ export function ChessGameConsole({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-[var(--glassBg)] border border-[var(--glassBorder)] backdrop-blur-xl shadow-xl overflow-hidden min-w-0">
-      <div className="flex items-center gap-1.5 p-2 border-b border-[var(--glassBorder)] bg-black/25">
+      <div className="chess-console-header flex items-center gap-1.5 p-2 border-b border-[var(--glassBorder)] bg-black/25">
         <button
           type="button"
           onClick={() => setActiveTab('game')}
@@ -159,7 +159,7 @@ export function ChessGameConsole({
       <div className="chess-console-body">
         {activeTab === 'game' && (
           <div className="flex flex-col gap-2.5 flex-1 min-h-0">
-            <div className="flex flex-col gap-1.5 p-2 rounded-xl bg-black/30 border border-white/10 shadow-inner">
+            <div className="chess-telemetry-card flex flex-col gap-1.5 p-2 rounded-xl bg-black/30 border border-white/10 shadow-inner">
               <div className="flex items-center justify-between font-mono">
                 <div className="flex items-center gap-1.5">
                   <span
@@ -190,7 +190,7 @@ export function ChessGameConsole({
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-[9px] font-mono text-[var(--textSecondary)] pt-1 border-t border-white/5">
+              <div className="chess-telemetry-metrics flex items-center justify-between text-[9px] font-mono text-[var(--textSecondary)] pt-1 border-t border-white/5">
                 <span title="Nodes Evaluated">
                   Nodes: {formatNodes(liveEval?.nodes)}
                 </span>
@@ -201,7 +201,7 @@ export function ChessGameConsole({
               </div>
 
               {continuationLine && (
-                <div className="text-[10px] font-mono text-[var(--textSecondary)] bg-black/40 px-2 py-1 rounded border border-white/5 truncate">
+                <div className="chess-telemetry-line text-[10px] font-mono text-[var(--textSecondary)] bg-black/40 px-2 py-1 rounded border border-white/5 truncate">
                   <span className="text-zinc-400 font-bold mr-1">Line:</span>
                   <span className="text-zinc-300">{continuationLine}</span>
                 </div>
@@ -217,7 +217,7 @@ export function ChessGameConsole({
             />
 
             {moveCandidates && moveCandidates.length > 1 && (
-              <div className="p-2 rounded-xl bg-black/20 border border-white/5 flex flex-col gap-1 font-mono text-[11px]">
+              <div className="chess-candidate-lines p-2 rounded-xl bg-black/20 border border-white/5 flex flex-col gap-1 font-mono text-[11px]">
                 <span className="text-[9px] font-bold text-[var(--textSecondary)] uppercase tracking-wider">
                   Top Candidate Lines
                 </span>
@@ -241,7 +241,11 @@ export function ChessGameConsole({
               </div>
             )}
 
-            {currentFen && <OpeningExplorer fen={currentFen} />}
+            {currentFen && (
+              <div className="chess-opening-explorer">
+                <OpeningExplorer fen={currentFen} />
+              </div>
+            )}
 
             {coach.visible && (
               <CoachControls

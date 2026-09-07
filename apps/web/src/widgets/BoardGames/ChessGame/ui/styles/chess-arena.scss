@@ -276,6 +276,28 @@
       display: flex;
       flex-direction: column;
     }
+
+    .chess-console-header {
+      padding: 0.25rem 0.5rem;
+      gap: 0.25rem;
+
+      button {
+        padding: 0.25rem 0.5rem;
+        font-size: 11px;
+      }
+    }
+
+    .chess-telemetry-card {
+      padding: 0.25rem 0.5rem;
+      gap: 0;
+    }
+
+    .chess-telemetry-metrics,
+    .chess-telemetry-line,
+    .chess-candidate-lines,
+    .chess-opening-explorer {
+      display: none;
+    }
   }
 }
 
