@@ -244,9 +244,7 @@ test.describe('Admin grant → player balance update (live backend)', () => {
       await adminPage.getByTestId('wallet-form-amount').fill('100');
       await adminPage.getByTestId('wallet-form-grant').click();
 
-      await expect(adminPage.getByTestId('wallet-form-success')).toBeVisible({
-        timeout: 5000,
-      });
+      await expect(adminPage.getByTestId('wallet-form-success')).toBeVisible();
 
       // Player sees updated balance
       await playerPage.goto('/login');
@@ -261,7 +259,6 @@ test.describe('Admin grant → player balance update (live backend)', () => {
       await playerPage.goto('/wallet');
       await expect(playerPage.getByTestId('balance-coins-value')).toContainText(
         '100',
-        { timeout: 5000 },
       );
     } finally {
       await adminContext.close();

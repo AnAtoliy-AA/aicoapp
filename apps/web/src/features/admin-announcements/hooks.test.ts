@@ -66,8 +66,7 @@ describe('useAdminAnnouncements', () => {
   it('is disabled when no token', async () => {
     sessionStateRef.accessToken = null;
     renderHook(() => useAdminAnnouncements({ page: 1 }));
-    await new Promise((r) => setTimeout(r, 50));
-    expect(apiMock.get).not.toHaveBeenCalled();
+    await waitFor(() => expect(apiMock.get).not.toHaveBeenCalled());
   });
 });
 

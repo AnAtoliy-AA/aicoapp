@@ -10,7 +10,6 @@ import { test } from './fixtures/test-utils';
 async function waitForHydration(page: import('@playwright/test').Page) {
   await page.waitForFunction(
     () => document.documentElement.getAttribute('data-app-ready') === 'true',
-    { timeout: 15000 },
   );
 }
 
@@ -20,7 +19,7 @@ async function waitForLangButton(
 ): Promise<boolean> {
   const btn = page.getByTestId(testId).first();
   try {
-    await expect(btn).toBeVisible({ timeout: 5000 });
+    await expect(btn).toBeVisible();
     return true;
   } catch {
     return false;

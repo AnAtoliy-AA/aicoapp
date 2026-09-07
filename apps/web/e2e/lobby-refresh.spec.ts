@@ -83,10 +83,8 @@ test.describe('Lobby Refresh', () => {
     await expect(async () => {
       const roomNameDisplay = page.getByTestId('room-name-text');
       // Use a short timeout for individual assertions so toPass can poll quickly
-      await expect(roomNameDisplay).toHaveText('Refreshed Name', {
-        timeout: 2000,
-      });
-      await expect(roomNameDisplay).toBeVisible({ timeout: 2000 });
+      await expect(roomNameDisplay).toHaveText('Refreshed Name');
+      await expect(roomNameDisplay).toBeVisible();
     }).toPass();
   });
 });

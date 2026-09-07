@@ -323,7 +323,6 @@ test.describe('Tournament register / refund flow (live backend)', () => {
     // Wallet shows debit
     await expect(page.getByTestId('balance-coins-value')).toContainText(
       String(initialCoins - 30),
-      { timeout: 5000 },
     );
 
     // Unregister
@@ -342,13 +341,12 @@ test.describe('Tournament register / refund flow (live backend)', () => {
     // Wallet shows refund
     await expect(page.getByTestId('balance-coins-value')).toContainText(
       String(initialCoins),
-      { timeout: 5000 },
     );
 
     // Transaction list shows both rows
     await navigateTo(page, '/wallet');
     const table = page.getByTestId('transactions-table');
-    await expect(table).toContainText('tournament_entry', { timeout: 3000 });
-    await expect(table).toContainText('tournament_refund', { timeout: 3000 });
+    await expect(table).toContainText('tournament_entry');
+    await expect(table).toContainText('tournament_refund');
   });
 });

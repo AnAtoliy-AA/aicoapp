@@ -140,7 +140,6 @@ test.describe('/wallet socket-driven refresh (mocked socket)', () => {
                 e.name.includes('/wallet')),
           );
         },
-        { timeout: 3000 },
       )
       .catch(() => {
         // No RSC fetch in the mocked context (page is fully static or
@@ -260,12 +259,11 @@ test.describe('Socket-driven wallet refresh (live backend)', () => {
     // updating the Server Component-rendered balance chip.
     await expect(page.getByTestId('balance-coins-value')).toContainText(
       String(initialCoins + GRANTED_COINS),
-      { timeout: 3000 },
     );
 
     // The new transaction should also appear in the list
     await expect(
       page.getByTestId('transactions-table').locator('tbody tr').first(),
-    ).toContainText('admin_grant', { timeout: 3000 });
+    ).toContainText('admin_grant');
   });
 });

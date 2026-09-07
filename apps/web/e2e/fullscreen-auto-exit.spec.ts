@@ -66,7 +66,6 @@ test.describe('Fullscreen auto-exit on game finish', () => {
       () =>
         !!window.gameSocket?.connected &&
         !!window.gameSocket?._mockListeners?.['games.session.snapshot'],
-      { timeout: 60000 },
     );
 
     const container = page.locator('.games-room-container');
@@ -108,6 +107,6 @@ test.describe('Fullscreen auto-exit on game finish', () => {
     );
 
     // Auto-exit fires after the delay (~1.5s) — allow generous slack.
-    await expect(container).not.toHaveClass(/is-fullscreen/, { timeout: 5000 });
+    await expect(container).not.toHaveClass(/is-fullscreen/);
   });
 });

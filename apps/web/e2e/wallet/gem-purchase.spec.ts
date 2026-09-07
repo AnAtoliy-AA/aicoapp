@@ -173,16 +173,12 @@ test.describe('Gem purchase via PayPal sandbox (live backend)', () => {
     await page.waitForURL(/\/wallet/);
 
     // Assert gem store section renders
-    await expect(page.getByTestId('gem-store-section')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.getByTestId('gem-store-section')).toBeVisible();
 
     // Click Buy on the first package
     await page.getByTestId('gem-package-buy-btn').first().click();
 
     // Assert redirect to PayPal (or pending banner if cancelled)
-    await expect(page.getByTestId('pending-gem-purchases')).toBeVisible({
-      timeout: 10000,
-    });
+    await expect(page.getByTestId('pending-gem-purchases')).toBeVisible();
   });
 });

@@ -297,7 +297,6 @@ test.describe('Tournament prize payout (live backend)', () => {
       // Player wallet updated by the socket event or polling
       await expect(playerPage.getByTestId('balance-coins-value')).toContainText(
         String(initialCoins + prizePool),
-        { timeout: 5000 },
       );
 
       // Transaction list shows the prize row
@@ -306,7 +305,7 @@ test.describe('Tournament prize payout (live backend)', () => {
           .getByTestId('transactions-table')
           .locator('tbody tr')
           .first(),
-      ).toContainText('tournament_prize', { timeout: 3000 });
+      ).toContainText('tournament_prize');
     } finally {
       await adminContext.close();
       await playerContext.close();

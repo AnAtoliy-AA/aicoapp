@@ -70,8 +70,7 @@ describe('useAdminUsers', () => {
       useAdminUsers({ page: 1, pageSize: 50 }),
     );
 
-    await new Promise((r) => setTimeout(r, 50));
-    expect(apiMock.get).not.toHaveBeenCalled();
+    await waitFor(() => expect(apiMock.get).not.toHaveBeenCalled());
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeNull();
   });

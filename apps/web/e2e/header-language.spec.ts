@@ -12,14 +12,10 @@ import { test, navigateTo, getIsMobile } from './fixtures/test-utils';
 async function openLanguageSwitcher(switcher: Locator): Promise<void> {
   await switcher.click();
   try {
-    await expect(switcher).toHaveAttribute('aria-expanded', 'true', {
-      timeout: 2000,
-    });
+    await expect(switcher).toHaveAttribute('aria-expanded', 'true');
   } catch {
     await switcher.click();
-    await expect(switcher).toHaveAttribute('aria-expanded', 'true', {
-      timeout: 5000,
-    });
+    await expect(switcher).toHaveAttribute('aria-expanded', 'true');
   }
 }
 

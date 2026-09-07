@@ -116,7 +116,7 @@ async function waitForHumanTurn(s: OfflineSession): Promise<void> {
     if (turn === 'player-1') return;
     if (s.isGameOver()) return;
     await s.runBots();
-    await new Promise((r) => setTimeout(r, 20));
+    await Promise.resolve();
   }
 }
 
