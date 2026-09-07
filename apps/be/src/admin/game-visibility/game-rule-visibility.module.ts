@@ -9,10 +9,7 @@ import {
 } from './game-rule-visibility.schema';
 import { GameRuleVisibilityService } from './game-rule-visibility.service';
 import { GameRuleVisibilityController } from './game-rule-visibility.controller';
-import {
-  GameSetting,
-  GameSettingSchema,
-} from './game-setting.schema';
+import { GameSetting, GameSettingSchema } from './game-setting.schema';
 import { GameSettingService } from './game-setting.service';
 import { GameSettingController } from './game-setting.controller';
 

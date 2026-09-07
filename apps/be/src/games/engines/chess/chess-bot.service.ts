@@ -13,9 +13,7 @@ import type {
 } from '@arcadeum/games-core/games/chess/chess.types';
 import type { GameSessionSummary } from '../../sessions/game-sessions.service';
 import { ChessBot } from '@arcadeum/games-core/games/chess/chess-bot';
-import {
-  getBotPersonality,
-} from '@arcadeum/games-core/games/chess/chess-bot-personalities';
+import { getBotPersonality } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
 import { isAiVsAiSession } from '../../common/ai-vs-ai';
 import { ChessStockfishService } from '../../chess/engine/chess-stockfish.service';
 
@@ -61,8 +59,17 @@ export class ChessBotService extends ChessBot {
   }
 
   private buildStockfishUciOptions(
-    personality: { style?: string; evaluationModifiers?: { attackWeight: number; safetyWeight: number; materialWeight: number } } | null,
-  ): { skillLevel?: number; contempt?: number; aggression?: number } | undefined {
+    personality: {
+      style?: string;
+      evaluationModifiers?: {
+        attackWeight: number;
+        safetyWeight: number;
+        materialWeight: number;
+      };
+    } | null,
+  ):
+    | { skillLevel?: number; contempt?: number; aggression?: number }
+    | undefined {
     if (!personality) return undefined;
 
     const mods = personality.evaluationModifiers;

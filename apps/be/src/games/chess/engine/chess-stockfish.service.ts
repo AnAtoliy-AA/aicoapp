@@ -226,19 +226,27 @@ export class ChessStockfishService implements OnModuleDestroy {
     fen: string,
     depth: number = 15,
     timeMs: number = 2000,
-    uciOptions?: { skillLevel?: number; contempt?: number; aggression?: number },
+    uciOptions?: {
+      skillLevel?: number;
+      contempt?: number;
+      aggression?: number;
+    },
   ): Promise<{ bestMove: string; ponder: string }> {
     const commands: string[] = [];
 
     if (uciOptions) {
       if (uciOptions.skillLevel !== undefined) {
-        commands.push(`setoption name Skill Level value ${uciOptions.skillLevel}`);
+        commands.push(
+          `setoption name Skill Level value ${uciOptions.skillLevel}`,
+        );
       }
       if (uciOptions.contempt !== undefined) {
         commands.push(`setoption name Contempt value ${uciOptions.contempt}`);
       }
       if (uciOptions.aggression !== undefined) {
-        commands.push(`setoption name Aggression value ${uciOptions.aggression}`);
+        commands.push(
+          `setoption name Aggression value ${uciOptions.aggression}`,
+        );
       }
     }
 

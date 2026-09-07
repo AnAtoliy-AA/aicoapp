@@ -282,7 +282,7 @@ export function useOAuth(session: SessionTokensValue): UseOAuthResult {
           idToken: tokenResponse.idToken,
         });
 
-        const snapshot = await applySessionResponse(
+        await applySessionResponse(
           session,
           sessionResponse,
           'oauth',

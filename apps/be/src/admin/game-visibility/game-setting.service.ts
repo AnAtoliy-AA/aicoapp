@@ -1,10 +1,7 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {
-  GameSetting,
-  type GameSettingDocument,
-} from './game-setting.schema';
+import { GameSetting, type GameSettingDocument } from './game-setting.schema';
 import { GAME_CATALOG } from '../../games/games.catalog';
 
 const VALID_GAME_IDS = new Set(GAME_CATALOG.map((g) => g.gameId));
@@ -57,8 +54,6 @@ export class GameSettingService {
       { settings, updatedBy },
       { upsert: true },
     );
-    this.logger.log(
-      `Settings for ${validGameId} updated by ${updatedBy}`,
-    );
+    this.logger.log(`Settings for ${validGameId} updated by ${updatedBy}`);
   }
 }

@@ -91,7 +91,7 @@ export class AiVsAiService {
       chess_v1: (hostId, roomId, extras) =>
         this.chessService.startSession(hostId, roomId, false, 0, {
           ...extras,
-          botDifficulty: (extras.botDifficulty as string) ?? 'expert',
+          botDifficulty: extras.botDifficulty ?? 'expert',
           botPersonality: extras.botPersonalityWhite as string,
         }),
       checkers_v1: (hostId, roomId, extras) =>
@@ -168,8 +168,9 @@ export class AiVsAiService {
       (gameSettings.aivsaiDifficulties as string[]) ??
       DEFAULT_AIVSAI_DIFFICULTIES;
     const selectedDifficulty =
-      aivsaiDifficulties[Math.floor(Math.random() * aivsaiDifficulties.length)] ??
-      'expert';
+      aivsaiDifficulties[
+        Math.floor(Math.random() * aivsaiDifficulties.length)
+      ] ?? 'expert';
 
     const gameOptions: Record<string, unknown> = {
       aiVsAi: true,
