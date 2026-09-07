@@ -18,6 +18,7 @@ import type { SpadesService } from '../spades/spades.service';
 import type { GoService } from '../go/go.service';
 import type { PachisiService } from '../pachisi/pachisi.service';
 import type { GameEngineRegistry } from '../engines/registry/game-engine.registry';
+import type { GameSettingService } from '../../admin/game-visibility/game-setting.service';
 
 interface RoomArg {
   hostId: string;
@@ -79,6 +80,11 @@ function buildService() {
         engineMetadata[gameId] ?? { minPlayers: 2, maxPlayers: 2 },
     ),
   } as unknown as GameEngineRegistry;
+  const settingService = {
+    getSettings: jest.fn().mockResolvedValue({
+      aivsaiDifficulties: ['expert'],
+    }),
+  } as unknown as GameSettingService;
   const service = new AiVsAiService(
     gameRoomModel,
     gameRoomsMapper,
@@ -96,6 +102,7 @@ function buildService() {
     services.go,
     services.pachisi,
     engineRegistry,
+    settingService,
   );
   return { service, gameRoomModel, gameRoomsMapper, realtimeService, services };
 }

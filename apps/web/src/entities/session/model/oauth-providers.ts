@@ -1,6 +1,5 @@
 'use client';
 
-import { type OAuthProvider } from '@/features/auth/hooks/useAuthForm';
 import { resolveAuthRedirectUri } from '@/shared/config/auth';
 import { OAUTH } from '@/shared/config/constants';
 

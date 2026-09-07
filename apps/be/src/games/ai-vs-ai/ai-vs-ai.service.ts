@@ -31,8 +31,10 @@ import { GoService } from '../go/go.service';
 import { PachisiService } from '../pachisi/pachisi.service';
 import { GameEngineRegistry } from '../engines/registry/game-engine.registry';
 import { BOT_PERSONALITIES } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
+import { GameSettingService } from '../../admin/game-visibility/game-setting.service';
 
 const AI_VS_AI_ROOM_NAME = 'AI vs AI';
+const DEFAULT_AIVSAI_DIFFICULTIES = ['hard', 'master', 'expert'];
 
 type AiVsAiStartFn = (
   botHostId: string,
@@ -83,13 +85,13 @@ export class AiVsAiService {
     @Inject(forwardRef(() => PachisiService))
     private readonly pachisiService: PachisiService,
     private readonly engineRegistry: GameEngineRegistry,
+    private readonly settingService: GameSettingService,
   ) {
     this.startFns = {
       chess_v1: (hostId, roomId, extras) =>
         this.chessService.startSession(hostId, roomId, false, 0, {
           ...extras,
-          botDifficulty: 'expert',
-          // Pass per-color personalities from gameOptions
+          botDifficulty: extras.botDifficulty ?? 'expert',
           botPersonality: extras.botPersonalityWhite as string,
         }),
       checkers_v1: (hostId, roomId, extras) =>
@@ -161,11 +163,20 @@ export class AiVsAiService {
     );
     const now = new Date();
 
+    const gameSettings = await this.settingService.getSettings(dto.gameId);
+    const aivsaiDifficulties =
+      (gameSettings.aivsaiDifficulties as string[]) ??
+      DEFAULT_AIVSAI_DIFFICULTIES;
+    const selectedDifficulty =
+      aivsaiDifficulties[
+        Math.floor(Math.random() * aivsaiDifficulties.length)
+      ] ?? 'expert';
+
     const gameOptions: Record<string, unknown> = {
       aiVsAi: true,
       aiMoveDelayMs,
-      botDifficulty: 'expert',
-      aiDifficulty: 'expert',
+      botDifficulty: selectedDifficulty,
+      aiDifficulty: selectedDifficulty,
       botPersonalityWhite: whitePersonality,
       botPersonalityBlack: blackPersonality,
       ...(dto.variant ? { variant: dto.variant } : {}),

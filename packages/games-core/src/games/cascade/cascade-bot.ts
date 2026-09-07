@@ -12,9 +12,14 @@ import type { AiDifficulty } from '../../lib/ai-difficulty';
  * playable card half the time; expert bots always follow the priority order.
  */
 export const DIFFICULTY_CONFIG: Record<AiDifficulty, { mistakeRate: number }> = {
+  beginner: { mistakeRate: 0.8 },
   easy: { mistakeRate: 0.5 },
+  intermediate: { mistakeRate: 0.3 },
   medium: { mistakeRate: 0.1 },
-  hard: { mistakeRate: 0.03 },
+  advanced: { mistakeRate: 0.05 },
+  strong: { mistakeRate: 0.03 },
+  hard: { mistakeRate: 0.02 },
+  master: { mistakeRate: 0.01 },
   expert: { mistakeRate: 0 },
 };
 

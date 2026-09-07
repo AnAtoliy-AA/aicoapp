@@ -226,6 +226,16 @@ export const byMessages = {
     difficultyMediumDesc: 'Разумнае навядзенне са стратэгіяй блакіроўкі',
     difficultyHardDesc: 'Дакладнае навядзенне на аснове верагоднасцяў',
     difficultyExpertDesc: 'Пошук максімальнай глыбіні, без памылак',
+    difficultyBeginner: 'Пачатковец',
+    difficultyIntermediate: 'Сярэдні',
+    difficultyAdvanced: 'Прадvoyны',
+    difficultyStrong: 'Моцны',
+    difficultyMaster: 'Майстар',
+    difficultyBeginnerDesc: 'Самы просты ўзровень для навічкоў',
+    difficultyIntermediateDesc: 'Базавая стратэгія і тактыка',
+    difficultyAdvancedDesc: 'Прадвинутыя метады гульні',
+    difficultyStrongDesc: 'Высокі ўзровень майстэрства',
+    difficultyMasterDesc: 'Элітны ўзровень гульні',
   },
   shared: {
     rules: {

@@ -8,10 +8,15 @@ export const DIFFICULTY_CONFIG: Record<
   AiDifficulty,
   { playChance: number; nopeChance: number }
 > = {
+  beginner: { playChance: 0.15, nopeChance: 0.2 },
   easy: { playChance: 0.25, nopeChance: 0.3 },
+  intermediate: { playChance: 0.4, nopeChance: 0.5 },
   medium: { playChance: 0.6, nopeChance: 0.8 },
-  hard: { playChance: 0.75, nopeChance: 0.9 },
-  expert: { playChance: 0.85, nopeChance: 0.95 },
+  advanced: { playChance: 0.7, nopeChance: 0.85 },
+  strong: { playChance: 0.75, nopeChance: 0.9 },
+  hard: { playChance: 0.8, nopeChance: 0.92 },
+  master: { playChance: 0.85, nopeChance: 0.95 },
+  expert: { playChance: 0.9, nopeChance: 0.98 },
 };
 
 const PLAYABLE_CARD_IDS: readonly string[] = [
