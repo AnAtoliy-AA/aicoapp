@@ -42,7 +42,7 @@ export class ChessStockfishController {
       return { error: 'fen is required' };
     }
 
-    const tier = this.subscriptionService.getUserTier(req.user.id);
+    const tier = await this.subscriptionService.getUserTier(req.user.id);
     if (!this.subscriptionService.canPerformAction(tier, 'gameReview')) {
       return {
         error:
@@ -64,7 +64,7 @@ export class ChessStockfishController {
       return { error: 'positionHistory with at least 2 positions is required' };
     }
 
-    const tier = this.subscriptionService.getUserTier(req.user.id);
+    const tier = await this.subscriptionService.getUserTier(req.user.id);
     if (!this.subscriptionService.canPerformAction(tier, 'gameReview')) {
       return {
         error:
@@ -86,7 +86,7 @@ export class ChessStockfishController {
       return { error: 'fen is required' };
     }
 
-    const tier = this.subscriptionService.getUserTier(req.user.id);
+    const tier = await this.subscriptionService.getUserTier(req.user.id);
     if (!this.subscriptionService.canPerformAction(tier, 'gameReview')) {
       return { error: 'Daily analysis limit reached.' };
     }
@@ -105,7 +105,7 @@ export class ChessStockfishController {
       return { error: 'fen is required' };
     }
 
-    const tier = this.subscriptionService.getUserTier(req.user.id);
+    const tier = await this.subscriptionService.getUserTier(req.user.id);
     if (!this.subscriptionService.canPerformAction(tier, 'puzzle')) {
       return { error: 'Daily puzzle limit reached.' };
     }

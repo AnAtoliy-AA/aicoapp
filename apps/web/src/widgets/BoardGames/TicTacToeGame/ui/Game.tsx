@@ -18,6 +18,7 @@ import {
   type TranslationKey,
 } from '@/shared/lib/useTranslation';
 import { useGameChatStore } from '@/widgets/GameChat';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { TicTacToeGameProps } from '../types';
 import { useTicTacToeState } from '../hooks/useTicTacToeState';
 import { useTicTacToeActions } from '../hooks/useTicTacToeActions';
@@ -93,12 +94,15 @@ function TicTacToeGameImpl({
     userId: currentUserId,
   });
 
+  const { play } = useGameSound('tic_tac_toe_v1');
+
   const handleCellClick = useCallback(
     (row: number, col: number) => {
+      play('place');
       useGameChatStore.getState().setPersistedCell(null);
       placeMark(row, col);
     },
-    [placeMark],
+    [placeMark, play],
   );
 
   const resolveDisplayNameBound = useCallback(

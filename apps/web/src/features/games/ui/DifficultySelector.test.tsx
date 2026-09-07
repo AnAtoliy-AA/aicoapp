@@ -7,9 +7,19 @@ vi.mock('@/shared/lib/useTranslation', () => ({
 }));
 
 describe('DifficultySelector', () => {
-  it('renders all four difficulty tiers', () => {
+  it('renders all nine difficulty tiers', () => {
     render(<DifficultySelector value="medium" onChange={vi.fn()} />);
-    for (const d of ['easy', 'medium', 'hard', 'expert']) {
+    for (const d of [
+      'beginner',
+      'easy',
+      'intermediate',
+      'medium',
+      'advanced',
+      'strong',
+      'hard',
+      'master',
+      'expert',
+    ]) {
       expect(
         screen.getByText(
           `games.lobby.difficulty${d[0].toUpperCase()}${d.slice(1)}`,
@@ -19,17 +29,16 @@ describe('DifficultySelector', () => {
   });
 
   it('marks the selected difficulty as active', () => {
-    const { container } = render(
-      <DifficultySelector value="hard" onChange={vi.fn()} />,
-    );
-    const active = container.querySelector('[data-active="on"]');
-    expect(active).not.toBeNull();
+    render(<DifficultySelector value="hard" onChange={vi.fn()} />);
+    const select = screen.getByRole('combobox');
+    expect(select).toHaveValue('hard');
   });
 
-  it('calls onChange with the clicked difficulty', () => {
+  it('calls onChange with the selected difficulty', () => {
     const onChange = vi.fn();
     render(<DifficultySelector value="medium" onChange={onChange} />);
-    fireEvent.click(screen.getByText('games.lobby.difficultyExpert'));
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'expert' } });
     expect(onChange).toHaveBeenCalledWith('expert');
   });
 });

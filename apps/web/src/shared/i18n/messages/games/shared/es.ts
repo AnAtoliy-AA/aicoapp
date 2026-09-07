@@ -231,6 +231,16 @@ export const esMessages = {
     difficultyMediumDesc: 'Apuntado inteligente con estrategia de bloqueo',
     difficultyHardDesc: 'Apuntado de precisión basado en probabilidad',
     difficultyExpertDesc: 'Búsqueda de profundidad máxima, sin errores',
+    difficultyBeginner: 'Principiante',
+    difficultyIntermediate: 'Intermedio',
+    difficultyAdvanced: 'Avanzado',
+    difficultyStrong: 'Fort',
+    difficultyMaster: 'Maestro',
+    difficultyBeginnerDesc: 'Nivel más fácil para novatos',
+    difficultyIntermediateDesc: 'Estrategia y táctica básicas',
+    difficultyAdvancedDesc: 'Métodos de juego avanzados',
+    difficultyStrongDesc: 'Alto nivel de habilidad',
+    difficultyMasterDesc: 'Nivel de juego de élite',
   },
   shared: {
     rules: {

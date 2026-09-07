@@ -18,6 +18,7 @@ import {
   type TurnStatusVariant,
 } from '@/features/games/ui/GameWidgetContainer';
 import { useRecordGameResult } from '@/features/stats/hooks/useRecordGameResult';
+import { useGameSound } from '@/shared/lib/game-sounds';
 
 import { SeaBattleLobby } from './SeaBattleLobby';
 import { reorderRoomParticipants } from '@/shared/api/gamesApi';
@@ -85,6 +86,16 @@ export const SeaBattleGame = memo(function SeaBattleGame({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('sea_battle_v1');
+
+  const handleAttack = useCallback(
+    (...args: Parameters<typeof attack>) => {
+      play('hit');
+      return attack(...args);
+    },
+    [attack, play],
+  );
 
   const handleAutoPlace = useCallback(() => {
     autoPlace();
@@ -422,7 +433,7 @@ export const SeaBattleGame = memo(function SeaBattleGame({
             currentUserId={currentUserId}
             currentTurnPlayerId={currentTurnPlayer?.playerId ?? null}
             isMyTurn={isMyTurn}
-            attack={attack}
+            attack={handleAttack}
             onSonar={useSonar}
             onRadar={useRadar}
             resolveDisplayNameBound={resolveDisplayNameBound}

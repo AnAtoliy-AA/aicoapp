@@ -199,7 +199,7 @@ export function useAudioPlayer(gameId?: string | null): AudioPlayerState {
     audioRef.current = newAudio;
   }, []);
   useEffect(() => {
-    if (!musicEnabled) return;
+    if (!musicEnabled || !track) return;
     if (!audioARef.current) {
       audioARef.current = new Audio();
       audioARef.current.preload = 'metadata';
@@ -275,7 +275,7 @@ export function useAudioPlayer(gameId?: string | null): AudioPlayerState {
         events.forEach(([evt, fn]) => a.removeEventListener(evt, fn));
       });
     };
-  }, [musicEnabled, index, crossfadeTo, track.src]);
+  }, [musicEnabled, index, crossfadeTo, track]);
   useEffect(() => {
     return () => {
       cancelAnimationFrame(crossfadeRafRef.current);

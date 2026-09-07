@@ -349,6 +349,16 @@ export const ruMessages = {
     difficultyMediumDesc: 'Умное наведение со стратегией блокировки',
     difficultyHardDesc: 'Точное наведение на основе вероятностей',
     difficultyExpertDesc: 'Поиск максимальной глубины, без ошибок',
+    difficultyBeginner: 'Начинающий',
+    difficultyIntermediate: 'Промежуточный',
+    difficultyAdvanced: 'Продвинутый',
+    difficultyStrong: 'Сильный',
+    difficultyMaster: 'Мастер',
+    difficultyBeginnerDesc: 'Самый простой уровень для новичков',
+    difficultyIntermediateDesc: 'Базовая стратегия и тактика',
+    difficultyAdvancedDesc: 'Продвинутые методы игры',
+    difficultyStrongDesc: 'Высокий уровень мастерства',
+    difficultyMasterDesc: 'Элитный уровень игры',
   },
   shared: {
     rules: {
@@ -369,11 +379,7 @@ export const ruMessages = {
       race: 'Гонка',
       puzzle: 'Головоломка',
     },
-    tags: {
-      strategy: 'Стратегия',
-      cards: 'Карты',
-      action: 'Экшн',
-    },
+    tags: { strategy: 'Стратегия', cards: 'Карты', action: 'Экшн' },
   },
   connectionOverlay: {
     title: 'Соединение потеряно',

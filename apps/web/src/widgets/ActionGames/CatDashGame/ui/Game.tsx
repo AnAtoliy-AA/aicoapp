@@ -17,6 +17,7 @@ import {
   useTranslation,
   type TranslationKey,
 } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { CatDashGameProps } from '../types';
 import { useCatDashState } from '../hooks/useCatDashState';
 import { useCatDashActions } from '../hooks/useCatDashActions';
@@ -67,6 +68,13 @@ function CatDashGameImpl({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('cat_dash_v1');
+
+  const handleRollDice = useCallback(() => {
+    play('roll');
+    rollDice();
+  }, [rollDice, play]);
 
   const resolveDisplayNameBound = useCallback(
     (id?: string | null) =>
@@ -171,7 +179,7 @@ function CatDashGameImpl({
               <button
                 type="button"
                 disabled={isGameOver}
-                onClick={rollDice}
+                onClick={handleRollDice}
                 className="flex flex-row items-center justify-center gap-2 h-12 px-5 rounded-2xl bg-[#7c3aed] transition-colors duration-150 ease-out hover:bg-[#6d28d9] active:bg-[#5b21b6] disabled:opacity-50 disabled:pointer-events-none"
               >
                 <span className="text-[#f5f7ff] font-bold text-[16px]">

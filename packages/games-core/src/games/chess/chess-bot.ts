@@ -47,12 +47,26 @@ interface DifficultyConfig {
 }
 
 const DIFFICULTY: Record<BotDifficulty, DifficultyConfig> = {
+  beginner: {
+    maxDepth: 1,
+    quiescenceDepth: 0,
+    useNullMove: false,
+    useLMR: false,
+    noiseCentipawns: 150,
+  },
   easy: {
     maxDepth: 2,
     quiescenceDepth: 0,
     useNullMove: false,
     useLMR: false,
     noiseCentipawns: 80,
+  },
+  intermediate: {
+    maxDepth: 3,
+    quiescenceDepth: 2,
+    useNullMove: false,
+    useLMR: false,
+    noiseCentipawns: 40,
   },
   medium: {
     maxDepth: 3,
@@ -61,16 +75,37 @@ const DIFFICULTY: Record<BotDifficulty, DifficultyConfig> = {
     useLMR: false,
     noiseCentipawns: 20,
   },
-  hard: {
+  advanced: {
     maxDepth: 4,
     quiescenceDepth: 6,
+    useNullMove: false,
+    useLMR: true,
+    noiseCentipawns: 0,
+  },
+  strong: {
+    maxDepth: 5,
+    quiescenceDepth: 8,
+    useNullMove: true,
+    useLMR: true,
+    noiseCentipawns: 0,
+  },
+  hard: {
+    maxDepth: 6,
+    quiescenceDepth: 8,
+    useNullMove: true,
+    useLMR: true,
+    noiseCentipawns: 0,
+  },
+  master: {
+    maxDepth: 7,
+    quiescenceDepth: 10,
     useNullMove: true,
     useLMR: true,
     noiseCentipawns: 0,
   },
   expert: {
-    maxDepth: 6,
-    quiescenceDepth: 8,
+    maxDepth: 8,
+    quiescenceDepth: 10,
     useNullMove: true,
     useLMR: true,
     noiseCentipawns: 0,

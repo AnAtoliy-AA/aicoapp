@@ -26,6 +26,10 @@ const STYLE_COLORS: Record<string, string> = {
   defensive: '#22c55e',
   solid: '#8b5cf6',
   balanced: '#6366f1',
+  greedy: '#eab308',
+  gambit: '#f97316',
+  fortress: '#06b6d4',
+  trickster: '#a855f7',
 };
 
 export function BotSelector({
@@ -45,8 +49,9 @@ export function BotSelector({
         {t('games.chess_v1.lobby.botPersonality')}
       </Typography>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-        {personalities.map((p) => {
+      <div className="max-h-[400px] overflow-y-auto rounded-xl border border-[var(--glassBorder)] p-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {personalities.map((p) => {
           const isActive = p.id === selectedId;
           const styleColor = STYLE_COLORS[p.style] ?? '#6366f1';
           return (
@@ -78,6 +83,7 @@ export function BotSelector({
             </button>
           );
         })}
+        </div>
       </div>
 
       {selected && (

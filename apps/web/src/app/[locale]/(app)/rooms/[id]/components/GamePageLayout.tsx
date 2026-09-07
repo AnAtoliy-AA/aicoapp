@@ -17,10 +17,6 @@ import { useEmotes } from '@/features/games/hooks/useEmotes';
 import { useGameRoomChat } from '@/features/games/hooks/useGameRoomChat';
 import { gameSocket } from '@/shared/lib/socket';
 import { ActiveEmotesProvider } from '@/features/games/ui/GameWidgetContainer';
-import {
-  SpectatorReactionsBar,
-  buildSpectatorReactionsLabels,
-} from '@/features/games/ui/SpectatorReactionsBar';
 import type { GameRoomSummary, GameSessionSummary } from '@/shared/types/games';
 
 import { useGameRematchStore } from '@/features/games/store/gameRematchStore';
@@ -285,15 +281,6 @@ export function GamePageLayout(props: GamePageLayoutProps) {
 
         {!isAuthenticated && <GuestTermsNotice />}
 
-        {isSpectating && (
-          <div className="flex w-full justify-center my-0.5">
-            <SpectatorReactionsBar
-              sendEmote={sendEmote}
-              labels={buildSpectatorReactionsLabels(t)}
-            />
-          </div>
-        )}
-
         <GameRow>
           <ActiveEmotesProvider
             value={{
@@ -317,6 +304,7 @@ export function GamePageLayout(props: GamePageLayoutProps) {
               onEmote={sendEmote}
               isHost={isHost}
               onDeleteMessage={handleDeleteMessage}
+              isSpectating={isSpectating}
             />
           </ChatPanel>
 

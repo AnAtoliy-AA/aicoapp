@@ -31,7 +31,7 @@ interface PlayerProfileProps {
   isOwnProfile?: boolean;
 }
 
-export function PlayerProfile({ userId, isOwnProfile = false }: PlayerProfileProps) {
+export function PlayerProfile({ userId, isOwnProfile: _isOwnProfile = false }: PlayerProfileProps) {
   const { t } = useTranslation();
   const [profile, setProfile] = useState<PlayerProfileData | null>(null);
   const [loading, setLoading] = useState(true);

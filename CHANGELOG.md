@@ -7,6 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.42] - 2026-09-07
+
+### Added
+- 40 bots, 9 difficulty levels, Stockfish personality, admin config
+
+### Fixed
+- reduce chess-stockfish.service.ts and ru.ts under 500 lines
+- resolve all ESLint warnings
+- sanitize game settings to prevent NoSQL injection
+- update test files for 9 difficulty levels and admin config
+
+
+## [1.28.41] - 2026-09-07
+
+### Added
+- add sound effects to all 17 games
+
+### Fixed
+- prevent GameMusic crash from destroying page layout
+- fix flaky solo control panel E2E test
+
+
+## [1.28.40] - 2026-09-07
+
+### Added
+- expand to 20 bots, add persistence, SEO structured data, and feature advantages
+
+### Fixed
+- add explicit Date type to subscription expiresAt prop for Mongoose
+
+
+## [1.28.39] - 2026-09-07
+
+### Fixed
+- deduplicate emotes and enforce auth for guest users
+
+
+## [1.28.38] - 2026-09-07
+
+### Added
+- add Stockfish 19 to dev environment on OCI
+- add coordinate trainer, improve landing page, add opening explorer
+- comprehensive improvements to beat competitors
+
+### Fixed
+- remove unused useMemo and useTranslation from CoordinateTrainer
+- type-annotate client.data access in matchmaking gateway
+- revert handleError change that broke gateway tests
+
+
+## [1.28.37] - 2026-09-07
+
+### Fixed
+- align env validator with actual env var names (MONGODB_OCI_URI, OAUTH_WEB_CLIENT_ID)
+
+
 ## [1.28.36] - 2026-09-07
 
 ### Fixed

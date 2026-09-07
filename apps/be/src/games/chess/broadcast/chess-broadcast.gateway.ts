@@ -32,7 +32,7 @@ export class ChessBroadcastGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { broadcastId: string },
   ): void {
-    client.join(`broadcast-${data.broadcastId}`);
+    void client.join(`broadcast-${data.broadcastId}`);
     void this.broadcastService.incrementViewerCount(data.broadcastId);
     const broadcast = this.broadcastService.getBroadcast(data.broadcastId);
     this.server.to(`broadcast-${data.broadcastId}`).emit('viewer-count', {
@@ -45,7 +45,7 @@ export class ChessBroadcastGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { broadcastId: string },
   ): void {
-    client.leave(`broadcast-${data.broadcastId}`);
+    void client.leave(`broadcast-${data.broadcastId}`);
     void this.broadcastService.decrementViewerCount(data.broadcastId);
     const broadcast = this.broadcastService.getBroadcast(data.broadcastId);
     this.server.to(`broadcast-${data.broadcastId}`).emit('viewer-count', {

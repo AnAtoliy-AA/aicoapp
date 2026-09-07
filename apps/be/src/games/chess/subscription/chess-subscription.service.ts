@@ -1,6 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import {
+  ChessSubscriptionUser,
+  type ChessSubscriptionUserDocument,
+  type SubscriptionTier,
+} from './chess-subscription-user.schema';
+import { OCI_CONNECTION } from '../../../common/providers/mongo-connections.provider';
 
-export type SubscriptionTier = 'free' | 'premium' | 'pro';
+export type { SubscriptionTier };
 
 export interface SubscriptionLimits {
   dailyGameReviews: number;
@@ -49,17 +57,52 @@ const TIER_LIMITS: Record<SubscriptionTier, SubscriptionLimits> = {
 @Injectable()
 export class ChessSubscriptionService {
   private readonly logger = new Logger(ChessSubscriptionService.name);
-  private readonly userUsage = new Map<
-    string,
-    { date: string; reviews: number; puzzles: number }
-  >();
+
+  constructor(
+    @InjectModel(ChessSubscriptionUser.name, OCI_CONNECTION)
+    private readonly model: Model<ChessSubscriptionUserDocument>,
+  ) {}
 
   getTierLimits(tier: SubscriptionTier): SubscriptionLimits {
     return TIER_LIMITS[tier];
   }
 
-  getUserTier(_userId: string): SubscriptionTier {
-    return 'free';
+  async getUserTier(userId: string): Promise<SubscriptionTier> {
+    const doc = await this.model.findOne({ userId }).lean();
+    if (!doc) return 'free';
+    if (doc.tier === 'free') return 'free';
+    if (doc.expiresAt && new Date(doc.expiresAt) < new Date()) {
+      return 'free';
+    }
+    return doc.tier;
+  }
+
+  async getDailyUsage(
+    userId: string,
+  ): Promise<{ date: string; gameReviews: number; puzzles: number }> {
+    const today = new Date().toISOString().slice(0, 10);
+    const doc = await this.model.findOne({ userId }).lean();
+    if (!doc || !doc.dailyUsage || doc.dailyUsage.date !== today) {
+      return { date: today, gameReviews: 0, puzzles: 0 };
+    }
+    return doc.dailyUsage;
+  }
+
+  async recordUsage(
+    userId: string,
+    action: 'gameReview' | 'puzzle',
+  ): Promise<void> {
+    const today = new Date().toISOString().slice(0, 10);
+    const field =
+      action === 'gameReview' ? 'dailyUsage.gameReviews' : 'dailyUsage.puzzles';
+    await this.model.findOneAndUpdate(
+      { userId },
+      {
+        $set: { 'dailyUsage.date': today },
+        $inc: { [field]: 1 },
+      },
+      { upsert: true },
+    );
   }
 
   canPerformAction(

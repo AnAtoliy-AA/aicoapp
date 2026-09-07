@@ -273,9 +273,11 @@ export function QuickButton({
   children,
   onClick,
   ariaLabel,
+  title,
 }: DivProps & {
   onClick?: MouseEventHandler<HTMLDivElement>;
   ariaLabel?: string;
+  title?: string;
 }) {
   return (
     <div
@@ -285,6 +287,7 @@ export function QuickButton({
       )}
       onClick={onClick}
       aria-label={ariaLabel}
+      title={title}
     >
       {children}
     </div>
