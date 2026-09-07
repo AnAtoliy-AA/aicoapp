@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.40] - 2026-09-07
+
+### Added
+- expand to 20 bots, add persistence, SEO structured data, and feature advantages
+
+### Fixed
+- add explicit Date type to subscription expiresAt prop for Mongoose
+
+
 ## [1.28.39] - 2026-09-07
 
 ### Fixed
