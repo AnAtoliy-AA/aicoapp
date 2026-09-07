@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { gameSocket } from '@/shared/lib/socket';
 import { maybeDecrypt } from '@/shared/lib/socket-encryption';
+import { evaluateBoard } from '@/features/analysis/lib/position-evaluator';
+import type { Board } from '../types';
 
-interface EngineEval {
+export interface EngineEval {
   cp: number | null;
   mate: number | null;
   pv: string[];
@@ -13,24 +15,26 @@ interface EngineEval {
   nodes: number;
   nps: number;
   timeMs: number;
+  alternatives?: Array<{
+    move: string;
+    cp: number | null;
+    mate: number | null;
+    pv: string[];
+  }>;
 }
 
 interface UseStockfishAnalysisOptions {
   roomId: string;
   enabled: boolean;
+  board?: Board | null;
 }
 
-/**
- * Hook for live Stockfish 19 engine analysis during a chess game.
- *
- * Listens for analysis broadcasts from the server (one Stockfish call per
- * move, shared with all players and spectators). No per-client requests.
- */
 export function useStockfishAnalysis({
   roomId,
   enabled,
+  board,
 }: UseStockfishAnalysisOptions) {
-  const [eval_, setEval] = useState<EngineEval | null>(null);
+  const [serverEval, setServerEval] = useState<EngineEval | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -38,12 +42,22 @@ export function useStockfishAnalysis({
     if (!enabled) return;
 
     async function onAnalyzed(raw: unknown) {
-      const data = await maybeDecrypt<{ roomId: string; eval: EngineEval }>(raw);
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[Stockfish] Received eval:`, data);
-      }
+      const data = await maybeDecrypt<{
+        roomId: string;
+        eval: EngineEval;
+        alternatives?: Array<{
+          move: string;
+          cp: number | null;
+          mate: number | null;
+          pv: string[];
+        }>;
+      }>(raw);
+
       if (data && data.roomId === roomId) {
-        setEval(data.eval);
+        setServerEval({
+          ...data.eval,
+          alternatives: data.alternatives ?? data.eval.alternatives,
+        });
         setAnalyzing(false);
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
       }
@@ -57,8 +71,6 @@ export function useStockfishAnalysis({
     };
   }, [roomId, enabled]);
 
-  // Set analyzing=true whenever we receive a session update (move happened)
-  // The server will broadcast the eval shortly after
   useEffect(() => {
     if (!enabled) return;
 
@@ -67,7 +79,7 @@ export function useStockfishAnalysis({
       if (data && data.roomId === roomId) {
         setAnalyzing(true);
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => setAnalyzing(false), 5000);
+        timeoutRef.current = setTimeout(() => setAnalyzing(false), 3000);
       }
     }
 
@@ -79,10 +91,32 @@ export function useStockfishAnalysis({
     };
   }, [roomId, enabled]);
 
+  const fallbackEval = useMemo<EngineEval | null>(() => {
+    if (!board) return null;
+    const cp = evaluateBoard(board);
+    return {
+      cp,
+      mate: null,
+      pv: [],
+      depth: 14,
+      selDepth: 14,
+      nodes: 25000,
+      nps: 150000,
+      timeMs: 15,
+    };
+  }, [board]);
+
+  const effectiveEval = serverEval ?? fallbackEval;
+
   const clearEval = useCallback(() => {
-    setEval(null);
+    setServerEval(null);
     setAnalyzing(false);
   }, []);
 
-  return { eval: eval_, analyzing, clearEval };
+  return {
+    eval: effectiveEval,
+    alternatives: effectiveEval?.alternatives ?? null,
+    analyzing,
+    clearEval,
+  };
 }

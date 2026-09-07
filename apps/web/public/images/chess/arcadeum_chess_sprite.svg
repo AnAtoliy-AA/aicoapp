@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <defs>
+    <linearGradient id="arc-w-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#E2E8F0" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+    <linearGradient id="arc-w-rim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <linearGradient id="arc-w-shade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#94A3B8" stop-opacity="0.5" />
+    </linearGradient>
+
+    <linearGradient id="arc-b-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="arc-b-rim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <linearGradient id="arc-b-shade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64748B" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#020617" stop-opacity="0.9" />
+    </linearGradient>
+
+    <filter id="arc-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <symbol id="arcadeum-white-pawn" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="30" ry="7" fill="#000000" opacity="0.25" />
+    <path d="M26 84 C26 78 35 76 50 76 C65 76 74 78 74 84 C74 87 68 89 50 89 C32 89 26 87 26 84 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M34 76 C35 60 40 52 42 46 C45 44 55 44 58 46 C60 52 65 60 66 76 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <ellipse cx="50" cy="46" rx="16" ry="5" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="2" />
+    <circle cx="50" cy="30" r="15" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <circle cx="45" cy="25" r="4" fill="#FFFFFF" opacity="0.9" />
+  </symbol>
+
+  <symbol id="arcadeum-black-pawn" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="30" ry="7" fill="#000000" opacity="0.4" />
+    <path d="M26 84 C26 78 35 76 50 76 C65 76 74 78 74 84 C74 87 68 89 50 89 C32 89 26 87 26 84 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M34 76 C35 60 40 52 42 46 C45 44 55 44 58 46 C60 52 65 60 66 76 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <ellipse cx="50" cy="46" rx="16" ry="5" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="2" />
+    <circle cx="50" cy="30" r="15" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <circle cx="45" cy="25" r="3.5" fill="#38BDF8" opacity="0.7" />
+  </symbol>
+
+  <symbol id="arcadeum-white-knight" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="32" ry="7" fill="#000000" opacity="0.25" />
+    <path d="M24 84 C24 77 34 75 50 75 C66 75 76 77 76 84 C76 88 68 90 50 90 C32 90 24 88 24 84 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M30 75 C31 66 33 60 30 52 C27 44 32 38 38 34 C41 26 44 19 55 16 C57 20 57 25 54 28 C64 26 73 30 74 41 C75 50 72 61 70 75 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M34 46 C28 50 25 56 26 62 C29 65 35 63 39 58 Z" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="42" cy="35" r="3.5" fill="#0F172A" />
+    <circle cx="43" cy="34" r="1.2" fill="#FFFFFF" />
+    <path d="M54 28 C60 36 62 48 64 62" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" fill="none" />
+  </symbol>
+
+  <symbol id="arcadeum-black-knight" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="32" ry="7" fill="#000000" opacity="0.4" />
+    <path d="M24 84 C24 77 34 75 50 75 C66 75 76 77 76 84 C76 88 68 90 50 90 C32 90 24 88 24 84 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M30 75 C31 66 33 60 30 52 C27 44 32 38 38 34 C41 26 44 19 55 16 C57 20 57 25 54 28 C64 26 73 30 74 41 C75 50 72 61 70 75 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M34 46 C28 50 25 56 26 62 C29 65 35 63 39 58 Z" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <circle cx="42" cy="35" r="3.5" fill="#38BDF8" />
+    <circle cx="43" cy="34" r="1.2" fill="#FFFFFF" />
+    <path d="M54 28 C60 36 62 48 64 62" stroke="#475569" stroke-width="2" stroke-linecap="round" fill="none" />
+  </symbol>
+
+  <symbol id="arcadeum-white-bishop" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="31" ry="7" fill="#000000" opacity="0.25" />
+    <path d="M25 84 C25 77 35 75 50 75 C65 75 75 77 75 84 C75 88 67 90 50 90 C33 90 25 88 25 84 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M32 75 C34 60 38 52 42 46 C45 44 55 44 58 46 C62 52 66 60 68 75 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <ellipse cx="50" cy="46" rx="18" ry="5" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="2" />
+    <path d="M34 44 C32 30 42 18 50 16 C58 18 68 30 66 44 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <circle cx="50" cy="14" r="4.5" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <path d="M47 24 L59 34" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" />
+  </symbol>
+
+  <symbol id="arcadeum-black-bishop" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="31" ry="7" fill="#000000" opacity="0.4" />
+    <path d="M25 84 C25 77 35 75 50 75 C65 75 75 77 75 84 C75 88 67 90 50 90 C33 90 25 88 25 84 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M32 75 C34 60 38 52 42 46 C45 44 55 44 58 46 C62 52 66 60 68 75 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <ellipse cx="50" cy="46" rx="18" ry="5" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="2" />
+    <path d="M34 44 C32 30 42 18 50 16 C58 18 68 30 66 44 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <circle cx="50" cy="14" r="4.5" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <path d="M47 24 L59 34" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" />
+  </symbol>
+
+  <symbol id="arcadeum-white-rook" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="32" ry="7" fill="#000000" opacity="0.25" />
+    <path d="M24 84 C24 77 34 75 50 75 C66 75 76 77 76 84 C76 88 68 90 50 90 C32 90 24 88 24 84 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M33 75 L36 44 L64 44 L67 75 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M28 44 L28 26 L36 26 L36 32 L44 32 L44 26 L56 26 L56 32 L64 32 L64 26 L72 26 L72 44 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <line x1="31" y1="44" x2="69" y2="44" stroke="url(#arc-w-rim)" stroke-width="3" stroke-linecap="round" />
+  </symbol>
+
+  <symbol id="arcadeum-black-rook" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="32" ry="7" fill="#000000" opacity="0.4" />
+    <path d="M24 84 C24 77 34 75 50 75 C66 75 76 77 76 84 C76 88 68 90 50 90 C32 90 24 88 24 84 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M33 75 L36 44 L64 44 L67 75 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M28 44 L28 26 L36 26 L36 32 L44 32 L44 26 L56 26 L56 32 L64 32 L64 26 L72 26 L72 44 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <line x1="31" y1="44" x2="69" y2="44" stroke="url(#arc-b-rim)" stroke-width="3" stroke-linecap="round" />
+  </symbol>
+
+  <symbol id="arcadeum-white-queen" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="33" ry="7" fill="#000000" opacity="0.25" />
+    <path d="M23 84 C23 77 34 75 50 75 C66 75 77 77 77 84 C77 88 69 90 50 90 C31 90 23 88 23 84 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M31 75 C33 58 39 48 44 44 C46 43 54 43 56 44 C61 48 67 58 69 75 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <ellipse cx="50" cy="44" rx="20" ry="5.5" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="2" />
+    <path d="M28 42 L24 24 L38 33 L50 20 L62 33 L76 24 L72 42 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <circle cx="24" cy="23" r="3" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="38" cy="32" r="2.8" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="50" cy="19" r="3.5" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="62" cy="32" r="2.8" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="76" cy="23" r="3" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+  </symbol>
+
+  <symbol id="arcadeum-black-queen" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="33" ry="7" fill="#000000" opacity="0.4" />
+    <path d="M23 84 C23 77 34 75 50 75 C66 75 77 77 77 84 C77 88 69 90 50 90 C31 90 23 88 23 84 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M31 75 C33 58 39 48 44 44 C46 43 54 43 56 44 C61 48 67 58 69 75 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <ellipse cx="50" cy="44" rx="20" ry="5.5" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="2" />
+    <path d="M28 42 L24 24 L38 33 L50 20 L62 33 L76 24 L72 42 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <circle cx="24" cy="23" r="3" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <circle cx="38" cy="32" r="2.8" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <circle cx="50" cy="19" r="3.5" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <circle cx="62" cy="32" r="2.8" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <circle cx="76" cy="23" r="3" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+  </symbol>
+
+  <symbol id="arcadeum-white-king" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="34" ry="7" fill="#000000" opacity="0.25" />
+    <path d="M22 84 C22 77 33 75 50 75 C67 75 78 77 78 84 C78 88 70 90 50 90 C30 90 22 88 22 84 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M31 75 C33 58 39 48 44 44 C46 43 54 43 56 44 C61 48 67 58 69 75 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <ellipse cx="50" cy="44" rx="21" ry="5.5" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="2" />
+    <path d="M29 42 C27 28 40 22 50 21 C60 22 73 28 71 42 Z" fill="url(#arc-w-body)" stroke="#334155" stroke-width="2.5" />
+    <path d="M47 11 L53 11 L53 14 L56 14 L56 17 L53 17 L53 22 L47 22 L47 17 L44 17 L44 14 L47 14 Z" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="50" cy="32" r="3" fill="url(#arc-w-rim)" stroke="#334155" stroke-width="1" />
+  </symbol>
+
+  <symbol id="arcadeum-black-king" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="85" rx="34" ry="7" fill="#000000" opacity="0.4" />
+    <path d="M22 84 C22 77 33 75 50 75 C67 75 78 77 78 84 C78 88 70 90 50 90 C30 90 22 88 22 84 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M31 75 C33 58 39 48 44 44 C46 43 54 43 56 44 C61 48 67 58 69 75 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <ellipse cx="50" cy="44" rx="21" ry="5.5" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="2" />
+    <path d="M29 42 C27 28 40 22 50 21 C60 22 73 28 71 42 Z" fill="url(#arc-b-body)" stroke="#0F172A" stroke-width="2.5" />
+    <path d="M47 11 L53 11 L53 14 L56 14 L56 17 L53 17 L53 22 L47 22 L47 17 L44 17 L44 14 L47 14 Z" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1.5" />
+    <circle cx="50" cy="32" r="3" fill="url(#arc-b-rim)" stroke="#0F172A" stroke-width="1" />
+  </symbol>
+</svg>

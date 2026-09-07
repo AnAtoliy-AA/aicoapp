@@ -111,6 +111,7 @@ function ChessGameImpl({
     {
       roomId,
       enabled: !isGameOver && !isLobby,
+      board: displaySnapshot?.board,
     },
   );
   const applyOptimisticMove = useCallback(
@@ -297,13 +298,7 @@ function ChessGameImpl({
     [displaySnapshot, isGameOver, currentUserId, resolveDisplayNameBound, t],
   );
   const liveAlternatives = useMemo(() => {
-    if (!liveEval || !('alternatives' in liveEval)) return null;
-    return (liveEval as Record<string, unknown>).alternatives as Array<{
-      move: string;
-      cp: number | null;
-      mate: number | null;
-      pv: string[];
-    }> | null;
+    return liveEval?.alternatives ?? null;
   }, [liveEval]);
   if (!room) return null;
   if (isLobby)
