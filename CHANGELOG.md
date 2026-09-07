@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.44] - 2026-09-07
+
+### Fixed
+- fix CI failures in idle-reconnect and single-player-games
+
+### Improved
+- consolidate e2e tests to reduce navigations and wall time
+- tune Playwright config timeouts for faster failure
+- remove all timeouts and delays from e2e and unit tests
+
+
 ## [1.28.43] - 2026-09-07
 
 ### Fixed
