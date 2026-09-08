@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.51] - 2026-09-08
+
+### Fixed
+- mobile menu zero suffix, solo bg image, and locale in game picker
+
+
 ## [1.28.50] - 2026-09-08
 
 ### Added
