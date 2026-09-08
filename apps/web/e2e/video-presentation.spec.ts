@@ -10,7 +10,7 @@ test.describe('Video Presentation', () => {
   test('should render video placeholder with custom cover image', async ({
     page,
   }) => {
-    await page.waitForSelector('[data-testid="presentation-section"]', {});
+    await page.waitForSelector('[data-testid="presentation-section"]');
     const thumbnail = page
       .locator('main')
       .first()

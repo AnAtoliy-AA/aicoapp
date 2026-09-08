@@ -73,7 +73,7 @@ test.describe('Game Over Screen', () => {
 
     // Entering an already-completed game should NOT auto-show the result modal.
     const victoryHeading = page.getByTestId('game-result-title');
-    await expect(victoryHeading).not.toBeVisible({ timeout: 3000 });
+    await expect(victoryHeading).not.toBeVisible();
   });
 
   test('should display defeat modal when player loses', async ({ page }) => {
@@ -136,6 +136,6 @@ test.describe('Game Over Screen', () => {
 
     // Entering an already-completed game should NOT auto-show the result modal.
     const defeatHeading = page.getByTestId('game-result-title');
-    await expect(defeatHeading).not.toBeVisible({ timeout: 3000 });
+    await expect(defeatHeading).not.toBeVisible();
   });
 });

@@ -14,6 +14,7 @@ import { useGlimwormStore } from './store/glimwormStore';
 import { gameSocket } from '@/shared/lib/socket';
 import { GameWidgetContainer } from '@/features/games/ui/GameWidgetContainer';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { BaseGameWidgetProps } from '@/features/games/types/base';
 import { GlimwormThemeProvider } from './lib/GlimwormThemeContext';
 
@@ -22,6 +23,7 @@ export default function GlimwormGame(
 ): React.JSX.Element {
   const { roomId, currentUserId, isHost, room } = props;
   const { t } = useTranslation();
+  const { play } = useGameSound('glimworm_v1');
 
   // State-backed callback ref: when the canvas div is mounted (after the
   // lobby branch ends), `setCanvasEl` flips the state and the pixi/controls
@@ -58,20 +60,22 @@ export default function GlimwormGame(
   // Restart = drop back to lobby (host can change settings before next start).
   const handleRestart = useCallback(() => {
     if (!currentUserId) return;
+    play('click');
     gameSocket.emit('glimworm.restart', {
       roomId,
       userId: currentUserId,
     });
-  }, [roomId, currentUserId]);
+  }, [roomId, currentUserId, play]);
 
   // Rematch = one-click new round with the same options as last time.
   const handleRematch = useCallback(() => {
     if (!currentUserId) return;
+    play('click');
     gameSocket.emit('glimworm.rematch', {
       roomId,
       userId: currentUserId,
     });
-  }, [roomId, currentUserId]);
+  }, [roomId, currentUserId, play]);
 
   if (isLobby && currentUserId) {
     return (

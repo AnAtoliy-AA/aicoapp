@@ -30,16 +30,7 @@ export function generatePGN(state: ChessClientState): string {
 }
 
 export function generateMoveList(state: ChessClientState): string[] {
-  const moves: string[] = [];
-  for (let i = 0; i < state.moveHistory.length; i++) {
-    const move = state.moveHistory[i];
-    if (i % 2 === 0) {
-      moves.push(`${Math.floor(i / 2) + 1}. ${move.notation}`);
-    } else {
-      moves.push(move.notation);
-    }
-  }
-  return moves;
+  return state.moveHistory.map((m) => m.notation);
 }
 
 function getPlayerName(
@@ -50,6 +41,17 @@ function getPlayerName(
   if (!player) return color === 'white' ? 'White' : 'Black';
   if (player.isBot) return 'Bot';
   return player.playerId.slice(0, 8);
+}
+
+export function downloadPGN(state: ChessClientState): void {
+  const pgn = generatePGN(state);
+  const blob = new Blob([pgn], { type: 'application/x-chess-pgn' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `chess-game-${Date.now()}.pgn`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function getResultTag(state: ChessClientState): string {

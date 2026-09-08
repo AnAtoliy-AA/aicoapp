@@ -55,12 +55,14 @@ export default defineConfig({
   // runs last and warms up against an already-busy Next.js dev server). One
   // retry clears those flakes without masking real regressions — failing
   // tests still need to fail twice in a row to mark the run red.
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 1 : 1,
   workers: process.env.CI
-    ? 1
+    ? process.env.PLAYWRIGHT_WORKERS
+      ? parseInt(process.env.PLAYWRIGHT_WORKERS)
+      : 2
     : process.env.PLAYWRIGHT_WORKERS
       ? parseInt(process.env.PLAYWRIGHT_WORKERS)
-      : undefined,
+      : 2,
   reporter: 'list',
   // 60s is the hard ceiling for any single test. Tests that need longer are
   // usually masking dev-server compile flake or a real perf regression — surface
@@ -68,15 +70,15 @@ export default defineConfig({
   // a project-level retry below to absorb the cold-compile first attempt.
   timeout: 60000,
   expect: {
-    timeout: 15000,
+    timeout: 10000,
   },
 
   use: {
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    actionTimeout: 10000,
+    navigationTimeout: 20000,
   },
 
   projects: [
@@ -97,10 +99,8 @@ export default defineConfig({
         launchOptions: {
           firefoxUserPrefs: {
             'privacy.bounceTrackingProtection.enabled': false,
-            'privacy.bounceTrackingProtection.hasUserInteraction.enabled':
-              false,
-            'privacy.bounceTrackingProtection.requireInteraction.enabled':
-              false,
+            'privacy.bounceTrackingProtection.hasUserInteraction.enabled': false,
+            'privacy.bounceTrackingProtection.requireInteraction.enabled': false,
             'privacy.bounceTrackingProtection.bounceTrackingGracePeriodSec': 31536000,
             'network.cookie.cookieBehavior': 0,
           },
@@ -111,11 +111,8 @@ export default defineConfig({
       name: 'webkit',
       // Safari + Next.js 16 dev server cold compile is reliably slow on the
       // first navigation. A second attempt against the now-warm cache passes
-      // — same pattern as the CI-wide retries=1. Bumping the per-test timeout
-      // gives the cold compile enough headroom that the retry isn't burnt on
-      // first-hit compilation either.
+      // — same pattern as the CI-wide retries=1.
       retries: 1,
-      timeout: 120_000,
       use: { ...devices['Desktop Safari'] },
     },
     {
@@ -132,13 +129,11 @@ export default defineConfig({
     {
       name: 'Mobile Safari',
       retries: 1,
-      timeout: 120_000,
       use: { ...devices['iPhone 12'] },
     },
     {
       name: 'Tablet Safari',
       retries: 1,
-      timeout: 120_000,
       use: { ...devices['iPad Pro 11'] },
     },
   ],
@@ -151,7 +146,7 @@ export default defineConfig({
           : 'pnpm --filter be dev',
       url: `${BE_URL}/health`,
       reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
+      timeout: 60 * 1000,
       env: {
         WEB_PORT: WEB_PORT,
         BE_PORT: BE_PORT,
@@ -192,7 +187,7 @@ export default defineConfig({
           : 'NEXT_PUBLIC_E2E=true pnpm run dev:next',
       url: BASE_URL,
       reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
+      timeout: 60 * 1000,
       env: {
         WEB_PORT: WEB_PORT,
         BE_PORT: BE_PORT,

@@ -20,9 +20,14 @@ const DIFFICULTY_CONFIG: Record<
   AiDifficulty,
   { maxDepth: number; noiseRate: number }
 > = {
+  beginner: { maxDepth: 1, noiseRate: 0.6 },
   easy: { maxDepth: 1, noiseRate: 0.4 },
+  intermediate: { maxDepth: 2, noiseRate: 0.2 },
   medium: { maxDepth: 3, noiseRate: 0.1 },
+  advanced: { maxDepth: 4, noiseRate: 0.05 },
+  strong: { maxDepth: 5, noiseRate: 0.0 },
   hard: { maxDepth: 5, noiseRate: 0.0 },
+  master: { maxDepth: 6, noiseRate: 0.0 },
   expert: { maxDepth: 7, noiseRate: 0.0 },
 };
 

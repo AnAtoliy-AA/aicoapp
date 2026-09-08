@@ -1,5 +1,7 @@
 name: Branch Guard
 
+permissions: read-all
+
 on:
   pull_request:
     branches: [main, staging]
@@ -17,9 +19,6 @@ on:
         description: 'Target branch (main or staging). Leave empty to auto-detect.'
         required: false
         default: ''
-
-permissions:
-  contents: read
 
 jobs:
   check-pr-title:

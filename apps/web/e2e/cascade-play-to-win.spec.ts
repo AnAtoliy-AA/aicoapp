@@ -162,7 +162,7 @@ test.describe('Cascade play to win', () => {
     // mis-mocked room status that would leave us stuck on the lobby.
     await expect(
       page.getByRole('button', { name: /red 9/i }).first(),
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible();
 
     // In-game UI: the user's lone playable card should be rendered.
     const playableCard = page.getByRole('button', { name: /red 5/i }).first();

@@ -13,7 +13,7 @@ import {
 } from '@arcadeum/ui';
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { gamesApi } from '@/features/games/api';
-import { useRoutes } from '@/shared/config/useRoutes';
+import { useRoutes, useLocale } from '@/shared/config/useRoutes';
 import {
   useTranslation,
   type TranslationKey,
@@ -24,6 +24,8 @@ import { GamePickerCard, type GamePickerItem } from './GamePickerCard';
 interface GamePickerModalProps {
   open: boolean;
   onClose: () => void;
+  inviteUserId?: string;
+  title?: string;
 }
 
 type GameCategoryKey = 'all' | 'board' | 'card' | 'casual' | 'puzzle';
@@ -55,8 +57,14 @@ function resolveCategory(
   return 'board';
 }
 
-export function GamePickerModal({ open, onClose }: GamePickerModalProps) {
+export function GamePickerModal({
+  open,
+  onClose,
+  inviteUserId,
+  title,
+}: GamePickerModalProps) {
   const router = useRouter();
+  const locale = useLocale();
   const routes = useRoutes();
   const { snapshot } = useSessionTokens();
   const { t } = useTranslation();
@@ -81,24 +89,26 @@ export function GamePickerModal({ open, onClose }: GamePickerModalProps) {
   }, [open]);
 
   const games: GamePickerItem[] = useMemo(() => {
-    return featuredGames.map((g) => {
-      const isComingSoon = comingSoonIds?.has(g.id) ?? false;
-      return {
-        id: g.id,
-        slug: g.id,
-        name: t(g.nameKey as TranslationKey),
-        description: t(g.descriptionKey as TranslationKey),
-        genre: g.genre,
-        pace: g.pace,
-        category: resolveCategory(g.type, g.genre),
-        players: g.players,
-        duration: g.duration,
-        isPlayable: g.isPlayable && !isComingSoon,
-        isDemo: g.isDemo,
-        landingHref: g.landingHref,
-      };
-    });
-  }, [t, comingSoonIds]);
+    return featuredGames
+      .filter((g) => !inviteUserId || g.players !== '1')
+      .map((g) => {
+        const isComingSoon = comingSoonIds?.has(g.id) ?? false;
+        return {
+          id: g.id,
+          slug: g.id,
+          name: t(g.nameKey as TranslationKey),
+          description: t(g.descriptionKey as TranslationKey),
+          genre: g.genre,
+          pace: g.pace,
+          category: resolveCategory(g.type, g.genre),
+          players: g.players,
+          duration: g.duration,
+          isPlayable: g.isPlayable && !isComingSoon,
+          isDemo: g.isDemo,
+          landingHref: g.landingHref,
+        };
+      });
+  }, [t, comingSoonIds, inviteUserId]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<GameCategoryKey, number> = {
@@ -137,22 +147,50 @@ export function GamePickerModal({ open, onClose }: GamePickerModalProps) {
       const game = games.find((g) => g.slug === gameId);
       if (game?.players === '1' && game.landingHref) {
         onClose();
-        router.push(game.landingHref);
+        router.push(`/${locale}${game.landingHref}`);
         return;
       }
       setLoadingGame(gameId);
       try {
-        const { room } = await gamesApi.quickplay(gameId, undefined, {
-          token: snapshot.accessToken || undefined,
-        });
-        onClose();
-        router.push(routes.gameRoom(room.id));
+        if (inviteUserId) {
+          const { room } = await gamesApi.createRoom(
+            {
+              gameId,
+              name: `${snapshot.accessToken ? snapshot.displayName || snapshot.username || 'Player' : 'Player'}'s game`,
+              visibility: 'public',
+            },
+            { token: snapshot.accessToken || undefined },
+          );
+          if (room?.id && snapshot.accessToken) {
+            await gamesApi.invitePlayers(room.id, [inviteUserId], {
+              token: snapshot.accessToken,
+            });
+          }
+          onClose();
+          router.push(routes.gameRoom(room.id));
+        } else {
+          const { room } = await gamesApi.quickplay(gameId, undefined, {
+            token: snapshot.accessToken || undefined,
+          });
+          onClose();
+          router.push(routes.gameRoom(room.id));
+        }
       } catch (err) {
-        console.warn(`Quickplay failed for ${gameId}:`, err);
+        console.warn(`Game creation failed for ${gameId}:`, err);
         setLoadingGame(null);
       }
     },
-    [snapshot.accessToken, routes, router, onClose, games],
+    [
+      snapshot.accessToken,
+      snapshot.displayName,
+      snapshot.username,
+      routes,
+      router,
+      onClose,
+      games,
+      inviteUserId,
+      locale,
+    ],
   );
 
   return (
@@ -160,7 +198,7 @@ export function GamePickerModal({ open, onClose }: GamePickerModalProps) {
       <ModalContent maxWidth={960} data-testid="game-picker-modal">
         <ModalHeader onClose={onClose}>
           <ModalTitle data-testid="game-picker-title">
-            {t('games.gamePicker.title')}
+            {title || t('games.gamePicker.title')}
           </ModalTitle>
         </ModalHeader>
         <ModalBody data-testid="game-picker-body">

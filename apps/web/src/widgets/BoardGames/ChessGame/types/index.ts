@@ -64,20 +64,29 @@ export interface ChessPlayer {
   playerId: string;
   color: PieceColor;
   isBot: boolean;
+  rating?: number | null;
 }
 
 export interface ChessOptions {
-  variant: 'standard' | 'chess960';
+  variant:
+    | 'standard'
+    | 'chess960'
+    | 'king_of_the_hill'
+    | 'three_check'
+    | 'crazyhouse'
+    | 'atomic';
   timeControl: TimeControl | null;
 }
 
-export type TimeControlType = 'blitz' | 'rapid' | 'classical';
-export type TimeIncrement = 0 | 3 | 5 | 10 | 15 | 30;
+export type TimeControlType =
+  'bullet' | 'blitz' | 'rapid' | 'classical' | 'daily';
+export type TimeIncrement = 0 | 1 | 2 | 3 | 5 | 10 | 15 | 30;
 
 export interface TimeControl {
   type: TimeControlType;
   initialSeconds: number;
   incrementSeconds: TimeIncrement;
+  daysPerMove?: number;
 }
 
 export interface PlayerClock {
@@ -111,7 +120,14 @@ export interface LegalMove {
 
 export interface ChessClientState {
   phase: ChessPhase;
-  variant: 'standard' | 'chess960';
+  gameCreatedAt: number;
+  variant:
+    | 'standard'
+    | 'chess960'
+    | 'king_of_the_hill'
+    | 'three_check'
+    | 'crazyhouse'
+    | 'atomic';
   timeControl: TimeControl | null;
   board: Board;
   currentTurnColor: PieceColor;
@@ -130,6 +146,8 @@ export interface ChessClientState {
   isInsufficientMaterial: boolean;
   isDrawByAgreement: boolean;
   drawOfferedBy: string | null;
+  takebackOfferedBy: string | null;
+  takebackMoveIndex: number | null;
   clocks: Record<PieceColor, PlayerClock> | null;
   positionHistory: string[];
   currentTurnIndex: number;
@@ -144,14 +162,26 @@ export const PROMOTION_PIECES: PieceType[] = [
   'knight',
 ];
 
-export const TIME_CONTROLS: TimeControl[] = [
+export interface TimeControlOption extends TimeControl {
+  disabled?: boolean;
+}
+
+export const TIME_CONTROLS: TimeControlOption[] = [
+  { type: 'bullet', initialSeconds: 60, incrementSeconds: 0 },
   { type: 'blitz', initialSeconds: 180, incrementSeconds: 0 },
+  { type: 'blitz', initialSeconds: 180, incrementSeconds: 2 },
   { type: 'blitz', initialSeconds: 300, incrementSeconds: 0 },
-  { type: 'blitz', initialSeconds: 300, incrementSeconds: 3 },
   { type: 'rapid', initialSeconds: 600, incrementSeconds: 0 },
   { type: 'rapid', initialSeconds: 900, incrementSeconds: 10 },
   { type: 'classical', initialSeconds: 1800, incrementSeconds: 0 },
 ];
 
-export const CHESS_THEME_IDS = ['standard', 'chess960'] as const;
+export const CHESS_THEME_IDS = [
+  'standard',
+  'chess960',
+  'king_of_the_hill',
+  'three_check',
+  'crazyhouse',
+  'atomic',
+] as const;
 export type ChessTheme = (typeof CHESS_THEME_IDS)[number];

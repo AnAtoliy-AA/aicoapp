@@ -21,13 +21,16 @@ describe('LeaderboardsCacheService', () => {
   });
 
   it('expires entries after the TTL', () => {
+    const now = Date.now();
+    jest.spyOn(Date, 'now').mockReturnValue(now);
     cache.set('k', stubSnapshot('all'), 1);
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        expect(cache.get('k')).toBeNull();
-        resolve();
-      }, 5);
-    });
+    expect(cache.get('k')?.mode).toBe('all');
+
+    // Advance past TTL
+    Date.now = jest.fn(() => now + 10);
+    expect(cache.get('k')).toBeNull();
+
+    jest.restoreAllMocks();
   });
 
   it('invalidateAll clears every key', () => {

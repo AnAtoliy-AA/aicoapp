@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Button } from '@arcadeum/ui';
+import { cx } from '@arcadeum/ui/utils/cx';
 
 interface LobbyOptionSectionProps {
   title: string;
@@ -15,15 +16,13 @@ export function LobbyOptionSection({
   hint,
 }: LobbyOptionSectionProps) {
   return (
-    <div className="flex flex-col items-stretch gap-1.5 w-full">
-      <span className="text-[13px] max-[800px]:text-[12px] font-semibold uppercase tracking-[0.5px] text-[var(--textSecondary)]">
+    <div className="flex flex-col items-stretch gap-2 w-full">
+      <span className="text-xs font-bold uppercase tracking-wider text-[var(--textPrimary)]">
         {title}
       </span>
       {children}
       {hint && (
-        <span className="text-[11px] text-[rgba(180,180,200,0.7)] opacity-[0.7]">
-          {hint}
-        </span>
+        <span className="text-[11px] text-[var(--textMuted)]">{hint}</span>
       )}
     </div>
   );
@@ -51,7 +50,6 @@ export function LobbyChipGroup({
   value,
   onChange,
   disabled = false,
-  accentColor = '#6366f1',
   testIdPrefix = 'chip',
 }: LobbyChipGroupProps) {
   return (
@@ -61,26 +59,14 @@ export function LobbyChipGroup({
         const isDisabled = disabled || option.comingSoon;
         return (
           <Button
-            className={`rounded-[10px] font-medium text-[13px] ${
+            className={cx(
+              'rounded-xl font-semibold text-xs px-3.5 py-2 transition-all',
               isActive
-                ? undefined
-                : 'bg-[var(--glassBg)] border-[var(--glassBorder)] text-[var(--color)] hover:bg-[var(--glassBgHover)]'
-            } ${
-              option.comingSoon
-                ? 'opacity-[0.4]'
-                : disabled && !isActive
-                  ? 'opacity-[0.5]'
-                  : ''
-            }`}
-            style={
-              isActive
-                ? {
-                    backgroundColor: `color-mix(in srgb, ${accentColor} 20%, transparent)`,
-                    borderColor: `color-mix(in srgb, ${accentColor} 80%, transparent)`,
-                    color: accentColor,
-                  }
-                : undefined
-            }
+                ? 'bg-indigo-500/20 border-indigo-500 text-white ring-1 ring-indigo-500/60 shadow-sm'
+                : 'bg-[var(--surface)]/90 backdrop-blur-md border-[var(--glassBorder)] text-[var(--textSecondary)] hover:bg-[var(--surfaceHover)] hover:text-[var(--textPrimary)] hover:border-white/30',
+              option.comingSoon && 'opacity-40 cursor-not-allowed',
+              disabled && !isActive && 'opacity-50 cursor-not-allowed',
+            )}
             key={option.id}
             variant="chip"
             size="sm"
@@ -89,10 +75,10 @@ export function LobbyChipGroup({
             disabled={isDisabled}
             onClick={() => !isDisabled && onChange(option.id)}
           >
-            {option.emoji && <span className="-mr-2">{option.emoji}</span>}
+            {option.emoji && <span className="-mr-1.5">{option.emoji}</span>}
             {option.label}
             {option.comingSoon && (
-              <span className="-ml-2 text-[48px] opacity-[0.85]">
+              <span className="-ml-1 text-[10px] uppercase font-bold tracking-wider opacity-80">
                 Coming Soon
               </span>
             )}
@@ -120,33 +106,27 @@ export function LobbyToggle({
 }: LobbyToggleProps) {
   return (
     <div className="flex flex-col items-stretch gap-1">
-      <div className="flex flex-row items-center gap-3">
+      <label className="flex flex-row items-center gap-3 cursor-pointer select-none">
         <input
           type="checkbox"
           checked={checked}
           disabled={disabled}
           onChange={(e) => onCheckedChange(e.target.checked)}
-          style={{
-            width: 16,
-            height: 16,
-            accentColor: '#6366f1',
-            cursor: disabled ? 'not-allowed' : 'pointer',
-          }}
+          className={cx(
+            'w-4 h-4 rounded accent-indigo-500',
+            disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+          )}
         />
         <span
-          className="text-[16px] font-medium"
-          style={{
-            color: disabled ? 'rgba(180,180,200,0.7)' : 'var(--color)',
-          }}
+          className={cx(
+            'text-sm font-medium',
+            disabled ? 'text-[var(--textMuted)]' : 'text-[var(--textPrimary)]',
+          )}
         >
           {label}
         </span>
-      </div>
-      {hint && (
-        <span className="text-[12px] text-[rgba(180,180,200,0.7)] opacity-[0.7]">
-          {hint}
-        </span>
-      )}
+      </label>
+      {hint && <span className="text-xs text-[var(--textMuted)]">{hint}</span>}
     </div>
   );
 }

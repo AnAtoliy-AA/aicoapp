@@ -7,17 +7,11 @@ const ROOT_DIR = process.cwd();
 // List of files to ignore (relative to root). Empty by design: every TS/TSX
 // file under apps/ must stay below MAX_LINES. If you genuinely need an
 // exemption, add the path here and link the follow-up refactor ticket.
-const ALLOW_LIST = new Set([
-  // i18n data dictionaries — inherently line-heavy because prettier wraps
-  // long translated strings onto their own lines (see apps/web/eslint.config.mjs
-  // for the matching max-lines exemption). Follow-up: extract the shared games
-  // messages into focused modules (ARC-916).
-  'apps/web/src/shared/i18n/messages/games/shared/en.ts',
-  'apps/web/src/shared/i18n/messages/games/shared/es.ts',
-  'apps/web/src/shared/i18n/messages/games/shared/fr.ts',
-  'apps/web/src/shared/i18n/messages/games/shared/ru.ts',
-  'apps/web/src/shared/i18n/messages/games/shared/by.ts',
-]);
+const ALLOW_LIST = new Set([]);
+
+// Glob-like patterns for files exempt from the line limit (i18n dictionaries
+// are inherently long because Prettier wraps translated strings).
+const ALLOW_PATTERNS = ['shared/i18n/messages/games/shared/'];
 
 const IGNORE_DIRS = new Set([
   'node_modules',
@@ -65,6 +59,10 @@ function scanDirectory(dir) {
         const relativePath = path.relative(ROOT_DIR, fullPath);
 
         if (ALLOW_LIST.has(relativePath)) {
+          continue;
+        }
+
+        if (ALLOW_PATTERNS.some((pattern) => relativePath.includes(pattern))) {
           continue;
         }
 

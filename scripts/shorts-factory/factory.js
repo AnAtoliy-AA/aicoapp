@@ -4,7 +4,7 @@
  * Shorts Factory - Automated Short-Form Video Generator
  *
  * Generates a 5-10 second 9:16 vertical short-form video of random
- * browsing across the Arcadeum app, injects random audio, applies
+ * browsing across the Arcadeum Games app, injects random audio, applies
  * fade-out, and prepares for automated posting via Postiz scheduler.
  *
  * Usage:
@@ -77,7 +77,7 @@ const CONFIG = {
   pendingDir: path.join(__dirname, '..', '..', 'pending'),
 
   // Video settings
-  videoDuration: { min: 5, max: 10 }, // seconds (randomized)
+  videoDuration: { min: 15, max: 25 }, // seconds (randomized)
   fadeOutDuration: 2, // seconds
   fadeOutStartOffset: 2, // seconds before end to start fade
   musicVolume: 0.35, // 35% volume
@@ -98,6 +98,9 @@ const CONFIG = {
   // Factory bot account for gameplay recording (optional)
   factoryBotToken: process.env.SHORTS_FACTORY_BOT_TOKEN || '',
   factoryBotRefreshToken: process.env.SHORTS_FACTORY_BOT_REFRESH_TOKEN || '',
+  factoryBotEmail: process.env.SHORTS_FACTORY_BOT_EMAIL || '',
+  factoryBotPassword: process.env.SHORTS_FACTORY_BOT_PASSWORD || '',
+  factoryBeUrl: process.env.BE_URL || process.env.BACKEND_URL || 'http://localhost:4000',
 
   // Approval settings
   approvalTimeoutMs: 3 * 60 * 60 * 1000, // 3 hours
@@ -295,26 +298,26 @@ async function reportResult(id, success, message, platforms) {
 // ============================================================================
 
 const CAPTIONS = [
-  'This is what web3 gaming actually looks like 🎮⚡',
-  'Play games, win real rewards, no wallet needed 💰🏆',
-  'The future of multiplayer gaming is live on Arcadeum ⚡',
-  'POV: you just found the best gaming platform online 🕹️🔥',
-  'Free to play. Easy to win. Impossible to stop 🚀',
-  'Gaming meets Web3 — and it slaps 🎯',
-  'Your next favorite game is one click away 🌟',
-  'Play. Compete. Earn. Repeat! 🔄💎',
-  'Level up your gaming experience today! ⬆️',
-  'Where casual gamers become champions 👑',
-  'Unlock exclusive drops just by playing 🔓🎁',
-  'The ultimate gaming destination just dropped 🌟',
-  'Real multiplayer. Real stakes. Real fun 🏅',
-  'Web3 gaming that actually works — no gas fees 😤⚡',
-  'Sink ships, climb ranks, collect rewards ⚓🏆',
-  'Chess with stakes? Sign me up 👑♟️',
-  'This snake game goes HARD 🐍🔥',
-  'Classic games, Web3 rewards — best combo ever 🎲💰',
-  'Drop in, play a quick game, win something epic 🎮🏆',
-  'Arcadeum just changed the game. Literally. 🚀',
+  'This is what next-gen gaming actually looks like 🎮⚡ 20+ games, ranked matchmaking, and real rewards',
+  'Play games, win real rewards, no download needed 💰🏆 Instant browser play, no app store required',
+  'The future of multiplayer gaming is live on Arcadeum Games ⚡ Real-time matchmaking, leaderboards, and daily challenges',
+  'POV: you just found the best gaming platform online 🕹️🔥 Chess, Sea Battle, Checkers, Poker, Go — all free',
+  'Free to play. Easy to win. Impossible to stop 🚀 20+ games with ranked seasons and unlockable rewards',
+  'Competitive gaming meets real rewards — and it slaps 🎯 ELO ratings, win streaks, and seasonal tournaments',
+  'Your next favorite game is one click away 🌟 No download, no signup friction — just play instantly',
+  'Play. Compete. Earn. Repeat! 🔄💎 Daily rewards, battle passes, and cosmetic unlocks',
+  'Level up your gaming experience today! ⬆️ 40 AI bot difficulties, Puzzle Rush, and game analysis',
+  'Where casual gamers become champions 👑 Ranked ladders, tournament brackets, and global leaderboards',
+  'Unlock exclusive drops just by playing 🔓🎁 Avatar skins, board themes, and animated effects',
+  'The ultimate gaming destination just dropped 🌟 20+ games across chess, cards, boards, and arcade',
+  'Real multiplayer. Real stakes. Real fun 🏅 Play vs AI, friends, or ranked opponents worldwide',
+  'Competitive gaming that actually works — instant matchmaking 😤⚡ Under 3 second queue times',
+  'Sink ships, climb ranks, collect rewards ⚓🏆 Sea Battle with ranked seasons and ship unlocks',
+  'Chess with stakes? Sign me up 👑♟️ Stockfish 19, 40 AI bots, 6 variants, and Puzzle Rush',
+  'This snake game goes HARD 🐍🔥 Glimworm multiplayer — 8-player neon battles',
+  'Classic games, modern rewards — best combo ever 🎲💰 Backgammon, Checkers, Hearts, Spades — all ranked',
+  'Drop in, play a quick game, win something epic 🎮🏆 Quick play mode, daily challenges, and instant rewards',
+  'Arcadeum Games just changed the game. Literally. 🚀 Browser-based, cross-platform, zero downloads',
 ];
 
 // ============================================================================
@@ -323,11 +326,42 @@ const CAPTIONS = [
 
 /**
  * Injects bot auth tokens into the browser context so gameplay pages load
- * as an authenticated user. Requires SHORTS_FACTORY_BOT_TOKEN in env.
- * Returns true if tokens were injected, false if no token configured.
+ * as an authenticated user. Auto-logins if no token set in env.
+ * Returns true if tokens were injected, false if no auth available.
  */
-async function injectBotAuth(context) {
-  if (!CONFIG.factoryBotToken) {
+async function getFactoryBotTokens() {
+  if (CONFIG.factoryBotToken) {
+    log('info', 'Using existing SHORTS_FACTORY_BOT_TOKEN from env');
+    return { accessToken: CONFIG.factoryBotToken, refreshToken: CONFIG.factoryBotRefreshToken };
+  }
+
+  if (!CONFIG.factoryBotEmail || !CONFIG.factoryBotPassword) {
+    log('warn', 'No bot credentials configured (SHORTS_FACTORY_BOT_EMAIL/PASSWORD)');
+    return null;
+  }
+
+  log('info', `Auto-login as bot user: ${CONFIG.factoryBotEmail}`);
+  try {
+    const res = await axios.post(`${CONFIG.factoryBeUrl}/auth/login`, {
+      email: CONFIG.factoryBotEmail,
+      password: CONFIG.factoryBotPassword,
+    }, { timeout: 15000 });
+
+    const { accessToken, refreshToken } = res.data || {};
+    if (accessToken) {
+      log('info', 'Bot login successful');
+      return { accessToken, refreshToken: refreshToken || '' };
+    }
+    log('warn', 'Bot login returned no accessToken');
+    return null;
+  } catch (err) {
+    log('warn', 'Bot login failed', { error: err.message, status: err.response?.status });
+    return null;
+  }
+}
+
+async function injectBotAuth(context, tokens) {
+  if (!tokens?.accessToken) {
     return false;
   }
   await context.addInitScript(
@@ -346,8 +380,8 @@ async function injectBotAuth(context) {
       } catch {}
     },
     {
-      accessToken: CONFIG.factoryBotToken,
-      refreshToken: CONFIG.factoryBotRefreshToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken || '',
     },
   );
   return true;
@@ -364,13 +398,13 @@ const SCENARIOS = [
     name: 'seaBattleGameplay',
     requiresAuth: true,
     caption:
-      'Live Sea Battle gameplay on Arcadeum! Sink fleets, earn rewards ⚓🔥 #seabattle #web3gaming',
+      'Live Sea Battle gameplay on Arcadeum Games! Sink fleets, earn rewards ⚓🔥 10x10 grid, 5 ships, placement strategy, and real-time combat. #seabattle #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/sea-battle', wait: 2000 },
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       { type: 'scroll', y: 200, wait: 800 },
       {
@@ -385,13 +419,13 @@ const SCENARIOS = [
     name: 'chessGameplay',
     requiresAuth: true,
     caption:
-      'Play chess vs AI for real rewards on Arcadeum! ♟️👑 #chess #web3gaming #onlinechess',
+      'Chess powered by Stockfish 19 — the newest version deployed September 2026, the strongest engine ever built ♟️🧠 40 personalized AI bots of all difficulties, 6 variants, Puzzle Rush, game review with accuracy scores. Play free at arcadeum.games #chess #stockfish #stockfish19 #chessengine #onlinechess #chess960 #puzzlerush #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/chess', wait: 2000 },
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       { type: 'scroll', y: 200, wait: 800 },
       {
@@ -412,7 +446,7 @@ const SCENARIOS = [
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       {
         type: 'hover',
@@ -426,13 +460,13 @@ const SCENARIOS = [
     name: 'criticalGameplay',
     requiresAuth: true,
     caption:
-      'Critical card game — high pressure, high reward ⚡🃏 #cardgame #arcade #web3',
+      'Critical card game — high pressure, high reward ⚡🃏 20+ cards, deck building, combo chains — survive 10 rounds to win. #cardgame #arcade #multiplayer #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/critical', wait: 2000 },
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       {
         type: 'hover',
@@ -452,7 +486,7 @@ const SCENARIOS = [
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       {
         type: 'hover',
@@ -472,7 +506,7 @@ const SCENARIOS = [
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       {
         type: 'hover',
@@ -492,7 +526,7 @@ const SCENARIOS = [
       {
         type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 6000,
+        wait: 3000,
       },
       {
         type: 'hover',
@@ -508,7 +542,7 @@ const SCENARIOS = [
   {
     name: 'gameExplorer',
     caption:
-      'Ready to level up? Discover next-gen web3 multiplayer games instantly on Arcadeum! ⚡🎮 #web3gaming #gaming',
+      'Ready to level up? Discover next-gen multiplayer games instantly on Arcadeum Games! ⚡🎮 #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en', wait: 2500 },
       { type: 'scroll', y: 500, wait: 800 },
@@ -529,7 +563,7 @@ const SCENARIOS = [
   {
     name: 'seaBattleIntro',
     caption:
-      'Sink enemy fleets & claim real rewards! ⚓ Play Sea Battle live on Arcadeum 🔥 #seabattle #indiegames',
+      'Sink enemy fleets & claim real rewards! ⚓ Play Sea Battle live on Arcadeum Games 🔥 Carrier, Battleship, Cruiser, Submarine, Destroyer — place them smart, sink them all. #seabattle #indiegames #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/sea-battle', wait: 2500 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -551,7 +585,7 @@ const SCENARIOS = [
   {
     name: 'chessLanding',
     caption:
-      'Play chess with real stakes vs. live opponents 👑♟️ Ranked matches on Arcadeum! #chess #gaming',
+      'Chess on Arcadeum Games — Stockfish 19, the newest engine version deployed September 2026. 40 personalized AI bots from beginner to grandmaster, 6 variants, Puzzle Rush with 500+ tactics, game review with accuracy scores 🧠♟️ Try free at arcadeum.games #chess #stockfish #stockfish19 #chess960 #puzzlerush #chessanalysis #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/chess', wait: 2500 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -572,7 +606,7 @@ const SCENARIOS = [
   {
     name: 'glimwormLanding',
     caption:
-      'A snake game that went MULTIPLAYER 🐍⚡ Glimworm on Arcadeum is insane #snakegame #arcade',
+      'A snake game that went MULTIPLAYER 🐍⚡ Glimworm on Arcadeum Games is insane — neon grid, power-ups, 8-player battles #snakegame #arcade #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/glimworm', wait: 2500 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -614,7 +648,7 @@ const SCENARIOS = [
   {
     name: 'tictactoeLanding',
     caption:
-      'Think Tic-Tac-Toe is easy? Try competing for real ranks on Arcadeum! ❌⭕ #boardgames #onlinegaming',
+      'Think Tic-Tac-Toe is easy? Try competing for real ranks on Arcadeum Games! ❌⭕ Center control, fork threats, and ranked matchmaking #boardgames #onlinegaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/tic-tac-toe', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -656,7 +690,7 @@ const SCENARIOS = [
   {
     name: 'checkersLanding',
     caption:
-      'Classic checkers with a competitive edge 🔴⚫ Ranked online play on Arcadeum! #checkers',
+      'Classic checkers with a competitive edge 🔴⚫ Forced captures, king promotion, multi-jump combos — ranked online play on Arcadeum Games! #checkers #competitive #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/checkers', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -677,7 +711,7 @@ const SCENARIOS = [
   {
     name: 'backgammonLanding',
     caption:
-      'Backgammon online with real opponents — the OG strategy game is back 🎲♟️ #backgammon',
+      'Backgammon online with real opponents — the OG strategy game is back 🎲♟️ Doubling cube, pip count, and prime formations. #backgammon #boardgame #strategy #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/backgammon', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -698,7 +732,7 @@ const SCENARIOS = [
   {
     name: 'heartsLanding',
     caption:
-      'Hearts card game online — avoid the Queen, win the round! 🃏❤️ #cardgame #gaming',
+      'Hearts card game online — avoid the Queen, win the round! 🃏❤️ Pass cards, shoot the moon, and dodge the Queen of Spades. #cardgame #tricktaking #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/hearts', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -719,7 +753,7 @@ const SCENARIOS = [
   {
     name: 'spadesLanding',
     caption:
-      'Spades online — team up & dominate the table! 🃏♠️ #spades #cardgame #multiplayer',
+      'Spades online — team up & dominate the table! 🃏♠️ Bid smart, play trump, and track bags. #spades #cardgame #multiplayer #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/spades', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -740,7 +774,7 @@ const SCENARIOS = [
   {
     name: 'catDashLanding',
     caption:
-      'Cat Dash — the most chaotic runner game on web3 🐱💨 #catdash #arcade #gaming',
+      'Cat Dash — the most chaotic runner game on web 🐱💨 Endless runner, power-ups, and distance challenges. #catdash #arcade #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/cat-dash', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -761,7 +795,7 @@ const SCENARIOS = [
   {
     name: '2048Landing',
     caption:
-      '2048 online with multiplayer twist — how high can you score? 🧩🏆 #2048 #puzzle',
+      '2048 online with multiplayer twist — how high can you score? 🧩🏆 Slide tiles, merge numbers, and chase 2048. #2048 #puzzle #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/2048', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -785,7 +819,7 @@ const SCENARIOS = [
   {
     name: 'gamesCatalogBrowse',
     caption:
-      '20+ games and counting! The Arcadeum catalog keeps growing 🎮🌟 #gaming #web3',
+      '20+ games and counting! The Arcadeum Games catalog keeps growing 🎮🌟 #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -806,7 +840,7 @@ const SCENARIOS = [
   {
     name: 'gamesCatalogFilter',
     caption:
-      'Strategy, action, cards — Arcadeum has it all 🎯🃏⚔️ #web3gaming #gaming',
+      'Strategy, action, cards — Arcadeum Games has it all 🎯🃏⚔️ #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games', wait: 2500 },
       {
@@ -851,7 +885,7 @@ const SCENARIOS = [
   {
     name: 'leaderboardClimb',
     caption:
-      'Climb the global leaderboards and earn recognition! 🏆 #gaming #leaderboard',
+      'Climb the global leaderboards and earn recognition! 🏆 Daily, weekly, and all-time rankings across 20+ games. #gaming #leaderboard #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/leaderboards', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -868,7 +902,7 @@ const SCENARIOS = [
   {
     name: 'communityBuzz',
     caption:
-      'Connect with gamers from around the world in real-time! 💬🌍 #gaming #community',
+      'Connect with gamers from around the world in real-time! 💬🌍 Live chat, friend lists, and online status. #gaming #community #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/community', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -889,7 +923,7 @@ const SCENARIOS = [
   {
     name: 'clansPage',
     caption:
-      'Join or create a clan and compete together for epic rewards! ⚔️🏰 #clans #gaming #teamwork',
+      'Join or create a clan and compete together for epic rewards! ⚔️🏰 Clan wars, shared leaderboards, and exclusive clan chat. #clans #gaming #teamwork #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/clans', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -910,7 +944,7 @@ const SCENARIOS = [
   {
     name: 'friendsPage',
     caption:
-      'Play with friends, challenge rivals, build your squad 🤝🎮 #friends #gaming',
+      'Play with friends, challenge rivals, build your squad 🤝🎮 Friend invites, rival tracking, and squad challenges. #friends #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/friends', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -931,7 +965,7 @@ const SCENARIOS = [
   {
     name: 'tournamentTime',
     caption:
-      'Join daily tournaments and win massive prizes! 🏅🔥 #tournament #esports',
+      'Join daily tournaments and win massive prizes! 🏅🔥 Bracket play, Swiss system, and free-for-all formats. #tournament #esports #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/tournaments', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -952,7 +986,7 @@ const SCENARIOS = [
   {
     name: 'eventsPage',
     caption:
-      "Special events with exclusive rewards — don't miss out! 🎉🎁 #events #gaming",
+      "Special events with exclusive rewards — don't miss out! 🎉🎁 Limited-time modes, holiday events, and rare cosmetics. #events #gaming #arcadeumgames",
     steps: [
       { type: 'navigate', url: '/en/events', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -973,7 +1007,7 @@ const SCENARIOS = [
   {
     name: 'playerProfiles',
     caption:
-      'Check out detailed player stats and achievements! 👤📊 #gaming #stats',
+      'Check out detailed player stats and achievements! 👤📊 Win rate, game history, and performance trends. #gaming #stats #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/leaderboards', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -990,7 +1024,7 @@ const SCENARIOS = [
   {
     name: 'referralRewards',
     caption:
-      'Invite friends to Arcadeum and earn bonus rewards! 🎁🔗 #referral #gaming',
+      'Invite friends to Arcadeum Games and earn bonus rewards! 🎁🔗 Referral codes, friend bonuses, and social sharing. #referral #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/referrals', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1014,7 +1048,7 @@ const SCENARIOS = [
   {
     name: 'rewardHunter',
     caption:
-      'Earn tokens and gems daily just for playing! 💰💎 #playtoearn #web3',
+      'Earn tokens and gems daily just for playing! 💰💎 Daily login streaks, achievement rewards, and shop currency. #playtoearn #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/rewards', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1031,7 +1065,7 @@ const SCENARIOS = [
   {
     name: 'shopAvatars',
     caption:
-      'Get custom avatars and unique skins in the Arcadeum shop! 🛒🎨 #gaming #cosmetics',
+      'Get custom avatars and unique skins in the Arcadeum Games shop! 🛒🎨 Avatar collection, board themes, and animated effects. #gaming #cosmetics #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/shop', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1052,7 +1086,7 @@ const SCENARIOS = [
   {
     name: 'shopInventory',
     caption:
-      'Manage and equip your custom collected skins! 🎒✨ #gaming #customization',
+      'Manage and equip your custom collected skins! 🎒✨ Wardrobe system, loadout presets, and rarity tiers. #gaming #customization #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/shop/inventory', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1073,7 +1107,7 @@ const SCENARIOS = [
   {
     name: 'walletWatch',
     caption:
-      'Securely manage your tokens and assets in the Arcadeum wallet! 💎🔐 #web3 #crypto',
+      'Securely manage your tokens and assets in the Arcadeum Games wallet! 💎🔐 Token balance, transaction history, and in-game purchases. #gaming #rewards #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/wallet', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1094,7 +1128,7 @@ const SCENARIOS = [
   {
     name: 'tokenInfo',
     caption:
-      'Join the next generation web3 gaming ecosystem! 🪙🚀 #web3 #blockchain',
+      'Join the next generation gaming ecosystem! 🪙🚀 Token utility, staking rewards, and governance voting. #gaming #rewards #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/token', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1115,19 +1149,19 @@ const SCENARIOS = [
   {
     name: 'battlePass',
     caption:
-      'Unlock legendary drops with the Arcadeum Battle Pass! 🎫🏆 #battlepass #gaming',
+      'Unlock legendary drops with the Arcadeum Games Battle Pass! 🎫🏆 Seasonal tiers, free and premium tracks, and exclusive cosmetics. #battlepass #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/battle-pass', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
       {
         type: 'hover',
-        selector: '[data-testid^="battlepass-tier-"]',
+        selector: '[data-testid^="battle-pass-tier-"]',
         wait: 1500,
       },
       { type: 'scroll', y: 300, wait: 800 },
       {
         type: 'hover',
-        selector: '[data-testid="battlepass-progress-bar"]',
+        selector: '[data-testid="battle-pass-rail"]',
         wait: 1200,
       },
       { type: 'scroll', y: 200, wait: 600 },
@@ -1139,7 +1173,7 @@ const SCENARIOS = [
   {
     name: 'homepageTour',
     caption:
-      'Welcome to Arcadeum — the ultimate web3 gaming playground! 🚀🎮 #web3gaming',
+      'Welcome to Arcadeum Games — the ultimate gaming playground! 🚀🎮 20+ games, ranked play, and real rewards. #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en', wait: 3000 },
       { type: 'scroll', y: 400, wait: 800 },
@@ -1160,7 +1194,7 @@ const SCENARIOS = [
   {
     name: 'replaysPage',
     caption:
-      'Replay your greatest victories and learn from your losses! 🎬🏆 #gaming #replay',
+      'Replay your greatest victories and learn from your losses! 🎬🏆 Full game replay, move-by-move analysis, and share highlights. #gaming #replay #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/replays', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1177,7 +1211,7 @@ const SCENARIOS = [
   {
     name: 'historyReplay',
     caption:
-      'Review and replay your best game moments! 🎬⚡ #gaming #replay #arcadeum',
+      'Review and replay your best game moments! 🎬⚡ Game history, opponent analysis, and downloadable PGNs. #gaming #replay #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/history', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1194,7 +1228,7 @@ const SCENARIOS = [
   {
     name: 'statsDeepDive',
     caption:
-      'Analyze your gameplay performance with in-depth stats! 📊🎮 #gaming #stats',
+      'Analyze your gameplay performance with in-depth stats! 📊🎮 Win rate trends, opening accuracy, and improvement tracking. #gaming #stats #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/stats', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1215,7 +1249,7 @@ const SCENARIOS = [
   {
     name: 'roadmapPage',
     caption:
-      'Big things are coming to Arcadeum! Check out the roadmap 🗺️🚀 #gaming #web3',
+      'Big things are coming to Arcadeum Games! Check out the roadmap 🗺️🚀 New games, features, and tournament modes. #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/roadmap', wait: 2500 },
       { type: 'scroll', y: 400, wait: 800 },
@@ -1236,7 +1270,7 @@ const SCENARIOS = [
   {
     name: 'blogRead',
     caption:
-      'Stay updated with the latest gaming news and updates! 📰🎮 #gaming #news',
+      'Stay updated with the latest gaming news and updates! 📰🎮 Patch notes, new game launches, and community spotlights. #gaming #news #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/blog', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1257,7 +1291,7 @@ const SCENARIOS = [
   {
     name: 'multiPageFlow',
     caption:
-      'A seamless, immersive web3 gaming experience! ✨🎮 #web3gaming #arcadeum',
+      'A seamless, immersive gaming experience! ✨🎮 Cross-platform play, instant matchmaking, and zero downloads. #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1272,7 +1306,7 @@ const SCENARIOS = [
   },
   {
     name: 'gameToLeaderboard',
-    caption: 'Play hard, rank high, and win prizes! 📈🏆 #competitive #gaming',
+    caption:       'Play hard, rank high, and win prizes! 📈🏆 Seasonal rankings, promotion matches, and division tiers. #competitive #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1288,7 +1322,7 @@ const SCENARIOS = [
   {
     name: 'shopToRewards',
     caption:
-      'Unlock premium cosmetics and climb the ranks! 🛍️🏆 #gaming #rewards',
+      'Unlock premium cosmetics and climb the ranks! 🛍️🏆 Avatar skins, board themes, and animated effects. #gaming #rewards #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/shop', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1304,7 +1338,7 @@ const SCENARIOS = [
   {
     name: 'communityToTournament',
     caption:
-      'Engage with the community and join active matches! 🏆💬 #esports #gaming',
+      'Engage with the community and join active matches! 🏆💬 Live chat, friend challenges, and tournament brackets. #esports #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/community', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1320,7 +1354,7 @@ const SCENARIOS = [
   {
     name: 'developersPortal',
     caption:
-      'Build the future of gaming on the Arcadeum SDK! 👨‍💻🚀 #gamedev #web3',
+      'Build the future of gaming on the Arcadeum Games SDK! 👨‍💻🚀 Developer docs, API reference, and integration guides. #gamedev #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/developers', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1337,7 +1371,7 @@ const SCENARIOS = [
   {
     name: 'changelogPage',
     caption:
-      "Arcadeum ships fast — check out what's new! 🚢⚡ #gaming #updates #changelog",
+      "Arcadeum Games ships fast — check out what's new! 🚢⚡ Patch notes, new games, and feature releases. #gaming #updates #arcadeumgames",
     steps: [
       { type: 'navigate', url: '/en/changelog', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1358,7 +1392,7 @@ const SCENARIOS = [
   {
     name: 'settingsCheck',
     caption:
-      'Customize your theme and accessibility settings! ⚙️🎨 #gaming #customization',
+      'Customize your theme and accessibility settings! ⚙️🎨 Light/dark mode, colorblind support, and UI preferences. #gaming #customization #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/settings', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1378,7 +1412,7 @@ const SCENARIOS = [
   {
     name: 'catalogToGameFlow',
     caption:
-      'Browse 20+ games and jump into action in seconds! 🎮⚡ #gaming #web3gaming #arcadeum',
+      'Browse 20+ games and jump into action in seconds! 🎮⚡ Chess, Sea Battle, Checkers, Poker, Go — all free. #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games', wait: 2500 },
       { type: 'scroll', y: 300, wait: 800 },
@@ -1394,16 +1428,21 @@ const SCENARIOS = [
       },
       { type: 'scroll', y: 300, wait: 800 },
       {
-        type: 'hover',
+        type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 1200,
+        wait: 3000,
+      },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 1500,
       },
     ],
   },
   {
     name: 'catalogToSeaBattleFlow',
     caption:
-      'Found Sea Battle in the catalog — time to sink some ships! ⚓🔥 #seabattle #gaming',
+      'Found Sea Battle in the catalog — time to sink some ships! ⚓🔥 10x10 grid, 5 ships, and real-time naval combat. #seabattle #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games', wait: 2500 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -1419,16 +1458,21 @@ const SCENARIOS = [
       },
       { type: 'scroll', y: 400, wait: 800 },
       {
-        type: 'hover',
+        type: 'click',
         selector: '[data-testid="quickplay-ai-button"]',
-        wait: 1200,
+        wait: 3000,
+      },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 1500,
       },
     ],
   },
   {
     name: 'leaderboardToProfileFlow',
     caption:
-      'Spotted a top player on the leaderboard — checking out their profile! 🏆👤 #competitive #gaming',
+      'Spotted a top player on the leaderboard — checking out their profile! 🏆👤 Win rate, game history, and achievement badges. #competitive #gaming #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/leaderboards', wait: 2500 },
       { type: 'scroll', y: 200, wait: 800 },
@@ -1456,7 +1500,7 @@ const SCENARIOS = [
   {
     name: 'themeShowcaseCyberpunk',
     caption:
-      'Cyberpunk vibes on Arcadeum — every game has themed skins! 🌆🎮 #cyberpunk #gaming #aesthetic',
+      'Cyberpunk vibes on Arcadeum Games — every game has themed skins! 🌆🎮 Neon boards, animated pieces, and custom effects. #cyberpunk #gaming #aesthetic #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/chess?theme=cyberpunk', wait: 3000 },
       { type: 'scroll', y: 200, wait: 800 },
@@ -1473,7 +1517,7 @@ const SCENARIOS = [
   {
     name: 'themeShowcaseUnderwater',
     caption:
-      'Deep sea aesthetic meets competitive gaming 🌊🐠 Check out Underwater theme! #aesthetic #gaming',
+      'Deep sea aesthetic meets competitive gaming 🌊🐠 Check out Underwater theme! Animated waves, coral effects, and ocean sounds. #aesthetic #gaming #arcadeumgames',
     steps: [
       {
         type: 'navigate',
@@ -1492,12 +1536,191 @@ const SCENARIOS = [
     ],
   },
 
+  // ─── CHESS-SPECIFIC SCENARIOS ─────────────────────────────────────────────
+
+  {
+    name: 'chessBulletBlitz',
+    caption:
+      'Bullet and blitz chess powered by Stockfish 19 — the newest engine version deployed September 2026. Fast moves, real-time eval ⚡🧠 Play at arcadeum.games #chess #bulletchess #blitzchess #stockfish19 #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 600 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1200,
+      },
+      {
+        type: 'click',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 3000,
+      },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 2000,
+      },
+      { type: 'scroll', y: 100, wait: 600 },
+    ],
+  },
+  {
+    name: 'chess960Variant',
+    caption:
+      'Chess960 (Fischer Random) — randomized starting positions, pure chess intuition ♟️🎲 Stockfish 19 powered at arcadeum.games #chess960 #fischerandom #chessvariant #stockfish19 #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess', wait: 2500 },
+      { type: 'scroll', y: 300, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-rules-button"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 400, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'chessPuzzleRush',
+    caption:
+      'Puzzle Rush — solve Stockfish 19-rated tactics as fast as you can! 🧩🔥 How many can you solve in 3 minutes? arcadeum.games #puzzlerush #chesstactics #stockfish19 #chesspuzzle #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess', wait: 2500 },
+      { type: 'scroll', y: 400, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-rules-button"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 300, wait: 800 },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'chessGameReview',
+    caption:
+      'Stockfish 19 game review — see your accuracy score, best moves, and biggest blunders 📊🔍 The newest engine version, deployed September 2026. Review at arcadeum.games #chessanalysis #gamereview #stockfish19 #chessimprovement #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess', wait: 2500 },
+      { type: 'scroll', y: 300, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 400, wait: 800 },
+      { type: 'scroll', y: 300, wait: 600 },
+    ],
+  },
+  {
+    name: 'chessAIBots',
+    caption:
+      '40 unique AI bot personalities powered by Stockfish 19 — from beginner to grandmaster level 🤖👑 Each bot has a unique name, avatar, and playstyle. Pick your opponent at arcadeum.games #chess #aichess #chessbot #stockfish19 #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 600 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1500,
+      },
+      { type: 'scroll', y: 400, wait: 800 },
+      { type: 'scroll', y: 300, wait: 600 },
+    ],
+  },
+  {
+    name: 'chessOpenings',
+    caption:
+      'From Scholar\'s Mate to Queen\'s Gambit — Stockfish 19 analyzes every opening move ♟️📚 Learn the best openings at arcadeum.games #chessopening #queensgambit #stockfish19 #chessstrategy #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 600 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1200,
+      },
+      {
+        type: 'click',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 3000,
+      },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 2000,
+      },
+    ],
+  },
+  {
+    name: 'chessCyberpunkTheme',
+    caption:
+      'Cyberpunk chess with Stockfish 19 — neon vibes meet grandmaster-level AI 🌆♟️ The strongest engine, the coolest theme. Play at arcadeum.games #chess #cyberpunk #stockfish19 #aesthetic #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess?theme=cyberpunk', wait: 3000 },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 400, wait: 800 },
+      {
+        type: 'click',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 3000,
+      },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 2000,
+      },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'chessCatalogToGame',
+    caption:
+      'Found Chess in the catalog — Stockfish 19 awaits! The newest engine version, September 2026 ♟️⚡ Jump into a game at arcadeum.games #chess #stockfish19 #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 600 },
+      {
+        type: 'hover',
+        selector: '[data-testid="games-catalog-card-chess_v1"]',
+        wait: 1200,
+      },
+      {
+        type: 'click',
+        selector: '[data-testid="games-catalog-card-chess_v1"]',
+        wait: 2500,
+      },
+      { type: 'scroll', y: 300, wait: 800 },
+      {
+        type: 'click',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 3000,
+      },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 1500,
+      },
+    ],
+  },
+
   // ─── MISSING GAME LANDINGS ────────────────────────────────────────────────
 
   {
     name: 'texasHoldemLanding',
     caption:
-      "Texas Hold'em poker with ranked matches — bluff your way to the top! 🃏♠️ #poker #texasholdem",
+      "Texas Hold'em poker with ranked matches — bluff your way to the top! 🃏♠️ Preflop, flop, turn, river — four betting rounds. #poker #texasholdem #arcadeumgames",
     steps: [
       { type: 'navigate', url: '/en/games/texas-holdem', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -1514,7 +1737,7 @@ const SCENARIOS = [
   {
     name: 'pachisiLanding',
     caption:
-      'Pachisi — the ancient royal board game goes online! 🎲👑 Play free on Arcadeum #pachisi #boardgame',
+      'Pachisi — the ancient royal board game goes online! 🎲👑 4 tokens, safe zones, and home stretch — classic Ludo strategy. #pachisi #boardgame #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/pachisi', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -1531,7 +1754,7 @@ const SCENARIOS = [
   {
     name: 'goLanding',
     caption:
-      'Go — the deepest strategy game ever made, now online! ⚫⚪ #go #baduk #strategy',
+      'Go — the deepest strategy game ever made, now online! ⚫⚪ 19x19 board, territory scoring, and life-and-death puzzles. #go #baduk #strategy #arcadeumgames',
     steps: [
       { type: 'navigate', url: '/en/games/go', wait: 3000 },
       { type: 'scroll', y: 200, wait: 600 },
@@ -1543,6 +1766,139 @@ const SCENARIOS = [
       { type: 'scroll', y: 400, wait: 800 },
       { type: 'scroll', y: 400, wait: 800 },
       { type: 'scroll', y: 300, wait: 600 },
+    ],
+  },
+
+  // ─── MULTI-PAGE STORY FLOWS ──────────────────────────────────────────────
+
+  {
+    name: 'leaderboardToChallengeFlow',
+    caption:
+      'Spotted a top player — checking their stats and sending a challenge! 🏆⚔️ ELO rating, game history, and head-to-head record. #competitive #gaming #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/leaderboards', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'click',
+        selector: '[data-testid^="player-row-"]',
+        wait: 2500,
+      },
+      { type: 'scroll', y: 300, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="player-stats-card"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'rewardClaimFlow',
+    caption:
+      'Daily rewards are LIVE — claim your free tokens and streak bonus! 💰🎁 Login streaks, daily challenges, and bonus multipliers. #playtoearn #gaming #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/rewards', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="daily-rewards"]',
+        wait: 1500,
+      },
+      {
+        type: 'click',
+        selector: '[data-testid="daily-rewards"]',
+        wait: 2000,
+      },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="streak-bonus-card"]',
+        wait: 1200,
+      },
+    ],
+  },
+  {
+    name: 'shopEquipFlow',
+    caption:
+      'New avatar unlocked — equip it and show your style! 🛒🎨 Avatar collection, rarity tiers, and loadout presets. #gaming #customization #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/shop', wait: 2500 },
+      { type: 'scroll', y: 300, wait: 800 },
+      {
+        type: 'click',
+        selector: '[data-testid^="shop-card-avatar-"]',
+        wait: 2000,
+      },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="equip-item-button"]',
+        wait: 1200,
+      },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'tournamentJoinFlow',
+    caption:
+      'Daily tournament is starting — join now and compete for prizes! 🏅🔥 Bracket play, Swiss system, and free-for-all. #tournament #esports #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/tournaments', wait: 2500 },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'click',
+        selector: '[data-testid^="tournament-card-"]',
+        wait: 2000,
+      },
+      { type: 'scroll', y: 200, wait: 800 },
+      {
+        type: 'hover',
+        selector: '[data-testid="tournament-join-button"]',
+        wait: 1500,
+      },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'themeShowcaseCyberpunkGameplay',
+    caption:
+      'Cyberpunk chess hits DIFFERENT 🌆♟️ Play with themed skins on Arcadeum Games! Neon aesthetics, animated pieces, and custom board themes. #cyberpunk #gaming #aesthetic #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/chess?theme=cyberpunk', wait: 3000 },
+      {
+        type: 'click',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 3000,
+      },
+      {
+        type: 'hover',
+        selector: '[data-testid="game-board-area"]',
+        wait: 2000,
+      },
+      { type: 'scroll', y: 200, wait: 600 },
+    ],
+  },
+  {
+    name: 'multiGameSpeedRun',
+    caption:
+      'Speed-running every game on Arcadeum Games — which one is YOUR favorite? 🎮⚡ Chess, Sea Battle, Checkers, Poker, Go — all free. #gaming #speedrun #arcadeumgames',
+    steps: [
+      { type: 'navigate', url: '/en/games/tic-tac-toe', wait: 2000 },
+      { type: 'scroll', y: 200, wait: 600 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1000,
+      },
+      { type: 'navigate', url: '/en/games/chess', wait: 2000 },
+      { type: 'scroll', y: 200, wait: 600 },
+      {
+        type: 'hover',
+        selector: '[data-testid="quickplay-ai-button"]',
+        wait: 1000,
+      },
+      { type: 'navigate', url: '/en/games/glimworm', wait: 2000 },
+      { type: 'scroll', y: 100, wait: 600 },
     ],
   },
 ];
@@ -1727,6 +2083,39 @@ async function waitForContent(page, timeout = 10000) {
 }
 
 /**
+ * Dismisses any tutorial, rules modal, or overlay that blocks the page
+ */
+async function dismissAnyOverlays(page) {
+  try {
+    const dismissSelectors = [
+      '[data-testid="tutorial-close-button"]',
+      '[data-testid="tutorial-skip-button"]',
+      '[data-testid="tutorial-finish-button"]',
+      '[data-testid="tutorial-blocker"]',
+      '[data-testid="close-rules-button"]',
+      '[data-testid="close-modal"]',
+      '[data-testid="modal-close-button"]',
+      '[data-testid="rules-modal-got-it-button"]',
+      '[data-testid="rules-modal"] button[data-testid="modal-close-button"]',
+      'button[aria-label*="Close"]',
+      'button:has-text("✕")',
+      'button:has-text("Got it")',
+      'button:has-text("Skip")',
+    ];
+    for (const sel of dismissSelectors) {
+      const loc = page.locator(sel);
+      if ((await loc.count()) > 0 && (await loc.first().isVisible())) {
+        await loc
+          .first()
+          .click({ force: true })
+          .catch(() => {});
+        await sleep(200);
+      }
+    }
+  } catch {}
+}
+
+/**
  * Executes a single scenario step
  */
 async function executeStep(page, step) {
@@ -1736,6 +2125,7 @@ async function executeStep(page, step) {
       log('info', `Step: Navigate to ${url}`);
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
       await waitForContent(page);
+      await dismissAnyOverlays(page);
       if (step.wait) await sleep(step.wait);
       break;
     }
@@ -1766,11 +2156,13 @@ async function executeStep(page, step) {
           .first()
           .click({ force: true })
           .catch(() => {});
+        await dismissAnyOverlays(page);
       } else {
         log('info', `Step: Click at (${step.x}, ${step.y})`);
         await page.mouse.move(step.x, step.y, { steps: 5 });
         await sleep(200);
         await page.mouse.click(step.x, step.y);
+        await dismissAnyOverlays(page);
       }
       await waitForContent(page).catch(() => {});
       if (step.wait) await sleep(step.wait);
@@ -1840,12 +2232,6 @@ async function captureBrowsing() {
     }
     if (!scenario) {
       scenario = randomElement(SCENARIOS);
-      if (!CONFIG.factoryBotToken) {
-        log(
-          'info',
-          'No SHORTS_FACTORY_BOT_TOKEN set — gameplay will record as anonymous. Set it to enable authenticated gameplay.',
-        );
-      }
     }
 
     const context = await browser.newContext({
@@ -1877,7 +2263,8 @@ async function captureBrowsing() {
     );
 
     if (scenario.requiresAuth) {
-      const injected = await injectBotAuth(context);
+      const botTokens = await getFactoryBotTokens();
+      const injected = await injectBotAuth(context, botTokens);
       log(
         'info',
         injected
@@ -2021,7 +2408,7 @@ const END_CARD_CTAS = [
 
 function getScenarioTags(scenarioName) {
   const name = (scenarioName || '').toLowerCase();
-  const tags = ['#arcadeum', '#web3', '#gaming'];
+  const tags = ['#arcadeumgames', '#gaming'];
 
   if (
     name.includes('gameplay') ||

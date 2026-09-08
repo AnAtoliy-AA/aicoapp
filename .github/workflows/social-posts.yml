@@ -1,5 +1,7 @@
 name: Social Posts
 
+permissions: read-all
+
 on:
   push:
     branches: [main, develop]
@@ -11,9 +13,6 @@ on:
         description: 'Version tag for release post (e.g. v1.22.34). Leave empty for daily post on develop.'
         required: false
         type: string
-
-permissions:
-  contents: read
 
 jobs:
   daily-post:

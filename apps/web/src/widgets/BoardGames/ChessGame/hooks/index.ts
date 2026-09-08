@@ -1,2 +1,11 @@
 export { useChessState } from './useChessState';
 export { useChessActions } from './useChessActions';
+export { useChessSounds } from './useChessSounds';
+export { useChessCoach } from './useChessCoach';
+export { useStockfishAnalysis } from './useStockfishAnalysis';
+export { useSquareClick } from './useSquareClick';
+export { useChessPremoves } from './useChessPremoves';
+export { useChessStreamerOverlays } from './useChessStreamerOverlays';
+export { useChessGameSounds } from './useChessGameSounds';
+export { useKeyboardMoveInput } from './useKeyboardMoveInput';
+export { useClockCountdown } from './useClockCountdown';

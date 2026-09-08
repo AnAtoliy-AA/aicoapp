@@ -59,6 +59,13 @@ export default tseslint.config(
     files: ['**/*.spec.ts'],
     rules: {
       '@typescript-eslint/unbound-method': 'off',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.object.name='jest'][callee.property.name='setTimeout']",
+          message: 'jest.setTimeout() is forbidden. Fix the test to run within default timeout.',
+        },
+      ],
     },
   },
 );

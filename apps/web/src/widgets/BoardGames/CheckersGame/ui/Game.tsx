@@ -18,6 +18,7 @@ import {
   type TranslationKey,
 } from '@/shared/lib/useTranslation';
 import { reorderRoomParticipants } from '@/shared/api/gamesApi';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import type { Board, CheckersGameProps, MoveStep, Mode } from '../types';
 import { MODE_CONFIGS } from '../types';
 import { useCheckersState } from '../hooks/useCheckersState';
@@ -68,6 +69,8 @@ function CheckersGameImpl({
     roomId,
     userId: currentUserId,
   });
+
+  const { play } = useGameSound('checkers_v1');
 
   const resolveDisplayNameBound = useCallback(
     (id?: string | null) =>
@@ -209,6 +212,7 @@ function CheckersGameImpl({
 
       // If clicking own piece, select it (start or restart chain)
       if (piece && piece.playerId === currentUserId) {
+        play('select_piece');
         setSelectedPiece({ row, col });
         setPendingSteps([]);
         setOptimisticBoard(null);
@@ -278,6 +282,7 @@ function CheckersGameImpl({
             setSelectedPiece({ row, col });
           } else {
             // End of chain: send full chain to server, show optimistic board
+            play('capture');
             setOptimisticBoard(nextBoard);
             setSelectedPiece(null);
             setPendingSteps([]);
@@ -285,6 +290,7 @@ function CheckersGameImpl({
           }
         } else {
           // Simple move: send to server, show optimistic board
+          play('move');
           const nextBoard = applyMoveToBoard(displayBoard, [moveStep]);
           setOptimisticBoard(nextBoard);
           setSelectedPiece(null);
@@ -304,6 +310,7 @@ function CheckersGameImpl({
       movePiece,
       backwardCaptures,
       flyingKings,
+      play,
     ],
   );
 

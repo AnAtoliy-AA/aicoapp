@@ -5,6 +5,7 @@ import type { ChessClientState } from '../types';
 describe('calculateOptimisticChessState', () => {
   const baseSnapshot: ChessClientState = {
     phase: 'playing',
+    gameCreatedAt: Date.now(),
     variant: 'standard',
     timeControl: null,
     board: [
@@ -75,6 +76,8 @@ describe('calculateOptimisticChessState', () => {
     isInsufficientMaterial: false,
     isDrawByAgreement: false,
     drawOfferedBy: null,
+    takebackOfferedBy: null,
+    takebackMoveIndex: null,
     clocks: null,
     positionHistory: [],
     currentTurnIndex: 0,
@@ -141,5 +144,51 @@ describe('calculateOptimisticChessState', () => {
   it('returns null if from square has no piece', () => {
     const result = calculateOptimisticChessState(baseSnapshot, 'c', 3, 'c', 4);
     expect(result).toBeNull();
+  });
+
+  it('calculates optimistic clocks for first move within grace period without deducting time', () => {
+    const stateWithClocks: ChessClientState = {
+      ...baseSnapshot,
+      gameCreatedAt: Date.now() - 5000,
+      clocks: {
+        white: { remainingSeconds: 180, lastMoveTimestamp: 0 },
+        black: { remainingSeconds: 180, lastMoveTimestamp: 0 },
+      },
+    };
+    const result = calculateOptimisticChessState(
+      stateWithClocks,
+      'a',
+      2,
+      'a',
+      4,
+    );
+    expect(result?.clocks?.white.remainingSeconds).toBe(180);
+    expect(result?.clocks?.white.lastMoveTimestamp).toBeGreaterThan(0);
+    expect(result?.clocks?.black.remainingSeconds).toBe(180);
+    expect(result?.currentTurnColor).toBe('black');
+  });
+
+  it('calculates optimistic clocks on regular move deducting elapsed and adding increment', () => {
+    const moveStartTime = Date.now() - 10000;
+    const stateWithClocks: ChessClientState = {
+      ...baseSnapshot,
+      currentTurnColor: 'black',
+      timeControl: { type: 'blitz', initialSeconds: 180, incrementSeconds: 2 },
+      clocks: {
+        white: { remainingSeconds: 175, lastMoveTimestamp: moveStartTime },
+        black: { remainingSeconds: 180, lastMoveTimestamp: 0 },
+      },
+    };
+    const result = calculateOptimisticChessState(
+      stateWithClocks,
+      'a',
+      7,
+      'a',
+      5,
+    );
+    expect(result?.currentTurnColor).toBe('white');
+    expect(result?.clocks?.black.remainingSeconds).toBe(172);
+    expect(result?.clocks?.black.lastMoveTimestamp).toBeGreaterThan(0);
+    expect(result?.clocks?.white.remainingSeconds).toBe(175);
   });
 });

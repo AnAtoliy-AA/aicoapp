@@ -2,23 +2,46 @@
 
 import { ReactNode, useEffect } from 'react';
 import { useSessionStore } from '@/entities/session/store/sessionStore';
+import { useSocketConnection } from '@/shared/hooks/useSocketConnection';
+import { disconnectSockets } from '@/shared/lib/socket';
 
 interface BrowserRegistryProps {
   children: ReactNode;
 }
 
 export default function BrowserRegistry({ children }: BrowserRegistryProps) {
-  useEffect(() => {
-    // Lazy-load the socket module only for pagehide cleanup. A static
-    // import would pull socket.io-client into the initial bundle of
-    // every page (the home page never opens a socket connection).
-    let disconnect: (() => void) | undefined;
-    void import('@/shared/lib/socket').then((mod) => {
-      disconnect = mod.disconnectSockets;
-    });
+  useSocketConnection();
 
+  // ARC-900: Register the service worker manually as a safety net.
+  // The @ducanh2912/next-pwa plugin normally handles registration, but if the
+  // plugin is disabled (e.g. NEXT_PUBLIC_E2E was accidentally set on staging)
+  // the SW never registers and offline downloads are stuck on "Waiting for the
+  // app to fully load…". This fallback ensures the SW is always registered in
+  // production, regardless of the plugin state.
+  useEffect(() => {
+    if (
+      typeof window === 'undefined' ||
+      !('serviceWorker' in navigator) ||
+      process.env.NODE_ENV !== 'production' ||
+      process.env.NEXT_PUBLIC_E2E === 'true'
+    ) {
+      return;
+    }
+    // Skip if the PWA plugin already registered a controlling SW.
+    if (navigator.serviceWorker.controller) return;
+    // Skip if a registration is already in flight or completed.
+    navigator.serviceWorker.getRegistration('/').then((reg) => {
+      if (reg) return;
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
+        // Registration failed — offline features will be unavailable but the
+        // rest of the app is unaffected.
+      });
+    });
+  }, []);
+
+  useEffect(() => {
     const handlePageHide = () => {
-      disconnect?.();
+      disconnectSockets();
     };
 
     window.addEventListener('pagehide', handlePageHide);

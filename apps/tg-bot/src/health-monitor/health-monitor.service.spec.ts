@@ -100,10 +100,7 @@ describe('HealthMonitorService alerts', () => {
     respondWith(
       () =>
         new Promise((_resolve, reject) =>
-          setTimeout(
-            () => reject(new DOMException('timed out', 'TimeoutError')),
-            0,
-          ),
+          reject(new DOMException('timed out', 'TimeoutError')),
         ),
     );
     await inner.check();

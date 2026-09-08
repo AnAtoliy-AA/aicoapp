@@ -48,15 +48,17 @@ export interface ChessOptions {
   variant: ChessVariant;
   timeControl: TimeControl | null;
   botDifficulty?: AiDifficulty;
+  botPersonality?: string;
 }
 
-export type TimeControlType = 'blitz' | 'rapid' | 'classical';
-export type TimeIncrement = 0 | 3 | 5 | 10 | 15 | 30;
+export type TimeControlType = 'bullet' | 'blitz' | 'rapid' | 'classical' | 'daily';
+export type TimeIncrement = 0 | 1 | 2 | 3 | 5 | 10 | 15 | 30;
 
 export interface TimeControl {
   type: TimeControlType;
   initialSeconds: number;
   incrementSeconds: TimeIncrement;
+  daysPerMove?: number;
 }
 
 export interface PlayerClock {
@@ -72,8 +74,10 @@ export interface LegalMove {
 
 export interface ChessState extends BaseGameState {
   variant: ChessVariant;
+  gameCreatedAt: number;
   timeControl: TimeControl | null;
   botDifficulty?: AiDifficulty;
+  botPersonality?: string;
   board: Board;
   currentTurnColor: PieceColor;
   castlingRights: CastlingRights;
@@ -91,9 +95,13 @@ export interface ChessState extends BaseGameState {
   isInsufficientMaterial: boolean;
   isDrawByAgreement: boolean;
   drawOfferedBy: string | null;
+  takebackOfferedBy: string | null;
+  takebackMoveIndex: number | null;
   clocks: Record<PieceColor, PlayerClock> | null;
   positionHistory: string[];
   legalMovesForCurrentPlayer: LegalMove[];
+  checkCount?: { white: number; black: number };
+  capturedPieces?: { white: PieceType[]; black: PieceType[] };
 }
 
 export interface MovePayload {
@@ -108,5 +116,6 @@ export interface ChessEngineConfig {
   timeControl?: TimeControl;
   variant?: ChessVariant;
   botDifficulty?: AiDifficulty;
+  botPersonality?: string;
   aiDifficulty?: AiDifficulty;
 }

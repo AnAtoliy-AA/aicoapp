@@ -1,4 +1,5 @@
 import {
+  expect,
   test,
   navigateTo,
   mockSession,
@@ -9,6 +10,13 @@ test('trace joinMatchmaking effect', async ({ page }) => {
   await mockAllOnPage(page);
   await mockSession(page);
   await navigateTo(page, '/en/games/sea-battle');
+
+  // Wait for the MatchmakingQueue component to mount and expose the hook
+  await page.waitForFunction(
+    () =>
+      typeof (window as Window & { __joinMatchmaking?: unknown })
+        .__joinMatchmaking === 'function',
+  );
 
   // Patch joinMatchmaking to add tracing
   await page.evaluate(() => {
@@ -46,14 +54,13 @@ test('trace joinMatchmaking effect', async ({ page }) => {
     ).__joinMatchmaking?.('sea_battle_v1'),
   );
 
-  // Poll isQueued after a short time
-  for (let i = 0; i < 10; i++) {
-    await page.waitForTimeout(200);
-    const state = await page.evaluate(() => {
-      const modal = document.querySelector('[data-testid="matchmaking-modal"]');
-      return { modalExists: !!modal };
-    });
-    console.log(`After ${(i + 1) * 200}ms:`, JSON.stringify(state));
-    if (state.modalExists) break;
-  }
+  await expect
+    .poll(async () => {
+      const state = await page.evaluate(() => {
+        const modal = document.querySelector('[data-testid="matchmaking-modal"]');
+        return { modalExists: !!modal };
+      });
+      return state.modalExists;
+    })
+    .toBe(true);
 });

@@ -145,7 +145,7 @@ test.describe('ARC payment flow (mocked)', () => {
   test('gem store shows ARC price on packages', async ({ page }) => {
     await navigateTo(page, '/wallet');
 
-    await page.waitForSelector('[data-testid="gem-store"]', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="gem-store"]');
 
     const arcPrice = page.locator('[data-testid="arc-price"]').first();
     await expect(arcPrice).toBeVisible();
@@ -155,9 +155,7 @@ test.describe('ARC payment flow (mocked)', () => {
   test('shop shows ARC price on items', async ({ page }) => {
     await navigateTo(page, '/en/shop');
 
-    await page.waitForSelector('[data-testid="shop-card-avatar-fox-01"]', {
-      timeout: 5000,
-    });
+    await page.waitForSelector('[data-testid="shop-card-avatar-fox-01"]');
 
     const arcButton = page.locator(
       '[data-testid="shop-card-action-avatar-fox-01"]',

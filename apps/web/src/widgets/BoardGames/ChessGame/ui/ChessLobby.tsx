@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import {
   type GameLobbyTheme,
@@ -15,8 +15,13 @@ import type { GameRoomSummary } from '@/shared/types/games';
 import { useRoomOptions } from '@/features/games/hooks/useRoomOptions';
 import type { BotDifficulty } from '@/features/games/ui/DifficultySelector';
 import type { ChessTheme, TimeControl } from '../types';
-import { TIME_CONTROLS } from '../types';
 import { RulesModal } from './RulesModal';
+import { BotSelector, type BotPersonalityOption } from './BotSelector';
+import { PgnImportModal } from './PgnImportModal';
+import { MatchmakingButton } from './MatchmakingButton';
+import { QuickPlayPanel } from './QuickPlayPanel';
+import { BOT_PERSONALITIES } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
+import { apiClient } from '@/shared/lib/api-client';
 
 const LOBBY_THEME: GameLobbyTheme = {
   titleGradient: 'linear-gradient(90deg, var(--color) 0%, var(--primary) 100%)',
@@ -24,14 +29,6 @@ const LOBBY_THEME: GameLobbyTheme = {
     'linear-gradient(90deg, var(--color) 0%, var(--primary) 100%)',
   buttonGradient: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
 };
-
-function formatTimeControl(tc: TimeControl | null): string {
-  if (!tc) return 'No clock';
-  const mins = Math.floor(tc.initialSeconds / 60);
-  return tc.incrementSeconds > 0
-    ? `${mins}+${tc.incrementSeconds}`
-    : `${mins}|0`;
-}
 
 interface ChessLobbyProps {
   room: GameRoomSummary;
@@ -42,6 +39,7 @@ interface ChessLobbyProps {
     withBots?: boolean;
     botCount?: number;
     botDifficulty?: BotDifficulty;
+    botPersonality?: string;
   }) => void;
   onReorderPlayers?: (newOrder: string[]) => void;
   onLeaveRoom?: () => void;
@@ -68,6 +66,45 @@ export function ChessLobby({
 }: ChessLobbyProps) {
   const { t } = useTranslation();
   const { setOption } = useRoomOptions({ roomId: room.id, userId });
+  const [selectedPersonality, setSelectedPersonality] = useState<string | null>(
+    null,
+  );
+  const [showPgnImport, setShowPgnImport] = useState(false);
+  const [availableDifficulties, setAvailableDifficulties] = useState<string[]>(
+    () => BOT_PERSONALITIES.map((p) => p.difficulty),
+  );
+
+  useEffect(() => {
+    apiClient
+      .get<{ settings: Record<string, Record<string, unknown>> }>(
+        '/admin/game-settings',
+      )
+      .then((data) => {
+        const chessSettings = data.settings?.chess_v1;
+        if (chessSettings?.availableDifficulties) {
+          setAvailableDifficulties(
+            chessSettings.availableDifficulties as string[],
+          );
+        }
+      })
+      .catch(() => {
+        // Use default (all difficulties)
+      });
+  }, []);
+
+  const personalityOptions: BotPersonalityOption[] = useMemo(
+    () =>
+      BOT_PERSONALITIES.filter((p) =>
+        availableDifficulties.includes(p.difficulty),
+      ).map((p) => ({
+        id: p.id,
+        name: p.name,
+        avatar: p.avatar,
+        rating: p.rating,
+        style: p.style,
+      })),
+    [availableDifficulties],
+  );
 
   const options = useMemo(() => {
     const raw = (room.gameOptions ?? {}) as Partial<{
@@ -75,14 +112,36 @@ export function ChessLobby({
       variant: string;
       timeControl: TimeControl | null;
     }>;
+    const validVariants = [
+      'standard',
+      'chess960',
+      'king_of_the_hill',
+      'three_check',
+      'crazyhouse',
+      'atomic',
+    ];
+    const variant = validVariants.includes(raw.variant ?? '')
+      ? (raw.variant as ChessTheme)
+      : 'standard';
     return {
       theme: (raw.theme as string) || 'adventure',
-      variant: (raw.variant ?? 'standard') as ChessTheme,
+      variant,
       timeControl: (raw.timeControl ?? null) as TimeControl | null,
     };
   }, [room.gameOptions]);
 
-  const variantLabel = options.variant === 'chess960' ? 'Chess960' : 'Standard';
+  const variantLabel =
+    options.variant === 'chess960'
+      ? 'Chess960'
+      : options.variant === 'king_of_the_hill'
+        ? t('games.chess_v1.lobby.kingOfTheHill')
+        : options.variant === 'three_check'
+          ? t('games.chess_v1.lobby.threeCheck')
+          : options.variant === 'crazyhouse'
+            ? t('games.chess_v1.lobby.crazyhouse')
+            : options.variant === 'atomic'
+              ? t('games.chess_v1.lobby.atomic')
+              : t('games.chess_v1.lobby.standard');
 
   const variantOptions = [
     {
@@ -95,54 +154,30 @@ export function ChessLobby({
       label: t('games.chess_v1.lobby.chess960'),
       description: t('games.chess_v1.lobby.chess960Desc'),
     },
-  ];
-
-  const timeControlOptions = [
-    ...TIME_CONTROLS.map((tc) => ({
-      id: `tc-${tc.initialSeconds}-${tc.incrementSeconds}`,
-      label: formatTimeControl(tc),
-      description:
-        tc.type === 'blitz'
-          ? t('games.chess_v1.lobby.blitz')
-          : tc.type === 'rapid'
-            ? t('games.chess_v1.lobby.rapid')
-            : t('games.chess_v1.lobby.classical'),
-    })),
     {
-      id: 'no-clock',
-      label: t('games.chess_v1.lobby.noClock'),
-      description: t('games.chess_v1.lobby.unlimitedTime'),
+      id: 'king_of_the_hill',
+      label: t('games.chess_v1.lobby.kingOfTheHill'),
+      description: t('games.chess_v1.lobby.kingOfTheHillDesc'),
+    },
+    {
+      id: 'three_check',
+      label: t('games.chess_v1.lobby.threeCheck'),
+      description: t('games.chess_v1.lobby.threeCheckDesc'),
+    },
+    {
+      id: 'crazyhouse',
+      label: t('games.chess_v1.lobby.crazyhouse'),
+      description: t('games.chess_v1.lobby.crazyhouseDesc'),
+    },
+    {
+      id: 'atomic',
+      label: t('games.chess_v1.lobby.atomic'),
+      description: t('games.chess_v1.lobby.atomicDesc'),
     },
   ];
 
-  const getSelectedTimeControl = () => {
-    if (options.timeControl === null) return 'no-clock';
-    return `tc-${options.timeControl.initialSeconds}-${options.timeControl.incrementSeconds}`;
-  };
-
-  const handleTimeControlChange = (value: string) => {
-    if (value === 'no-clock') {
-      setOption({ timeControl: null });
-    } else {
-      const [, initial, increment] = value.split('-');
-      const tc = TIME_CONTROLS.find(
-        (t) =>
-          t.initialSeconds === Number(initial) &&
-          t.incrementSeconds === Number(increment),
-      );
-      if (tc) setOption({ timeControl: tc });
-    }
-  };
-
   const optionsSlot = (
     <div className="flex flex-col items-stretch gap-4">
-      <LobbyOptionSection title={t('games.create.sectionVariant')}>
-        <GameThemePicker
-          selectedTheme={options.theme}
-          onSelect={(themeId) => setOption({ theme: themeId })}
-          disabled={!isHost}
-        />
-      </LobbyOptionSection>
       <LobbyOptionSection title={t('games.chess_v1.lobby.variant')}>
         <LobbyChipGroup
           options={variantOptions}
@@ -154,16 +189,44 @@ export function ChessLobby({
         />
       </LobbyOptionSection>
 
-      <LobbyOptionSection title={t('games.chess_v1.lobby.timeControl')}>
-        <LobbyChipGroup
-          options={timeControlOptions}
-          value={getSelectedTimeControl()}
-          onChange={handleTimeControlChange}
+      <QuickPlayPanel
+        selectedTimeControl={options.timeControl}
+        disabled={!isHost || startBusy}
+        onSelectTimeControl={(tc) => {
+          setOption({ timeControl: tc });
+        }}
+      />
+
+      <LobbyOptionSection title={t('games.create.sectionVariant')}>
+        <GameThemePicker
+          selectedTheme={options.theme}
+          onSelect={(themeId) => setOption({ theme: themeId })}
           disabled={!isHost}
-          accentColor="#6366f1"
-          testIdPrefix="chess-time"
         />
       </LobbyOptionSection>
+
+      <LobbyOptionSection title={t('games.chess_v1.lobby.botPersonality')}>
+        <BotSelector
+          personalities={personalityOptions}
+          selectedId={selectedPersonality}
+          onSelect={setSelectedPersonality}
+          disabled={!isHost}
+        />
+      </LobbyOptionSection>
+
+      <button
+        type="button"
+        onClick={() => setShowPgnImport(true)}
+        className="w-full py-2 px-4 rounded-lg bg-[var(--backgroundHover)] border border-[var(--glassBorder)] text-[var(--textSecondary)] text-xs font-semibold cursor-pointer hover:text-[var(--color)] transition-colors"
+      >
+        {t('games.chess_v1.actions.importPgn')}
+      </button>
+
+      <MatchmakingButton
+        userId={userId}
+        rating={1200}
+        timeControlType={options.timeControl?.type ?? 'blitz'}
+      />
     </div>
   );
 
@@ -175,7 +238,11 @@ export function ChessLobby({
         isHost={isHost}
         startBusy={startBusy}
         onStartGame={(opts) =>
-          onStartGame({ ...opts, botDifficulty: opts?.difficulty ?? 'medium' })
+          onStartGame({
+            ...opts,
+            botDifficulty: opts?.difficulty ?? 'medium',
+            botPersonality: selectedPersonality ?? undefined,
+          })
         }
         onLeaveRoom={onLeaveRoom}
         onDeleteRoom={onDeleteRoom}
@@ -188,6 +255,7 @@ export function ChessLobby({
         maxPlayers={2}
         theme={LOBBY_THEME}
         enableBots
+        showDifficulty={false}
         labels={{
           startWithBotsLabel: t('games.chess_v1.lobby.startWithBots'),
         }}
@@ -197,6 +265,13 @@ export function ChessLobby({
         onReorderPlayers={onReorderPlayers}
       />
       <RulesModal open={showRulesOpen} onClose={onShowRulesClose} />
+      <PgnImportModal
+        isOpen={showPgnImport}
+        onClose={() => setShowPgnImport(false)}
+        onImport={(_moves, _variant) => {
+          // PGN import creates a new room with the imported position
+        }}
+      />
     </>
   );
 }

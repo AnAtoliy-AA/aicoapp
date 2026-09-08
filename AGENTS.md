@@ -1,4 +1,4 @@
-# Arcadeum Monorepo
+# Arcadeum Games Monorepo
 
 ## Structure
 
@@ -37,6 +37,8 @@
 - **Separate Themes from Modes** — visual themes (`cyberpunk`, `underwater`, `zen`, etc.) are skins/palettes/backgrounds. Game modes (`standard`, `chess960`, `battle_royale`, `speed`) are gameplay rules. Never conflate them.
 - **Theme Adapter Pattern** — every game widget must implement `lib/theme-adapter.ts` (`sharedThemeTo<Game>(theme: GameTheme): <Game>Theme`), `lib/theme.ts` (`get<Game>Theme(variant?: string)`), and `lib/<Game>ThemeContext.tsx` (`createGameThemeContext`).
 - **Adding New Themes** — when adding a new theme to `SHARED_THEMES` (with background image and palette tokens), it MUST automatically propagate to all games without altering individual game engines.
+- **No Hardcoded Theme CSS in Games** — never write hardcoded per-theme CSS/SCSS selectors (e.g. `[data-theme='cyberpunk'] { ... }`). Instead, map `theme.colors.*` in `lib/theme-adapter.ts` to game-specific tokens, mint scoped CSS custom properties on the root board container via a `boardVars(theme)` helper (as in `BackgammonBoard` and `HeartsBoard`), and have stylesheets strictly consume `var(--...)`. Any new theme added to `SHARED_THEMES` must immediately work with zero CSS modifications.
+- **Two-Player Board Orientation** — in all two-player games (Chess, Checkers, Backgammon, etc.), the current local player's side/home board/pieces must ALWAYS be oriented at the bottom. The view must dynamically flip or invert coordinates based on `currentUserId` so the player always plays upwards from their perspective.
 
 ### i18n
 
@@ -65,6 +67,7 @@
 ### Tests
 
 - **Write unit tests** (Vitest for web, Jest for BE/mobile) and **Playwright e2e tests** for all user-facing features. Cover: happy path, edge cases, and error states.
+- **No timeouts or delays in tests** — `waitForTimeout`, `test.setTimeout`, `jest.setTimeout`, `vi.setTimeout`, `setTimeout(r, N)` delays, and `{ timeout: N }` overrides are all forbidden. Use `expect.poll()`, `waitFor()`, or fake timers instead. ESLint enforces this.
 
 ## Commit Convention
 
@@ -102,7 +105,7 @@ PR titles are validated by CI (`branch-guard.yml`). The title must match the tar
 - `/commit` — create a commit following Conventional Commits with ARC-XXX scope
 - `/new-web-page` — add a Next.js App Router page (`page.tsx` + `*Client.tsx` + `*View.tsx` + i18n)
 - `/new-be-module` — add a NestJS module (controller, service, module, DTOs, Mongoose schema)
-- `/new-game` — add a complete multiplayer game end-to-end (BE engine/service/gateway/bot, web widget, landing, registries, i18n, tests, PR)
+- `/new-game` — add a complete multiplayer game end-to-end (BE engine/service/gateway/bot, web widget, landing, registries, i18n, tests, PR) for Arcadeum Games
 - `/new-mobile-screen` — add an Expo Router screen with i18n and RN styling (StyleSheet + useThemedStyles)
 - `/new-ui-component` — add a shared Tailwind component to `packages/ui` (`@arcadeum/ui`)
 - `/check-ui-components` — audit existing `@arcadeum/ui` components before implementing any UI; reuse or add to `packages/ui`

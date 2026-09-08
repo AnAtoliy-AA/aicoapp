@@ -14,6 +14,7 @@ import {
   type PreCheckFn,
 } from '../game-bot-watchdog';
 import { extractAiVsAiExtras } from './ai-vs-ai';
+import { DistributedRoomLock } from './distributed-room-lock';
 
 /**
  * Shared base class for every game service. Encapsulates the session
@@ -30,7 +31,7 @@ export abstract class BaseGameService<
   implements OnModuleInit, OnModuleDestroy
 {
   protected abstract readonly logger: Logger;
-  private readonly roomLocks = new Map<string, Promise<void>>();
+  private readonly roomLock: DistributedRoomLock;
   private watchdogInstance: GameBotWatchdog | null = null;
 
   abstract readonly gameId: string;
@@ -52,6 +53,7 @@ export abstract class BaseGameService<
   ) {
     this.mongoConnection = mongoConnection;
     this.preCheck = preCheck;
+    this.roomLock = new DistributedRoomLock(redis);
   }
 
   onModuleInit() {
@@ -219,34 +221,40 @@ export abstract class BaseGameService<
     action: string,
     payload: unknown,
   ): Promise<GameSessionSummary> {
-    const prev = this.roomLocks.get(roomId) ?? Promise.resolve();
-    let release: () => void;
-    const next = new Promise<void>((resolve) => {
-      release = resolve;
-    });
-    this.roomLocks.set(roomId, next);
-    await prev;
-
-    try {
+    const updatedSession = await this.roomLock.runLocked(roomId, async () => {
       const session = await this.sessionsService.findSessionByRoom(roomId);
       if (!session) throw new Error('Session not found');
 
-      const updatedSession = await this.sessionsService.executeAction({
+      const updated = await this.sessionsService.executeAction({
         sessionId: session.id,
         userId,
         action,
         payload,
       });
 
-      await this.afterSessionStep(updatedSession);
-      await this.emitSessionUpdate(updatedSession);
-      return updatedSession;
-    } finally {
-      release!();
-      if (this.roomLocks.get(roomId) === next) {
-        this.roomLocks.delete(roomId);
-      }
+      await this.emitSessionUpdate(updated);
+      return updated;
+    });
+
+    // Trigger bot turn AFTER releasing the lock to avoid deadlock
+    if (updatedSession.status !== 'completed') {
+      this.logger.debug(
+        `[Base] Triggering bot check for room ${updatedSession.roomId}`,
+      );
+      this.botService.checkAndPlay(updatedSession).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `Bot turn failed for room ${updatedSession.roomId}: ${message}`,
+        );
+      });
+    } else {
+      await this.roomsService.updateRoomStatus(
+        updatedSession.roomId,
+        'completed',
+      );
     }
+
+    return updatedSession;
   }
 
   protected abstract resolveOptions(raw: unknown): TOptions;

@@ -31,6 +31,21 @@ import {
 import { getLegalMoves, simulateMove } from './chess.move-generator';
 import { isInCheck } from './chess.attacks';
 import { updateCastlingRights } from './chess.castling';
+import { toFen } from './chess-fen';
+import { checkKingOfTheHillWin } from './chess-variants/king-of-the-hill';
+import {
+  createThreeCheckState,
+  recordCheck,
+  checkThreeCheckWin,
+  type ThreeCheckState,
+} from './chess-variants/three-check';
+import { applyExplosion, isKingCaptured } from './chess-variants/atomic';
+import {
+  createCrazyhouseState,
+  recordCapture,
+  canDrop,
+  type CrazyhouseState,
+} from './chess-variants/crazyhouse';
 
 const ACTION = {
   MOVE: 'move',
@@ -38,6 +53,9 @@ const ACTION = {
   FORFEIT: 'forfeit',
   DRAW_OFFER: 'draw_offer',
   DRAW_ACCEPT: 'draw_accept',
+  TAKEBACK_OFFER: 'takeback_offer',
+  TAKEBACK_ACCEPT: 'takeback_accept',
+  TAKEBACK_DECLINE: 'takeback_decline',
 } as const;
 export class ChessEngine extends BaseGameEngine<ChessState> {
   private readonly logger = createLogger('ChessEngine');
@@ -79,12 +97,16 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
     const clocks = timeControl
       ? ({
           white: {
-            remainingSeconds: timeControl.initialSeconds,
-            lastMoveTimestamp: Date.now(),
+            remainingSeconds: timeControl.type === 'daily'
+              ? (timeControl.daysPerMove ?? 1) * 86400
+              : timeControl.initialSeconds,
+            lastMoveTimestamp: 0,
           },
           black: {
-            remainingSeconds: timeControl.initialSeconds,
-            lastMoveTimestamp: Date.now(),
+            remainingSeconds: timeControl.type === 'daily'
+              ? (timeControl.daysPerMove ?? 1) * 86400
+              : timeControl.initialSeconds,
+            lastMoveTimestamp: 0,
           },
         } as const)
       : null;
@@ -101,12 +123,13 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
             return board;
           })()
         : parseFen(INITIAL_BOARD_FEN);
-    return {
+    const baseState: ChessState = {
       variant,
       timeControl,
       botDifficulty,
       board: initialBoard,
       currentTurnColor: 'white',
+      gameCreatedAt: Date.now(),
       castlingRights: { ...INITIAL_CASTLING_RIGHTS },
       enPassantTarget: null,
       halfMoveClock: 0,
@@ -122,8 +145,17 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
       isInsufficientMaterial: false,
       isDrawByAgreement: false,
       drawOfferedBy: null,
+      takebackOfferedBy: null,
+      takebackMoveIndex: null,
       clocks,
-      positionHistory: [boardToFen(initialBoard)],
+      positionHistory: [toFen({
+        board: initialBoard,
+        currentTurnColor: 'white',
+        castlingRights: { ...INITIAL_CASTLING_RIGHTS },
+        enPassantTarget: null,
+        halfMoveClock: 0,
+        fullMoveNumber: 1,
+      } as ChessState)],
       currentTurnIndex: 0,
       logs: [
         this.createLogEntry('system', 'Chess game started. White moves first.'),
@@ -138,6 +170,14 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
         'white',
       ).map((m) => ({ from: m.from, to: m.to, promotion: m.promotion })),
     };
+
+    if (variant === 'three_check') {
+      return createThreeCheckState(baseState);
+    }
+    if (variant === 'crazyhouse') {
+      return createCrazyhouseState(baseState);
+    }
+    return baseState;
   }
 
   validateAction(
@@ -177,6 +217,32 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
       );
     }
 
+    if (action === ACTION.TAKEBACK_OFFER) {
+      const player = state.players.find((p) => p.playerId === context.userId);
+      if (!player || player.color !== state.currentTurnColor) return false;
+      if (state.moveHistory.length < 2) return false;
+      if (state.takebackOfferedBy) return false;
+      return true;
+    }
+
+    if (action === ACTION.TAKEBACK_ACCEPT) {
+      const player = state.players.find((p) => p.playerId === context.userId);
+      if (!player) return false;
+      return (
+        state.takebackOfferedBy !== null &&
+        state.takebackOfferedBy !== context.userId
+      );
+    }
+
+    if (action === ACTION.TAKEBACK_DECLINE) {
+      const player = state.players.find((p) => p.playerId === context.userId);
+      if (!player) return false;
+      return (
+        state.takebackOfferedBy !== null &&
+        state.takebackOfferedBy !== context.userId
+      );
+    }
+
     return false;
   }
 
@@ -197,6 +263,15 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
     }
     if (action === ACTION.DRAW_ACCEPT) {
       return this.executeDrawAccept(state, context);
+    }
+    if (action === ACTION.TAKEBACK_OFFER) {
+      return this.executeTakebackOffer(state, context);
+    }
+    if (action === ACTION.TAKEBACK_ACCEPT) {
+      return this.executeTakebackAccept(state, context);
+    }
+    if (action === ACTION.TAKEBACK_DECLINE) {
+      return this.executeTakebackDecline(state, context);
     }
     return this.errorResult(`Unknown action: ${action}`);
   }
@@ -333,7 +408,27 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
 
     if (newState.clocks) {
       const movingColor = state.currentTurnColor;
+      const opponentColor = movingColor === 'white' ? 'black' : 'white';
       const clock = { ...newState.clocks[movingColor] };
+      const opponentClock = newState.clocks[opponentColor];
+      const isFirstMove =
+        opponentClock.lastMoveTimestamp === 0 && clock.lastMoveTimestamp === 0;
+      let elapsed = 0;
+      if (isFirstMove) {
+        const gameCreatedAt =
+          (state as unknown as { gameCreatedAt?: number }).gameCreatedAt ??
+          Date.now();
+        const sinceCreation = Math.floor((Date.now() - gameCreatedAt) / 1000);
+        elapsed = Math.max(0, sinceCreation - 20);
+      } else {
+        const referenceTime =
+          opponentClock.lastMoveTimestamp > 0
+            ? opponentClock.lastMoveTimestamp
+            : ((state as unknown as { gameCreatedAt?: number }).gameCreatedAt ??
+              Date.now());
+        elapsed = Math.max(0, Math.floor((Date.now() - referenceTime) / 1000));
+      }
+      clock.remainingSeconds = Math.max(0, clock.remainingSeconds - elapsed);
       const tc = (
         state as unknown as { timeControl?: { incrementSeconds?: number } }
       ).timeControl;
@@ -345,7 +440,7 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
 
     newState.positionHistory = [
       ...state.positionHistory,
-      boardToFen(newState.board),
+      toFen(newState),
     ];
 
     const opponentInCheck = isInCheck(
@@ -401,6 +496,85 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
         'isDrawByRepetition',
         'Draw by threefold repetition.',
       );
+    }
+
+    // --- Variant-specific win conditions ---
+
+    // King of the Hill: king reaching center squares wins immediately
+    if (newState.variant === 'king_of_the_hill' && !newState.winnerColor) {
+      const kothWinner = checkKingOfTheHillWin(newState);
+      if (kothWinner) {
+        newState.winnerColor = kothWinner;
+        newState.logs.push(
+          this.createLogEntry(
+            'system',
+            `${kothWinner} wins by King of the Hill!`,
+          ),
+        );
+      }
+    }
+
+    // Three-Check: track checks and declare winner at 3 checks
+    if (newState.variant === 'three_check' && !newState.winnerColor) {
+      const tcState = newState as ThreeCheckState;
+      if (!tcState.checkCount) {
+        tcState.checkCount = { white: 0, black: 0 };
+      }
+      if (opponentInCheck) {
+        const updated = recordCheck(tcState, newState.currentTurnColor);
+        tcState.checkCount = updated.checkCount;
+        const threeCheckWinner = checkThreeCheckWin(tcState);
+        if (threeCheckWinner) {
+          newState.winnerColor = threeCheckWinner;
+          newState.logs.push(
+            this.createLogEntry(
+              'system',
+              `${threeCheckWinner} wins by Three-Check!`,
+            ),
+          );
+        }
+      }
+    }
+
+    // Atomic: explosion on capture, king captured = loss
+    if (newState.variant === 'atomic' && !newState.winnerColor) {
+      if (move.captured) {
+        const capturedPos = move.to;
+        const exploded = applyExplosion(newState, capturedPos);
+        newState.board = exploded.board;
+
+        // Check if either king was captured in the explosion
+        if (isKingCaptured(newState, 'white')) {
+          newState.winnerColor = 'black';
+          newState.logs.push(
+            this.createLogEntry(
+              'system',
+              'Black wins! White king was destroyed in the explosion!',
+            ),
+          );
+        } else if (isKingCaptured(newState, 'black')) {
+          newState.winnerColor = 'white';
+          newState.logs.push(
+            this.createLogEntry(
+              'system',
+              'White wins! Black king was destroyed in the explosion!',
+            ),
+          );
+        }
+      }
+    }
+
+    // Crazyhouse: track captured pieces for drop rights
+    if (newState.variant === 'crazyhouse') {
+      const czState = newState as CrazyhouseState;
+      if (!czState.capturedPieces) {
+        czState.capturedPieces = { white: [], black: [] };
+      }
+      if (move.captured) {
+        const capturingColor = state.currentTurnColor;
+        const updated = recordCapture(czState, move.captured, capturingColor);
+        czState.capturedPieces = updated.capturedPieces;
+      }
     }
 
     newState.legalMovesForCurrentPlayer = getLegalMoves(
@@ -467,6 +641,78 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
     newState.logs = [
       ...state.logs,
       this.createLogEntry('system', 'Draw by agreement.', {
+        senderId: context.userId,
+      }),
+    ];
+    return this.successResult(newState);
+  }
+
+  private executeTakebackOffer(
+    state: ChessState,
+    context: GameActionContext,
+  ): GameActionResult<ChessState> {
+    const player = state.players.find((p) => p.playerId === context.userId);
+    if (!player) return this.errorResult('Player not found');
+    const newState = this.cloneState(state);
+    newState.takebackOfferedBy = context.userId;
+    newState.takebackMoveIndex = state.moveHistory.length - 2;
+    newState.logs = [
+      ...state.logs,
+      this.createLogEntry('system', `${player.color} offers a takeback.`, {
+        senderId: context.userId,
+      }),
+    ];
+    return this.successResult(newState);
+  }
+
+  private executeTakebackAccept(
+    state: ChessState,
+    context: GameActionContext,
+  ): GameActionResult<ChessState> {
+    if (!state.takebackOfferedBy || state.takebackMoveIndex === null) {
+      return this.errorResult('No takeback offer pending');
+    }
+    const newState = this.cloneState(state);
+    const revertToIndex = state.takebackMoveIndex;
+    newState.moveHistory = state.moveHistory.slice(0, revertToIndex);
+    newState.positionHistory = state.positionHistory.slice(0, revertToIndex + 1);
+    const lastFen = newState.positionHistory[newState.positionHistory.length - 1];
+    if (lastFen) {
+      const restored = parseFen(lastFen);
+      newState.board = restored;
+      const fenTurn = lastFen.split(' ')[1];
+      if (fenTurn === 'w' || fenTurn === 'b') {
+        newState.currentTurnColor = fenTurn === 'w' ? 'white' : 'black';
+      }
+    }
+    newState.takebackOfferedBy = null;
+    newState.takebackMoveIndex = null;
+    newState.isCheck = false;
+    newState.isCheckmate = false;
+    newState.isStalemate = false;
+    newState.logs = [
+      ...state.logs,
+      this.createLogEntry('system', 'Takeback accepted.', {
+        senderId: context.userId,
+      }),
+    ];
+    newState.legalMovesForCurrentPlayer = getLegalMoves(
+      newState,
+      newState.currentTurnColor,
+    ).map((m) => ({ from: m.from, to: m.to, promotion: m.promotion }));
+    return this.successResult(newState);
+  }
+
+  private executeTakebackDecline(
+    state: ChessState,
+    context: GameActionContext,
+  ): GameActionResult<ChessState> {
+    const newState = this.cloneState(state);
+    newState.takebackOfferedBy = null;
+    newState.takebackMoveIndex = null;
+    newState.logs = [
+      ...state.logs,
+      this.createLogEntry('system', 'Takeback declined.', {
         senderId: context.userId,
       }),
     ];

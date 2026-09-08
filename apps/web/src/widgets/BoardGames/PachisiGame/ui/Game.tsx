@@ -14,6 +14,7 @@ import { usePostGameAnalytics } from '@/features/games/hooks/usePostGameAnalytic
 import { PostGameAnalytics } from '@/features/games/ui/PostGameAnalytics';
 import { resolveDisplayName } from '@/features/games/lib/resolveDisplayName';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { reorderRoomParticipants } from '@/shared/api/gamesApi';
 import type { PachisiGameProps, PachisiOptions, PachisiTheme } from '../types';
 import { usePachisiState } from '../hooks/usePachisiState';
@@ -59,6 +60,8 @@ function PachisiGameImpl({
     currentTurnUserId,
     myTurn,
     isGameOver,
+    actionBusy,
+    setActionBusy,
     startBusy,
     setStartBusy,
     session,
@@ -68,10 +71,31 @@ function PachisiGameImpl({
     initialSession,
   });
 
-  const { startSession, rollDice, moveToken } = usePachisiActions({
+  const { startSession, rollDice, moveToken, passTurn } = usePachisiActions({
     roomId,
     userId: currentUserId,
+    onActionStart: (action) => setActionBusy(action),
   });
+
+  const { play } = useGameSound('pachisi_v1');
+
+  const handleRoll = useCallback(() => {
+    play('roll');
+    rollDice();
+  }, [rollDice, play]);
+
+  const handleMove = useCallback(
+    (...args: Parameters<typeof moveToken>) => {
+      play('move');
+      return moveToken(...args);
+    },
+    [moveToken, play],
+  );
+
+  const handlePass = useCallback(() => {
+    play('click');
+    passTurn();
+  }, [passTurn, play]);
 
   const resolveDisplayNameBound = useCallback(
     (id?: string | null) =>
@@ -185,13 +209,15 @@ function PachisiGameImpl({
   }
 
   const board = (
-    <div className="box-border flex w-full flex-col items-stretch p-1 sm:p-2">
+    <div className="box-border flex w-full flex-1 flex-col items-center justify-center p-1 sm:p-2 min-h-0">
       {snapshot ? (
         <PachisiBoard
+          actionBusy={Boolean(actionBusy)}
           currentUserId={currentUserId}
           myTurn={myTurn}
-          onMove={moveToken}
-          onRoll={rollDice}
+          onMove={handleMove}
+          onPassTurn={handlePass}
+          onRoll={handleRoll}
           snapshot={snapshot}
         />
       ) : null}

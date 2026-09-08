@@ -3,7 +3,9 @@ import { WsException } from '@nestjs/websockets';
 import type { Socket } from 'socket.io';
 import type { GameMessageHandlerFn } from './game-message-handler.interface';
 import { ChessService } from './chess/chess.service';
+import { ChessStockfishService } from './chess/engine/chess-stockfish.service';
 import type { ChessOptions } from './engines/chess/chess.types';
+import type { File, Rank, PieceType } from './engines/chess/chess.constants';
 import {
   BaseGameGateway,
   extractRoomAndUser,
@@ -17,7 +19,10 @@ export class ChessGateway extends BaseGameGateway<ChessOptions> {
   protected readonly logger = new Logger(ChessGateway.name);
   protected readonly eventPrefix = 'chess';
 
-  constructor(protected readonly gameService: ChessService) {
+  constructor(
+    protected readonly gameService: ChessService,
+    private readonly stockfishService: ChessStockfishService,
+  ) {
     super();
   }
 
@@ -47,7 +52,7 @@ export class ChessGateway extends BaseGameGateway<ChessOptions> {
   }
 
   protected getGameHandlers(): Record<string, GameMessageHandlerFn> {
-    return {
+    const handlers = {
       'chess.session.move': this.wrapHandler(
         'move',
         async (client, payload, roomId, userId) => {
@@ -62,11 +67,11 @@ export class ChessGateway extends BaseGameGateway<ChessOptions> {
             );
           }
           await this.gameService.move(userId, roomId, {
-            fromFile: payload.fromFile as string,
-            fromRank: payload.fromRank as number,
-            toFile: payload.toFile as string,
-            toRank: payload.toRank as number,
-            promotion: payload.promotion as string | undefined,
+            fromFile: payload.fromFile as File,
+            fromRank: payload.fromRank as Rank,
+            toFile: payload.toFile as File,
+            toRank: payload.toRank as Rank,
+            promotion: payload.promotion as PieceType | undefined,
           });
           client.emit(
             'chess.session.moved',
@@ -112,5 +117,6 @@ export class ChessGateway extends BaseGameGateway<ChessOptions> {
         },
       ),
     };
+    return handlers;
   }
 }

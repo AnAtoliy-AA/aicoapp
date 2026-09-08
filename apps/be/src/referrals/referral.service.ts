@@ -135,7 +135,7 @@ export class ReferralService {
   async trackReferral(
     referralCode: string,
     referredUserId: string,
-  ): Promise<void> {
+  ): Promise<string | null> {
     if (typeof referralCode !== 'string')
       throw new BadRequestException('Invalid referralCode');
     if (typeof referredUserId !== 'string')
@@ -148,14 +148,14 @@ export class ReferralService {
       .exec();
     if (!referrer) {
       this.logger.warn(`Invalid referral code: ${safeCode}`);
-      return;
+      return null;
     }
 
     const referrerId = referrer._id.toString();
 
     if (referrerId === safeReferredUserId) {
       this.logger.warn('User cannot refer themselves');
-      return;
+      return null;
     }
 
     if (typeof safeReferredUserId !== 'string')
@@ -169,7 +169,7 @@ export class ReferralService {
       .exec();
     if (existingReferral) {
       this.logger.warn(`User ${safeReferredUserId} already has a referral`);
-      return;
+      return null;
     }
 
     const referral = await this.referralModel.create({
@@ -200,7 +200,7 @@ export class ReferralService {
       this.logger.warn(
         `Referrer ${referrerId} hit daily referral payout cap (${REFERRAL_DAILY_PAYOUT_CAP}) — skipping payout`,
       );
-      return;
+      return referrerId;
     }
 
     await this.payoutPerReferral(
@@ -209,6 +209,7 @@ export class ReferralService {
       referredUserId,
     );
     await this.checkAndGrantRewards(referrerId);
+    return referrerId;
   }
 
   private async payoutPerReferral(
@@ -273,6 +274,32 @@ export class ReferralService {
             remaining: nextTier.requiredInvites - totalReferrals,
           }
         : null,
+    };
+  }
+
+  async getRewardsConfig() {
+    const [coinsPerReferral, tier1Bonus, tier2Bonus, tier3Bonus] =
+      await Promise.all([
+        this.economy.getNumber('referral_reward_coins_per'),
+        this.economy.getNumber('referral_tier_1_bonus_coins'),
+        this.economy.getNumber('referral_tier_2_bonus_coins'),
+        this.economy.getNumber('referral_tier_3_bonus_coins'),
+      ]);
+
+    return {
+      perFriend: coinsPerReferral,
+      tier1Bonus,
+      tier2Bonus,
+      tier3Bonus,
+      tiers: REWARD_TIERS.map((t) => ({
+        tier: t.tier,
+        requiredInvites: t.requiredInvites,
+        rewards: t.rewards.map((r) => ({
+          rewardId: r.rewardId,
+          rewardType: r.rewardType,
+          label: r.label,
+        })),
+      })),
     };
   }
 

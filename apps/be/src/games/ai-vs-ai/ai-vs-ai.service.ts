@@ -30,8 +30,11 @@ import { SpadesService } from '../spades/spades.service';
 import { GoService } from '../go/go.service';
 import { PachisiService } from '../pachisi/pachisi.service';
 import { GameEngineRegistry } from '../engines/registry/game-engine.registry';
+import { BOT_PERSONALITIES } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
+import { GameSettingService } from '../../admin/game-visibility/game-setting.service';
 
 const AI_VS_AI_ROOM_NAME = 'AI vs AI';
+const DEFAULT_AIVSAI_DIFFICULTIES = ['hard', 'master', 'expert'];
 
 type AiVsAiStartFn = (
   botHostId: string,
@@ -82,12 +85,14 @@ export class AiVsAiService {
     @Inject(forwardRef(() => PachisiService))
     private readonly pachisiService: PachisiService,
     private readonly engineRegistry: GameEngineRegistry,
+    private readonly settingService: GameSettingService,
   ) {
     this.startFns = {
       chess_v1: (hostId, roomId, extras) =>
         this.chessService.startSession(hostId, roomId, false, 0, {
           ...extras,
-          botDifficulty: 'expert',
+          botDifficulty: extras.botDifficulty ?? 'expert',
+          botPersonality: extras.botPersonalityWhite as string,
         }),
       checkers_v1: (hostId, roomId, extras) =>
         this.checkersService.startSession(hostId, roomId, false, 0, extras),
@@ -131,6 +136,8 @@ export class AiVsAiService {
       variant?: string;
       theme?: string;
       aiMoveDelayMs?: number;
+      botPersonalityWhite?: string;
+      botPersonalityBlack?: string;
     },
   ): Promise<GameRoomSummary> {
     const startGame = this.startFns[dto.gameId];
@@ -141,9 +148,13 @@ export class AiVsAiService {
     }
 
     const aiMoveDelayMs = this.resolveDelay(dto.aiMoveDelayMs);
-    // Seat every bot position the game needs: 2 for 1v1 games (unchanged
-    // layout), 4 for full-table games like Hearts. The room is born "full"
-    // so no human can join mid-spectate.
+
+    // Resolve bot personalities — pick random if not specified
+    const whitePersonality =
+      dto.botPersonalityWhite ?? this.randomPersonality();
+    const blackPersonality =
+      dto.botPersonalityBlack ?? this.randomPersonality();
+
     const { minPlayers } = this.engineRegistry.getMetadata(dto.gameId);
     const seatCount = Math.max(2, minPlayers);
     const botIds = Array.from(
@@ -152,11 +163,22 @@ export class AiVsAiService {
     );
     const now = new Date();
 
+    const gameSettings = await this.settingService.getSettings(dto.gameId);
+    const aivsaiDifficulties =
+      (gameSettings.aivsaiDifficulties as string[]) ??
+      DEFAULT_AIVSAI_DIFFICULTIES;
+    const selectedDifficulty =
+      aivsaiDifficulties[
+        Math.floor(Math.random() * aivsaiDifficulties.length)
+      ] ?? 'expert';
+
     const gameOptions: Record<string, unknown> = {
       aiVsAi: true,
       aiMoveDelayMs,
-      botDifficulty: 'expert',
-      aiDifficulty: 'expert',
+      botDifficulty: selectedDifficulty,
+      aiDifficulty: selectedDifficulty,
+      botPersonalityWhite: whitePersonality,
+      botPersonalityBlack: blackPersonality,
       ...(dto.variant ? { variant: dto.variant } : {}),
       theme: dto.theme || 'adventure',
     };
@@ -198,6 +220,11 @@ export class AiVsAiService {
       return delay as (typeof AI_VS_AI_DELAYS_MS)[number];
     }
     return AI_VS_AI_DEFAULT_DELAY_MS;
+  }
+
+  private randomPersonality(): string {
+    const idx = Math.floor(Math.random() * BOT_PERSONALITIES.length);
+    return BOT_PERSONALITIES[idx].id;
   }
 
   private async startAiSession(

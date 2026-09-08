@@ -1,5 +1,7 @@
 name: Deploy to OCI (Dev)
 
+permissions: read-all
+
 on:
   push:
     branches: [staging]
@@ -16,8 +18,6 @@ on:
         required: true
         default: 'staging'
 
-permissions: {}
-
 jobs:
   changes:
     name: Detect changes
@@ -26,7 +26,7 @@ jobs:
       be-or-tg: ${{ steps.filter.outputs.be-or-tg }}
     steps:
       - uses: actions/checkout@v7
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -75,6 +75,25 @@ jobs:
 
             pnpm --filter @arcadeum/games-core build && pnpm --filter be build
             pnpm --filter tg-bot build
+
+            # Stockfish 19 — skip download if binary already present
+            # Service checks /usr/local/bin/stockfish first (Docker path),
+            # then falls back to apps/be/bin/stockfish (local dev path).
+            SF_BIN="/usr/local/bin/stockfish"
+            if [ ! -x "$SF_BIN" ]; then
+              echo "==> Downloading Stockfish 19 (Linux x86-64)..."
+              curl -L -o /tmp/sf19.tar.gz \
+                "https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-linux-x86-64-universal.tar.gz"
+              mkdir -p /tmp/sf19-extract
+              tar -xzf /tmp/sf19.tar.gz -C /tmp/sf19-extract
+              find /tmp/sf19-extract -name "stockfish" -type f -executable -exec cp {} "$SF_BIN" \;
+              chmod +x "$SF_BIN"
+              rm -rf /tmp/sf19.tar.gz /tmp/sf19-extract
+              "$SF_BIN" <<< "uci" 2>/dev/null | head -1
+              echo "==> Stockfish 19 installed."
+            else
+              echo "==> Stockfish 19 binary already present, skipping download."
+            fi
 
             mkdir -p "${DEPLOY_DIR}/scripts"
 

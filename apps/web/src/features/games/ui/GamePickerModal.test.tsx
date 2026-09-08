@@ -18,6 +18,7 @@ vi.mock('@/shared/config/useRoutes', () => ({
   useRoutes: () => ({
     gameRoom: (id: string) => `/games/rooms/${id}`,
   }),
+  useLocale: () => 'en',
 }));
 
 vi.mock('@/shared/lib/useTranslation', () => ({

@@ -13,6 +13,7 @@ import { IpBlockGuard, IpBlockService } from './common/guards/ip-block.guard';
 import { CsrfGuard } from './common/guards/csrf.guard';
 import { RequestIdInterceptor } from './common/interceptors/request-id.interceptor';
 import { CompressedIoAdapter } from './common/adapters/compressed-io.adapter';
+import { validateEnv } from './common/config/env-validator';
 
 /**
  * Maximum request body size: 1 MB. Prevents abuse via oversized payloads.
@@ -50,6 +51,11 @@ async function bootstrap() {
     throw new Error(
       'E2E mode must not be enabled in production. Set E2E=false or remove it.',
     );
+  }
+
+  // Validate environment variables at startup (skip in E2E/test mode)
+  if (process.env.E2E !== 'true' && process.env.NODE_ENV !== 'test') {
+    validateEnv();
   }
 
   const logger = new ArcadeumLogger();
@@ -117,6 +123,33 @@ async function bootstrap() {
       'x-request-id',
     ],
   });
+
+  // Health check endpoint for load balancers and monitoring
+  const httpAdapter = app.getHttpAdapter();
+
+  httpAdapter.get('/health', (_req: Request, res: Response) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Prometheus metrics endpoint (proxied from OTel exporter on port 9464)
+  if (process.env.METRICS_ENABLED === 'true') {
+    httpAdapter.get('/metrics', async (_req: Request, res: Response) => {
+      try {
+        const response = await fetch('http://127.0.0.1:9464/metrics');
+        const body = await response.text();
+        res.setHeader(
+          'Content-Type',
+          response.headers.get('content-type') ?? 'text/plain',
+        );
+        res.send(body);
+      } catch {
+        res.status(503).json({ error: 'Metrics not available' });
+      }
+    });
+  }
 
   const port = process.env.PORT ?? process.env.BE_PORT ?? 4000;
   await app.listen(port, '0.0.0.0');

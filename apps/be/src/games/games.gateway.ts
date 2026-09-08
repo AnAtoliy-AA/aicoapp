@@ -176,7 +176,7 @@ export class GamesGateway {
     const activeUserId = userId || anonId || `guest_${client.id}`;
     if (activeUserId) {
       this.realtime.untrackSocket(activeUserId, client.id);
-      this.matchmakingService.leaveQueue(activeUserId);
+      void this.matchmakingService.leaveQueue(activeUserId);
     }
     if (this.liveStatsService) {
       void this.liveStatsService.getLiveStats().then((stats) => {
@@ -187,7 +187,7 @@ export class GamesGateway {
 
     for (const room of client.rooms) {
       if (room.startsWith('game-room:')) {
-        const data = { userId, idle: true };
+        const data = { userId: activeUserId, idle: true };
         this.server.to(room).emit('games.player.idle_changed', data);
         const roomId = room.replace('game-room:', '');
         const specChannel = this.realtime.spectatorChannel(roomId);
@@ -447,7 +447,7 @@ export class GamesGateway {
         ? ipHeader.split(',')[0].trim()
         : client.handshake.address;
 
-    this.matchmakingService.joinQueue(
+    void this.matchmakingService.joinQueue(
       userId,
       client.id,
       gameId,
@@ -472,7 +472,7 @@ export class GamesGateway {
   ): void {
     const userId = extractString(payload, 'userId');
     this.validateUserId(client, userId);
-    this.matchmakingService.leaveQueue(userId);
+    void this.matchmakingService.leaveQueue(userId);
     client.emit('games.matchmaking.left', maybeEncrypt({}));
   }
 }

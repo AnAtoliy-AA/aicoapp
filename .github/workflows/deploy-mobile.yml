@@ -1,5 +1,7 @@
 name: Deploy Android Preview
 
+permissions: read-all
+
 on:
   push:
     branches:
@@ -10,8 +12,6 @@ on:
       - 'pnpm-lock.yaml'
 
   workflow_dispatch:
-
-permissions: {}
 
 jobs:
   build:

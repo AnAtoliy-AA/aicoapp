@@ -244,6 +244,8 @@ export const gamesApi = {
       variant?: string;
       theme?: string;
       aiMoveDelayMs?: number;
+      botPersonalityWhite?: string;
+      botPersonalityBlack?: string;
     },
     options?: ApiClientOptions,
   ): Promise<CreateRoomResponse> => {
@@ -254,6 +256,8 @@ export const gamesApi = {
         variant: params?.variant,
         theme: params?.theme,
         aiMoveDelayMs: params?.aiMoveDelayMs,
+        botPersonalityWhite: params?.botPersonalityWhite,
+        botPersonalityBlack: params?.botPersonalityBlack,
       },
       options,
     );
@@ -304,6 +308,29 @@ export const gamesApi = {
   ): Promise<{ count: number; nextRoomNumber: number }> => {
     return apiClient.get<{ count: number; nextRoomNumber: number }>(
       '/games/my-room-count',
+      options,
+    );
+  },
+
+  invitePlayers: async (
+    roomId: string,
+    userIds: string[],
+    options?: ApiClientOptions,
+  ): Promise<void> => {
+    return apiClient.post<void>(
+      `/games/rooms/${roomId}/invitation/invite`,
+      { userIds },
+      options,
+    );
+  },
+
+  declineInvitation: async (
+    roomId: string,
+    options?: ApiClientOptions,
+  ): Promise<void> => {
+    return apiClient.post<void>(
+      `/games/rooms/${roomId}/invitation/decline`,
+      undefined,
       options,
     );
   },

@@ -86,9 +86,7 @@ test.describe('Admin economy settings — full interactive flow (live backend)',
     await page.waitForURL(/\/admin/);
 
     await page.goto('/admin/economy');
-    await expect(page.getByTestId('economy-table')).toBeVisible({
-      timeout: 10000,
-    });
+    await expect(page.getByTestId('economy-table')).toBeVisible();
 
     // Edit game_win_coin_reward
     await page.getByTestId('economy-edit-game_win_coin_reward').click();
@@ -98,9 +96,7 @@ test.describe('Admin economy settings — full interactive flow (live backend)',
     await input.fill('100');
     await page.getByTestId('economy-save-btn').click();
 
-    await expect(page.getByTestId('economy-success-message')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.getByTestId('economy-success-message')).toBeVisible();
 
     // Verify source badge changed
     await expect(
@@ -113,10 +109,8 @@ test.describe('Admin economy settings — full interactive flow (live backend)',
 
     // View audit history
     await page.getByTestId('economy-history-game_win_coin_reward').click();
-    await expect(page.getByTestId('economy-audit-list')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.getByTestId('economy-audit-list')).toBeVisible();
     const rows = page.getByTestId(/^economy-audit-row-/);
-    await expect(rows).toHaveCount(2, { timeout: 5000 });
+    await expect(rows).toHaveCount(2);
   });
 });

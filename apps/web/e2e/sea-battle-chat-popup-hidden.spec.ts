@@ -80,7 +80,6 @@ test.describe('Sea Battle Chat Message Popup — suppression', () => {
           !!store
         );
       },
-      { timeout: 60000 },
     );
 
     // Force the chat panel open via the store so the test does not depend on
@@ -125,7 +124,7 @@ test.describe('Sea Battle Chat Message Popup — suppression', () => {
             return store?.getState().logs.some((l) => l.message === msg);
           }, expectedMsg);
         },
-        { timeout: 30000, intervals: [1000] },
+        { intervals: [1000] },
       )
       .toBe(true);
 

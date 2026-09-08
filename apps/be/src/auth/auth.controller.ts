@@ -29,7 +29,9 @@ import { OAuthLoginDto } from './dtos/oauth-login.dto';
 import { RefreshTokenRequestDto } from './dtos/refresh-token-request.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { RequestMagicLinkDto, VerifyMagicLinkDto } from './dtos/magic-link.dto';
 import { PasswordResetService } from './services/password-reset.service';
+import { MagicLinkService } from './services/magic-link.service';
 import { ConfigService } from '@nestjs/config';
 import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
 import {
@@ -115,6 +117,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly passwordReset: PasswordResetService,
+    private readonly magicLink: MagicLinkService,
     configService: ConfigService,
   ) {
     this.cookieKey = cookieCipherKey(resolveJwtSecret(configService));
@@ -288,6 +291,36 @@ export class AuthController {
     return this.authService.getUserProfileById(user.userId);
   }
 
+  @Post('magic-link')
+  @HttpCode(200)
+  @Throttle({ strict: { limit: 3, ttl: 60 * 60 * 1000 } })
+  async requestMagicLink(
+    @Body() dto: RequestMagicLinkDto,
+  ): Promise<{ success: boolean }> {
+    // Always returns 200 to prevent account enumeration
+    return this.magicLink.requestMagicLink(dto.email);
+  }
+
+  @Post('magic-link/verify')
+  @Throttle({ auth: { limit: 10, ttl: 60_000 } })
+  async verifyMagicLink(
+    @Body() dto: VerifyMagicLinkDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthTokensResponse> {
+    const result = await this.magicLink.verifyMagicLink(dto.token);
+    setTokenCookies(
+      res,
+      req,
+      this.cookieKey,
+      result.accessToken,
+      result.accessTokenExpiresAt,
+      result.refreshToken,
+      result.refreshTokenExpiresAt,
+    );
+    return result;
+  }
+
   @Get('users/search')
   @UseGuards(JwtAuthGuard)
   @Throttle({ default: { limit: 30, ttl: 60_000 } })
@@ -305,6 +338,12 @@ export class AuthController {
       requestingUserId: user.userId,
       includeSelf: includeSelf === 'true',
     });
+  }
+
+  @Get('users/:id')
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  async getUserPublicProfile(@Param('id') id: string) {
+    return this.authService.getPublicProfile(id);
   }
 
   @Post('block/:userId')

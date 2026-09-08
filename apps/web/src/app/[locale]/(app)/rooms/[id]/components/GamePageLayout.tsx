@@ -1,7 +1,13 @@
 'use client';
 
 import '@/features/games/ui/scrollbar.scss';
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { useFullscreen } from '@/features/games/hooks/useFullscreen';
 import { ConnectionOverlay } from '@arcadeum/ui/components/ConnectionOverlay/ConnectionOverlay';
@@ -11,10 +17,6 @@ import { useEmotes } from '@/features/games/hooks/useEmotes';
 import { useGameRoomChat } from '@/features/games/hooks/useGameRoomChat';
 import { gameSocket } from '@/shared/lib/socket';
 import { ActiveEmotesProvider } from '@/features/games/ui/GameWidgetContainer';
-import {
-  SpectatorReactionsBar,
-  buildSpectatorReactionsLabels,
-} from '@/features/games/ui/SpectatorReactionsBar';
 import type { GameRoomSummary, GameSessionSummary } from '@/shared/types/games';
 
 import { useGameRematchStore } from '@/features/games/store/gameRematchStore';
@@ -73,6 +75,12 @@ export function GamePageLayout(props: GamePageLayoutProps) {
 
   const teamMode = !!(room.gameOptions as { teamMode?: boolean } | undefined)
     ?.teamMode;
+
+  const opponentUserId = useMemo(() => {
+    if (!userId || !room.members) return undefined;
+    const opponent = room.members.find((m: { id: string }) => m.id !== userId);
+    return opponent?.id;
+  }, [userId, room.members]);
 
   const { t } = useTranslation();
   const gameContainerRef = useRef<HTMLDivElement>(null);
@@ -268,18 +276,10 @@ export function GamePageLayout(props: GamePageLayoutProps) {
           isGameOver={isGameOver}
           onRematch={onRematch ?? undefined}
           rematchLoading={rematchLoading}
+          opponentUserId={opponentUserId}
         />
 
         {!isAuthenticated && <GuestTermsNotice />}
-
-        {isSpectating && (
-          <div className="flex w-full justify-center my-0.5">
-            <SpectatorReactionsBar
-              sendEmote={sendEmote}
-              labels={buildSpectatorReactionsLabels(t)}
-            />
-          </div>
-        )}
 
         <GameRow>
           <ActiveEmotesProvider
@@ -304,6 +304,7 @@ export function GamePageLayout(props: GamePageLayoutProps) {
               onEmote={sendEmote}
               isHost={isHost}
               onDeleteMessage={handleDeleteMessage}
+              isSpectating={isSpectating}
             />
           </ChatPanel>
 

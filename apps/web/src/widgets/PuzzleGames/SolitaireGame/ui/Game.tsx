@@ -1,84 +1,64 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-} from 'react';
-import { Button, LoadingState } from '@arcadeum/ui';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { useTrackSoloGameStarted } from '@/shared/analytics/useTrackSoloGameStarted';
-import { GameResultModal } from '@/features/games/ui/GameResultModal';
 import type { GameResultStats } from '@/features/games/ui/GameResultStatsGrid';
+import {
+  SoloGameContainer,
+  formatDuration,
+  useSoloTimer,
+  useSoloPause,
+  SoloActionButton,
+} from '@/features/games/ui/SoloGameContainer';
+import { useSoloTheme } from '@/features/games/store/soloThemeStore';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { SolitaireThemeProvider } from '../lib/SolitaireThemeContext';
 import { useSolitaireStore } from '../store/solitaireStore';
-import type { MoveSource } from '../types';
+import type { MoveSource, MoveTarget } from '../types';
 import { SolitaireBoard } from './SolitaireBoard';
 
 export default function SolitaireGame() {
   useTrackSoloGameStarted('solitaire_v1');
+  const { themeId } = useSoloTheme('solitaire_v1');
   return (
-    <SolitaireThemeProvider>
+    <SolitaireThemeProvider variant={themeId}>
       <SolitaireTable />
     </SolitaireThemeProvider>
   );
 }
 
-function subscribeNoop(): () => void {
-  return () => undefined;
-}
-
-function formatDuration(durationMs: number): string {
-  const totalSeconds = Math.floor(durationMs / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
 function SolitaireTable() {
   const { t } = useTranslation();
+  const { themeId } = useSoloTheme('solitaire_v1');
   const game = useSolitaireStore((state) => state.game);
   const finished = useSolitaireStore((state) => state.finished);
   const startedAt = useSolitaireStore((state) => state.startedAt);
+  const finishedAt = useSolitaireStore((state) => state.finishedAt);
   const draw = useSolitaireStore((state) => state.draw);
   const move = useSolitaireStore((state) => state.move);
   const newGame = useSolitaireStore((state) => state.newGame);
 
+  const { play } = useGameSound('solitaire_v1');
   const [selection, setSelection] = useState<MoveSource | null>(null);
+  const isRunning = finishedAt === null;
+  const pause = useSoloPause(isRunning, finishedAt);
+  const timer = useSoloTimer(isRunning, startedAt, pause.isPaused);
 
-  const mounted = useSyncExternalStore(
-    subscribeNoop,
-    () => true,
-    () => false,
+  const handleDraw = useCallback(() => {
+    if (pause.isPaused) return;
+    play('card_flip');
+    draw();
+  }, [draw, pause.isPaused, play]);
+
+  const handleMove = useCallback(
+    (source: MoveSource, target: MoveTarget) => {
+      if (pause.isPaused) return;
+      play('card_place');
+      move(source, target);
+    },
+    [move, pause.isPaused, play],
   );
-
-  const [elapsedMs, setElapsedMs] = useState(0);
-  const isRunning = mounted && finished === null;
-  useEffect(() => {
-    if (!isRunning) return undefined;
-    const interval = setInterval(
-      () => setElapsedMs(Date.now() - startedAt),
-      1000,
-    );
-    return () => clearInterval(interval);
-  }, [isRunning, startedAt]);
-
-  const [isDismissed, setIsDismissed] = useState(false);
-
-  const handleCloseModal = useCallback(() => {
-    setIsDismissed(true);
-  }, []);
-
-  const handleNewGame = useCallback(() => {
-    setIsDismissed(false);
-    newGame();
-  }, [newGame]);
-
-  const handleOpenModal = useCallback(() => {
-    setIsDismissed(false);
-  }, []);
 
   const stats: GameResultStats | null = useMemo(() => {
     if (!finished) return null;
@@ -89,68 +69,72 @@ function SolitaireTable() {
     };
   }, [finished]);
 
-  if (!mounted) {
-    return <LoadingState message={t('games.solitaire_v1.board.loading')} />;
-  }
+  const statsItems = [
+    {
+      id: 'score',
+      label: t('games.solitaire_v1.hud.score'),
+      value: game.score,
+      icon: '🎯',
+    },
+    {
+      id: 'moves',
+      label: t('games.solitaire_v1.hud.moves'),
+      value: game.moves,
+      icon: '🔄',
+    },
+    {
+      id: 'time',
+      label: t('games.solitaire_v1.hud.time'),
+      value: finished ? formatDuration(finished.durationMs) : timer.formatted,
+      icon: '⏱️',
+      dataTestId: 'solitaire-timer',
+    },
+  ];
+
+  const actions = (
+    <div className="flex items-center gap-1 sm:gap-1.5">
+      {finished !== null && (
+        <SoloActionButton
+          variant="results"
+          dataTestId="solitaire-show-results-button"
+          icon="🏆"
+        >
+          {t('games.table.analytics.view') || 'Results'}
+        </SoloActionButton>
+      )}
+      <SoloActionButton
+        onClick={newGame}
+        dataTestId="solitaire-new-game-button"
+        icon="🔄"
+      >
+        {t('games.solitaire_v1.hud.newGame')}
+      </SoloActionButton>
+    </div>
+  );
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-4 px-2">
-      <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--glassBorder)] bg-[var(--glassBg)] p-3 shadow-xl backdrop-blur-md sm:p-4">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <StatCard
-            label={t('games.solitaire_v1.hud.score')}
-            value={game.score}
-          />
-          <StatCard
-            label={t('games.solitaire_v1.hud.moves')}
-            value={game.moves}
-          />
-          <StatCard
-            label={t('games.solitaire_v1.hud.time')}
-            value={formatDuration(elapsedMs)}
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          {finished !== null && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleOpenModal}
-              data-testid="solitaire-show-results-button"
-              className="border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-300 hover:bg-amber-500/25"
-            >
-              🏆 {t('games.table.analytics.view') || 'Results'}
-            </Button>
-          )}
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleNewGame}
-            data-testid="solitaire-new-game-button"
-          >
-            {t('games.solitaire_v1.hud.newGame')}
-          </Button>
-        </div>
-      </div>
-
-      <SolitaireBoard
-        game={game}
-        selection={selection}
-        onSelect={setSelection}
-        onDraw={draw}
-        onMove={move}
-      />
-
-      <GameResultModal
-        isOpen={finished !== null && !isDismissed}
-        result={finished ? (finished.won ? 'victory' : 'defeat') : null}
-        gameName="Solitaire"
-        onRematch={handleNewGame}
-        rematchLabel={t('games.solitaire_v1.result.playAgain')}
-        onClose={handleCloseModal}
-        t={t}
-        messages={{
+    <SoloGameContainer
+      gameId="solitaire_v1"
+      difficulty="default"
+      sortBy="score"
+      order="desc"
+      maxWidthClassName="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl"
+      leaderboardDefaultExpanded={true}
+      pause={pause}
+      isRunning={isRunning}
+      startedAt={startedAt}
+      finishedAt={finishedAt}
+      onNewGame={newGame}
+      statsItems={statsItems}
+      actions={actions}
+      loadingMessage="games.solitaire_v1.board.loading"
+      modal={{
+        result: finished ? (finished.won ? 'victory' : 'defeat') : null,
+        gameName: 'Solitaire',
+        rematchLabel: t('games.solitaire_v1.result.playAgain'),
+        theme: themeId,
+        stats,
+        messages: {
           title: t(
             finished?.won
               ? 'games.solitaire_v1.result.wonTitle'
@@ -161,23 +145,16 @@ function SolitaireTable() {
               ? 'games.solitaire_v1.result.wonBody'
               : 'games.solitaire_v1.result.lostBody',
           ),
-        }}
-        theme="casino"
-        stats={stats}
+        },
+      }}
+    >
+      <SolitaireBoard
+        game={game}
+        selection={selection}
+        onSelect={pause.isPaused ? () => undefined : setSelection}
+        onDraw={handleDraw}
+        onMove={handleMove}
       />
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-[var(--glassBorder)] bg-[var(--glassBg)] px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
-      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--textSecondary)]">
-        {label}
-      </span>
-      <span className="font-mono text-base font-extrabold tabular-nums text-[var(--color)] sm:text-lg">
-        {value}
-      </span>
-    </div>
+    </SoloGameContainer>
   );
 }

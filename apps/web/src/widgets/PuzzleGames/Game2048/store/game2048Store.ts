@@ -3,6 +3,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useLocalStatsStore } from '@/features/stats/store/statsStore';
+import { useSoloScoreStore } from '@/features/stats/store/soloScoreStore';
+import { useSessionStore } from '@/entities/session/store/sessionStore';
 import { move, newGame } from '../lib/engine';
 import type { Direction } from '../types';
 
@@ -36,22 +38,40 @@ function finishIfOver(
   score: number,
   moves: number,
   startedAt: number,
+  hasEverWon: boolean = false,
 ): Pick<Game2048StoreState, 'finishedAt' | 'finished'> | null {
   if (status === 'playing') return null;
 
+  const won = status === 'won' || hasEverWon;
   const finishedAt = Date.now();
+  const durationMs = finishedAt - startedAt;
+  const userId = useSessionStore.getState().snapshot.userId ?? 'anon';
+  const sessionId = `g2048_${userId}_${finishedAt}`;
+
   void useLocalStatsStore.getState().recordGameResult({
     gameId: GAME_2048_ID,
-    result: status === 'won' ? 'won' : 'lost',
+    result: won ? 'won' : 'lost',
     timestamp: finishedAt,
   });
+
+  useSoloScoreStore.getState().addScore({
+    gameId: GAME_2048_ID,
+    difficulty: 'default',
+    score,
+    moves,
+    durationMs,
+    result: won ? 'won' : 'lost',
+    sessionId,
+    timestamp: finishedAt,
+  });
+
   return {
     finishedAt,
     finished: {
-      won: status === 'won',
+      won,
       score,
       moves,
-      durationMs: finishedAt - startedAt,
+      durationMs,
     },
   };
 }
@@ -73,36 +93,51 @@ export const useGame2048Store = create<Game2048StoreState>()(
         const state = get();
         if (state.status === 'lost') return;
 
+        const effectiveKeepPlaying =
+          state.status === 'won' ? true : state.keepPlayingFlag;
+
         const next = move(
           {
             grid: state.grid,
             score: state.score,
             status: state.status,
-            keepPlaying: state.keepPlayingFlag,
+            keepPlaying: effectiveKeepPlaying,
             moves: state.moves,
           },
           direction,
         );
         if (next.grid === state.grid) return;
 
+        const isNewlyFinished =
+          (state.status === 'playing' &&
+            (next.status === 'won' || next.status === 'lost')) ||
+          (state.status === 'won' && next.status === 'lost');
+
         const best = Math.max(state.best, next.score);
         set((current) => ({
           grid: next.grid,
           score: next.score,
           status: next.status,
-          keepPlayingFlag: next.keepPlaying,
+          keepPlayingFlag: next.keepPlaying || effectiveKeepPlaying,
           moves: next.moves,
           best,
-          ...(next.status !== 'playing'
-            ? finishIfOver(next.status, next.score, next.moves, current.startedAt)
-            : null),
+          ...(isNewlyFinished
+            ? finishIfOver(
+                next.status,
+                next.score,
+                next.moves,
+                current.startedAt,
+                state.status === 'won' || state.keepPlayingFlag,
+              )
+            : state.status === 'won' && next.status !== 'lost'
+              ? { finished: null, finishedAt: null }
+              : null),
         }));
       },
 
       continuePlaying: () =>
         set((state) => {
-          if (state.status !== 'won' || state.keepPlayingFlag) return state;
-          // Resume play — clear the dialog but remember the win.
+          if (state.status === 'lost') return state;
           return { keepPlayingFlag: true, finished: null, finishedAt: null };
         }),
 

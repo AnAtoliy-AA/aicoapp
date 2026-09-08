@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   UnauthorizedException,
+  NotFoundException,
   Inject,
   forwardRef,
 } from '@nestjs/common';
@@ -18,13 +19,14 @@ import {
   OAuthClientService,
   RefreshTokenService,
   GoogleOAuthService,
+  AppleOAuthService,
+  DiscordOAuthService,
 } from './services';
 import { LoginLockoutService } from './services/login-lockout.service';
 import { escapeRegExp } from '../common/utils/escape-regexp';
 import {
   buildAuthUserProfile,
   ensureUserUsername,
-  getOrCreateOAuthUser,
   resolveDisplayName,
 } from './auth-helpers';
 import type {
@@ -38,6 +40,11 @@ import { InventoryService } from '../shop/services/inventory.service';
 import { SignupRewardService } from './services';
 import { ModuleRef } from '@nestjs/core';
 import { GeoLookupService } from '../common/geo/geo-lookup.service';
+import {
+  Friendship,
+  FriendshipDocument,
+} from '../friends/schemas/friendship.schema';
+import { AuthOAuthHandler } from './auth-oauth.handler';
 
 export type {
   OAuthTokenResponse,
@@ -49,10 +56,14 @@ export type {
 export class AuthService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Friendship.name)
+    private readonly friendshipModel: Model<FriendshipDocument>,
     private readonly jwt: JwtService,
     private readonly oauthClient: OAuthClientService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly googleOAuth: GoogleOAuthService,
+    private readonly appleOAuth: AppleOAuthService,
+    private readonly discordOAuth: DiscordOAuthService,
     @Inject(forwardRef(() => ReferralService))
     private readonly referralService: ReferralService,
     private readonly signupReward: SignupRewardService,
@@ -132,10 +143,19 @@ export class AuthService {
 
     if (data.referralCode) {
       try {
-        await this.referralService.trackReferral(
+        const referrerId = await this.referralService.trackReferral(
           data.referralCode,
           (created as UserDocument).id as string,
         );
+        if (referrerId) {
+          await this.friendshipModel.create({
+            requesterId: new Types.ObjectId(referrerId),
+            addresseeId: new Types.ObjectId(
+              (created as UserDocument).id as string,
+            ),
+            status: 'accepted',
+          });
+        }
       } catch {
         // Non-critical
       }
@@ -223,6 +243,7 @@ export class AuthService {
     const refresh = await this.refreshTokenService.issueRefreshToken(
       String(user.id),
       null,
+      data.rememberMe,
     );
     return {
       accessToken,
@@ -237,63 +258,18 @@ export class AuthService {
     data: OAuthLoginDto,
     ip?: string | null,
   ): Promise<AuthTokensResponse> {
-    if (data.provider !== 'google') {
-      throw new UnauthorizedException('Unsupported OAuth provider');
-    }
-
-    if (!data.accessToken && !data.idToken) {
-      throw new UnauthorizedException('Missing OAuth credentials');
-    }
-
-    const googleProfile = await this.googleOAuth.fetchGoogleProfile({
-      accessToken: data.accessToken,
-      idToken: data.idToken,
-    });
-
-    if (!googleProfile.emailVerified) {
-      throw new UnauthorizedException('Google account email not verified');
-    }
-
-    const user = await getOrCreateOAuthUser(
-      googleProfile,
+    // Delegate to the OAuth handler which manages all providers
+    const oauthHandler = new AuthOAuthHandler(
       this.userModel,
-      (id) => this.grantStarterItems(id),
-      (id) => this.signupReward.grant(id),
+      this.jwt,
+      this.googleOAuth,
+      this.appleOAuth,
+      this.discordOAuth,
+      this.refreshTokenService,
+      this.lockoutService,
+      this.geoLookup,
     );
-
-    if (user.isBlocked) {
-      throw new UnauthorizedException('Account is blocked');
-    }
-
-    if (user.deletedAt) {
-      throw new UnauthorizedException('Account has been removed');
-    }
-
-    if (!user.countryCode) {
-      void this.attachCountryFromIp(String(user.id), ip);
-    }
-
-    const payload: { sub: string; email: string; username: string } = {
-      sub: String(user.id),
-      email: user.email,
-      username: user.username,
-    };
-
-    const accessToken = await this.jwt.signAsync(payload);
-    const accessTokenExpiresAt =
-      this.refreshTokenService.deriveAccessTokenExpiration(accessToken);
-    const refresh = await this.refreshTokenService.issueRefreshToken(
-      String(user.id),
-      null,
-    );
-
-    return {
-      accessToken,
-      accessTokenExpiresAt,
-      refreshToken: refresh.token,
-      refreshTokenExpiresAt: refresh.expiresAt,
-      user: buildAuthUserProfile(user),
-    };
+    return oauthHandler.loginWithOAuth(data, ip);
   }
 
   async refreshToken(rawToken: string): Promise<AuthTokensResponse> {
@@ -370,6 +346,43 @@ export class AuthService {
     }
     const ensured = await ensureUserUsername(doc, this.userModel);
     return buildAuthUserProfile(ensured);
+  }
+
+  async getPublicProfile(userId: string) {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new NotFoundException('User not found');
+    }
+    const doc = await this.userModel
+      .findById(userId)
+      .select(
+        'username displayName role xp equippedAvatarId equippedBadgeId equippedNameColorId equippedFrameId equippedAuraId equippedBannerId countryCode createdAt',
+      )
+      .lean();
+    if (!doc) {
+      throw new NotFoundException('User not found');
+    }
+    return {
+      id: String(doc._id),
+      username: doc.username,
+      displayName: (doc as { displayName?: string }).displayName ?? null,
+      role: doc.role ?? 'free',
+      xp: (doc as { xp?: number }).xp ?? 0,
+      equippedAvatarId:
+        (doc as { equippedAvatarId?: string | null }).equippedAvatarId ?? null,
+      equippedBadgeId:
+        (doc as { equippedBadgeId?: string | null }).equippedBadgeId ?? null,
+      equippedNameColorId:
+        (doc as { equippedNameColorId?: string | null }).equippedNameColorId ??
+        null,
+      equippedFrameId:
+        (doc as { equippedFrameId?: string | null }).equippedFrameId ?? null,
+      equippedAuraId:
+        (doc as { equippedAuraId?: string | null }).equippedAuraId ?? null,
+      equippedBannerId:
+        (doc as { equippedBannerId?: string | null }).equippedBannerId ?? null,
+      countryCode: (doc as { countryCode?: string | null }).countryCode ?? null,
+      createdAt: (doc as { createdAt?: Date }).createdAt?.toISOString() ?? null,
+    };
   }
 
   async blockUser(userId: string, blockedUserId: string): Promise<void> {
