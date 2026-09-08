@@ -112,23 +112,18 @@ export class ChessService extends BaseGameService<ChessOptions> {
   async move(userId: string, roomId: string, payload: MovePayload) {
     return this.runAction(userId, roomId, 'move', payload);
   }
-
   async drawOffer(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'draw_offer', {});
   }
-
   async drawAccept(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'draw_accept', {});
   }
-
   async takebackOffer(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'takeback_offer', {});
   }
-
   async takebackAccept(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'takeback_accept', {});
   }
-
   async takebackDecline(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'takeback_decline', {});
   }
@@ -334,14 +329,20 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const currentClock = state.clocks[state.currentTurnColor];
     if (!currentClock) return;
 
-    const GRACE_MS = 20_000;
+    const isFirstMove =
+      state.clocks.white.lastMoveTimestamp === 0 &&
+      state.clocks.black.lastMoveTimestamp === 0;
 
-    if (currentClock.lastMoveTimestamp === 0) {
-      const sinceCreation = Date.now() - state.gameCreatedAt;
-      if (sinceCreation < GRACE_MS) return;
+    if (isFirstMove) {
+      const gca =
+        state.gameCreatedAt > 0
+          ? state.gameCreatedAt
+          : new Date(session.createdAt).getTime();
+      const elapsed = Date.now() - gca - 20_000;
       if (
+        elapsed < 0 ||
         !this.isTimeExpired(
-          sinceCreation - GRACE_MS,
+          elapsed,
           currentClock.remainingSeconds,
           isDaily,
           daysPerMove,
@@ -358,7 +359,9 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const turnStartedAt =
       opponentClock?.lastMoveTimestamp > 0
         ? opponentClock.lastMoveTimestamp
-        : state.gameCreatedAt;
+        : state.gameCreatedAt > 0
+          ? state.gameCreatedAt
+          : new Date(session.createdAt).getTime();
     if (
       !this.isTimeExpired(
         Date.now() - turnStartedAt,
@@ -370,12 +373,8 @@ export class ChessService extends BaseGameService<ChessOptions> {
       return;
 
     const loser = state.players.find((p) => p.color === state.currentTurnColor);
-    const winner = state.players.find(
-      (p) => p.color !== state.currentTurnColor,
-    );
-    if (loser && winner) {
+    if (loser)
       await this.runAction(loser.playerId, session.roomId, 'forfeit', {});
-    }
   }
 
   private isGameOver(state: ChessState): boolean {
