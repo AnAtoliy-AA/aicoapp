@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.54] - 2026-09-08
+
+### Fixed
+- restore pm2 tg-bot cleanup for port 4001 (ARC-000)
+- install docker compose plugin + buildx, fix .dockerignore (ARC-000)
+- fix prod deploy for Docker migration (ARC-000)
+
+
 ## [1.28.53] - 2026-09-08
 
 ### Fixed
