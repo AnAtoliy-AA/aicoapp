@@ -101,6 +101,7 @@ export function useAudioPlayer(gameId?: string | null): AudioPlayerState {
           d = order.map((i) => data[i]).filter(Boolean);
           if (d.length !== data.length) d = data;
         }
+        if (d.length === 0) return;
         const saved = loadStoredSettings().musicEnabledTracks;
         const validSaved =
           saved && saved.length > 0
@@ -385,7 +386,7 @@ export function useAudioPlayer(gameId?: string | null): AudioPlayerState {
   }, []);
   const reorderTracks = useCallback(
     (newTracks: readonly MusicTrack[]) => {
-      const currentSrc = tracks[index].src;
+      const currentSrc = tracks[index]?.src;
       setTracks(newTracks);
       const ni = newTracks.findIndex((t) => t.src === currentSrc);
       if (ni !== -1) setIndex(ni);
@@ -398,7 +399,7 @@ export function useAudioPlayer(gameId?: string | null): AudioPlayerState {
     [tracks, index],
   );
   useEffect(() => {
-    if (!musicEnabled) return;
+    if (!musicEnabled || !track) return;
     const ms =
       typeof navigator !== 'undefined' ? navigator.mediaSession : undefined;
     if (!ms) return;
@@ -430,7 +431,7 @@ export function useAudioPlayer(gameId?: string | null): AudioPlayerState {
         ['play', 'pause', 'previoustrack', 'nexttrack', 'stop'] as const
       ).forEach((action) => setHandler(action, null));
     };
-  }, [musicEnabled, track.title, togglePlay, prev, next, stop]);
+  }, [musicEnabled, track, track?.title, togglePlay, prev, next, stop]);
 
   useEffect(() => {
     const ms =
