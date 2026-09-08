@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.49] - 2026-09-08
+
+### Added
+- rework lobby, fix clock, fix board themes
+
+### Fixed
+- update tests for board theme default and i18n snapshot
+- move Date.now() out of render for lint purity
+
+
 ## [1.28.48] - 2026-09-07
 
 ### Added
