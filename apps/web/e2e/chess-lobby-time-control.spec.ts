@@ -96,9 +96,65 @@ test.describe('Chess Lobby Time Control UI/UX', () => {
     await expect(presetNoClock.getByText('Unlimited')).toBeVisible();
 
     await preset32.click();
-    await expect(preset32).toHaveAttribute('data-active', 'true');
-    await expect(preset32.getByTestId('selected-indicator')).toBeVisible();
-    await expect(preset30).toHaveAttribute('data-active', 'false');
+
+    await mockRoomInfo(page, {
+      room: {
+        id: roomId,
+        name: 'Chess Time Control Room',
+        gameId: 'chess_v1',
+        gameOptions: {
+          variant: 'standard',
+          theme: 'adventure',
+          timeControl: {
+            type: 'blitz',
+            initialSeconds: 180,
+            incrementSeconds: 2,
+          },
+        },
+        status: 'lobby',
+        playerCount: 1,
+        maxPlayers: 2,
+      },
+    });
+
+    await mockGameSocket(page, roomId, MOCK_OBJECT_ID, {
+      gameId: 'chess_v1',
+      roomJoinedPayload: {
+        id: roomId,
+        gameId: 'chess_v1',
+        status: 'lobby',
+        gameOptions: {
+          variant: 'standard',
+          theme: 'adventure',
+          timeControl: {
+            type: 'blitz',
+            initialSeconds: 180,
+            incrementSeconds: 2,
+          },
+        },
+        members: [
+          {
+            id: MOCK_OBJECT_ID,
+            userId: MOCK_OBJECT_ID,
+            displayName: 'Host Player',
+            isHost: true,
+          },
+        ],
+      },
+    });
+
+    await navigateTo(page, routes.gameRoom(roomId));
+    await waitForRoomReady(page);
+
+    const updatedPreset32 = page.getByTestId('quick-play-3-2');
+    await expect(updatedPreset32).toHaveAttribute('data-active', 'true');
+    await expect(
+      updatedPreset32.getByTestId('selected-indicator'),
+    ).toBeVisible();
+    await expect(page.getByTestId('quick-play-3-0')).toHaveAttribute(
+      'data-active',
+      'false',
+    );
 
     await expect(page.getByText('1|0')).toHaveCount(0);
     await expect(page.getByText('3|0')).toHaveCount(0);
