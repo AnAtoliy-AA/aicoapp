@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.52] - 2026-09-08
+
+### Fixed
+- prefix pages.shop to skinChip translation key (ARC-000)
+- fix timeout check for first move and clock reference (ARC-000) (ARC-000)
+- fix clock jumping, optimistic sync, game over freeze, and board orientation (ARC-000) (ARC-000)
+- rework clock system for independent player timers
+
+
 ## [1.28.51] - 2026-09-08
 
 ### Fixed
