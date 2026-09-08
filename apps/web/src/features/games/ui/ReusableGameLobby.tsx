@@ -54,18 +54,6 @@ export type {
   ReusableGameLobbyProps,
 } from './ReusableGameLobby.types';
 
-const floatStyle: React.CSSProperties = {
-  animation: 'float 3s ease-in-out infinite',
-};
-
-const slideInStyle: React.CSSProperties = {
-  animation: 'slideIn 0.5s ease-out both',
-};
-
-const slideInDelayedStyle: React.CSSProperties = {
-  animation: 'slideIn 0.5s ease-out 0.15s both',
-};
-
 // ============ Component ============
 
 export function ReusableGameLobby({
@@ -286,9 +274,11 @@ export function ReusableGameLobby({
       <LobbyContent>
         {/* Center column: desktop header + settings (single instance) */}
         <div className="flex flex-col flex-1 min-w-0 max-w-full max-[1023px]:w-full max-[1023px]:order-2">
-          <CenterSection style={slideInStyle as never}>
-            <GameIcon style={floatStyle as never}>{gameIcon}</GameIcon>
-            <LobbyTitle style={slideInDelayedStyle as never}>
+          <CenterSection className="[animation:slideIn_0.5s_ease-out_both]">
+            <GameIcon className="[animation:float_3s_ease-in-out_infinite]">
+              {gameIcon}
+            </GameIcon>
+            <LobbyTitle className="[animation:slideIn_0.5s_ease-out_0.15s_both]">
               {waitingLabel}
             </LobbyTitle>
             <LobbySubtitle>{subtitleText || defaultSubtitle}</LobbySubtitle>

@@ -171,6 +171,7 @@ export const byMessages = {
       atomicDesc: 'Узяцці ўзрываюць навакольныя фігуры',
       noClock: 'Без гадзінніка',
       unlimitedTime: 'Неабмежаваны час',
+      bullet: 'Пуля',
       blitz: 'Бліц',
       rapid: 'Хуткія',
       classical: 'Класічныя',
@@ -178,6 +179,7 @@ export const byMessages = {
       medium: 'Сярэдні',
       hard: 'Складаны',
       botPersonality: 'Асоба бота',
+      selectBot: 'Выбраць бота',
     },
     profile: {
       notFound: 'Профіль не знойдзены',

@@ -172,6 +172,7 @@ export const ruMessages = {
       atomicDesc: 'Взятия взрывают окружающие фигуры',
       noClock: 'Без часов',
       unlimitedTime: 'Неограниченное время',
+      bullet: 'Пуля',
       blitz: 'Блиц',
       rapid: 'Быстрые',
       classical: 'Классические',
@@ -179,6 +180,7 @@ export const ruMessages = {
       medium: 'Средний',
       hard: 'Сложный',
       botPersonality: 'Личность бота',
+      selectBot: 'Выберите бота',
     },
     profile: {
       notFound: 'Профиль не найден',

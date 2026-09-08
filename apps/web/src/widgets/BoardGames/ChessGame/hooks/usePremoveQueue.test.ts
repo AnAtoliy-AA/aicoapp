@@ -6,6 +6,7 @@ import type { ChessClientState } from '../types';
 describe('usePremoveQueue', () => {
   const baseSnapshot: ChessClientState = {
     phase: 'playing',
+    gameCreatedAt: Date.now(),
     variant: 'standard',
     timeControl: null,
     board: [

@@ -100,13 +100,13 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
             remainingSeconds: timeControl.type === 'daily'
               ? (timeControl.daysPerMove ?? 1) * 86400
               : timeControl.initialSeconds,
-            lastMoveTimestamp: Date.now(),
+            lastMoveTimestamp: 0,
           },
           black: {
             remainingSeconds: timeControl.type === 'daily'
               ? (timeControl.daysPerMove ?? 1) * 86400
               : timeControl.initialSeconds,
-            lastMoveTimestamp: Date.now(),
+            lastMoveTimestamp: 0,
           },
         } as const)
       : null;
@@ -129,6 +129,7 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
       botDifficulty,
       board: initialBoard,
       currentTurnColor: 'white',
+      gameCreatedAt: Date.now(),
       castlingRights: { ...INITIAL_CASTLING_RIGHTS },
       enPassantTarget: null,
       halfMoveClock: 0,
@@ -408,11 +409,18 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
     if (newState.clocks) {
       const movingColor = state.currentTurnColor;
       const clock = { ...newState.clocks[movingColor] };
-      const tc = (
-        state as unknown as { timeControl?: { incrementSeconds?: number } }
-      ).timeControl;
-      const increment = tc?.incrementSeconds ?? 0;
-      clock.remainingSeconds += increment;
+      const isFirstMove = clock.lastMoveTimestamp === 0;
+      if (!isFirstMove) {
+        const elapsed = Math.floor(
+          (Date.now() - clock.lastMoveTimestamp) / 1000,
+        );
+        clock.remainingSeconds = Math.max(0, clock.remainingSeconds - elapsed);
+        const tc = (
+          state as unknown as { timeControl?: { incrementSeconds?: number } }
+        ).timeControl;
+        const increment = tc?.incrementSeconds ?? 0;
+        clock.remainingSeconds += increment;
+      }
       clock.lastMoveTimestamp = Date.now();
       newState.clocks = { ...newState.clocks, [movingColor]: clock };
     }

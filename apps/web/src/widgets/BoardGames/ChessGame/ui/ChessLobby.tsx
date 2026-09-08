@@ -15,7 +15,6 @@ import type { GameRoomSummary } from '@/shared/types/games';
 import { useRoomOptions } from '@/features/games/hooks/useRoomOptions';
 import type { BotDifficulty } from '@/features/games/ui/DifficultySelector';
 import type { ChessTheme, TimeControl } from '../types';
-import { TIME_CONTROLS } from '../types';
 import { RulesModal } from './RulesModal';
 import { BotSelector, type BotPersonalityOption } from './BotSelector';
 import { PgnImportModal } from './PgnImportModal';
@@ -30,18 +29,6 @@ const LOBBY_THEME: GameLobbyTheme = {
     'linear-gradient(90deg, var(--color) 0%, var(--primary) 100%)',
   buttonGradient: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
 };
-
-function formatTimeControl(tc: TimeControl | null): string {
-  if (!tc) return 'No clock';
-  if (tc.type === 'daily') {
-    const days = tc.daysPerMove ?? 1;
-    return `${days}d`;
-  }
-  const mins = Math.floor(tc.initialSeconds / 60);
-  return tc.incrementSeconds > 0
-    ? `${mins}+${tc.incrementSeconds}`
-    : `${mins}|0`;
-}
 
 interface ChessLobbyProps {
   room: GameRoomSummary;
@@ -189,67 +176,8 @@ export function ChessLobby({
     },
   ];
 
-  const TIME_CONTROL_LABELS: Record<string, string> = {
-    bullet: t('games.chess_v1.lobby.bullet'),
-    blitz: t('games.chess_v1.lobby.blitz'),
-    rapid: t('games.chess_v1.lobby.rapid'),
-    daily: t('games.chess_v1.lobby.daily'),
-    classical: t('games.chess_v1.lobby.classical'),
-  };
-
-  const timeControlOptions = [
-    ...TIME_CONTROLS.map((tc) => ({
-      id: `tc-${tc.initialSeconds}-${tc.incrementSeconds}-${tc.daysPerMove ?? 0}`,
-      label: formatTimeControl(tc),
-      description: TIME_CONTROL_LABELS[tc.type] ?? tc.type,
-    })),
-    {
-      id: 'no-clock',
-      label: t('games.chess_v1.lobby.noClock'),
-      description: t('games.chess_v1.lobby.unlimitedTime'),
-    },
-  ];
-
-  const getSelectedTimeControl = () => {
-    if (options.timeControl === null) return 'no-clock';
-    return `tc-${options.timeControl.initialSeconds}-${options.timeControl.incrementSeconds}-${options.timeControl.daysPerMove ?? 0}`;
-  };
-
-  const handleTimeControlChange = (value: string) => {
-    if (value === 'no-clock') {
-      setOption({ timeControl: null });
-    } else {
-      const parts = value.split('-');
-      const initial = Number(parts[1]);
-      const increment = Number(parts[2]);
-      const daysPerMove = Number(parts[3]) || undefined;
-      const tc = TIME_CONTROLS.find(
-        (t) =>
-          t.initialSeconds === initial &&
-          t.incrementSeconds === increment &&
-          (t.daysPerMove ?? 0) === (daysPerMove ?? 0),
-      );
-      if (tc) setOption({ timeControl: tc });
-    }
-  };
-
   const optionsSlot = (
     <div className="flex flex-col items-stretch gap-4">
-      {isHost && (
-        <QuickPlayPanel
-          disabled={startBusy}
-          onSelectTimeControl={(tc) => {
-            setOption({ timeControl: tc });
-          }}
-        />
-      )}
-      <LobbyOptionSection title={t('games.create.sectionVariant')}>
-        <GameThemePicker
-          selectedTheme={options.theme}
-          onSelect={(themeId) => setOption({ theme: themeId })}
-          disabled={!isHost}
-        />
-      </LobbyOptionSection>
       <LobbyOptionSection title={t('games.chess_v1.lobby.variant')}>
         <LobbyChipGroup
           options={variantOptions}
@@ -261,14 +189,19 @@ export function ChessLobby({
         />
       </LobbyOptionSection>
 
-      <LobbyOptionSection title={t('games.chess_v1.lobby.timeControl')}>
-        <LobbyChipGroup
-          options={timeControlOptions}
-          value={getSelectedTimeControl()}
-          onChange={handleTimeControlChange}
+      <QuickPlayPanel
+        selectedTimeControl={options.timeControl}
+        disabled={!isHost || startBusy}
+        onSelectTimeControl={(tc) => {
+          setOption({ timeControl: tc });
+        }}
+      />
+
+      <LobbyOptionSection title={t('games.create.sectionVariant')}>
+        <GameThemePicker
+          selectedTheme={options.theme}
+          onSelect={(themeId) => setOption({ theme: themeId })}
           disabled={!isHost}
-          accentColor="#6366f1"
-          testIdPrefix="chess-time"
         />
       </LobbyOptionSection>
 
@@ -322,6 +255,7 @@ export function ChessLobby({
         maxPlayers={2}
         theme={LOBBY_THEME}
         enableBots
+        showDifficulty={false}
         labels={{
           startWithBotsLabel: t('games.chess_v1.lobby.startWithBots'),
         }}

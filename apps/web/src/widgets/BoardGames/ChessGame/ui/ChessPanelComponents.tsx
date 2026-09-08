@@ -55,6 +55,7 @@ export function PlayerCards({
   currentTurnColor,
   isGameOver,
   clocks,
+  liveClocks,
   timeControl,
 }: {
   whiteId: string;
@@ -64,26 +65,28 @@ export function PlayerCards({
   currentTurnColor: 'white' | 'black';
   isGameOver: boolean;
   clocks: Record<string, { remainingSeconds: number } | null> | null;
+  liveClocks?: { white: number; black: number } | null;
   timeControl: { incrementSeconds: number } | null;
 }) {
+  const whiteTime = liveClocks?.white ?? clocks?.white?.remainingSeconds ?? 0;
+  const blackTime = liveClocks?.black ?? clocks?.black?.remainingSeconds ?? 0;
+  const whiteHasClock = !!liveClocks || !!clocks?.white;
+  const blackHasClock = !!liveClocks || !!clocks?.black;
+
   return (
     <div className="flex gap-2 w-full">
       <PlayerCard
         playerId={whiteId}
         name={whiteName}
         isActive={currentTurnColor === 'white' && !isGameOver}
-        mainTime={
-          clocks?.white ? formatClock(clocks.white.remainingSeconds) : '--:--'
-        }
+        mainTime={whiteHasClock ? formatClock(whiteTime) : '--:--'}
         incrTime={timeControl ? `+${timeControl.incrementSeconds}` : '+0'}
       />
       <PlayerCard
         playerId={blackId}
         name={blackName}
         isActive={currentTurnColor === 'black' && !isGameOver}
-        mainTime={
-          clocks?.black ? formatClock(clocks.black.remainingSeconds) : '--:--'
-        }
+        mainTime={blackHasClock ? formatClock(blackTime) : '--:--'}
         incrTime={timeControl ? `+${timeControl.incrementSeconds}` : '+0'}
       />
     </div>
@@ -159,19 +162,28 @@ export function GameInfoPanel({
   t: TranslateFn;
 }) {
   // Players: their own color. Spectators: toggle between White/Black.
-  const perspective = isSpectator ? (spectatorPerspective ?? 'white') : (myColor ?? 'white');
+  const perspective = isSpectator
+    ? (spectatorPerspective ?? 'white')
+    : (myColor ?? 'white');
   const shouldFlip = perspective === 'black';
 
   const displayEval = useMemo(() => {
     if (!liveEval) return null;
-    const cp = liveEval.cp != null ? (shouldFlip ? -liveEval.cp : liveEval.cp) : null;
-    const mate = liveEval.mate != null ? (shouldFlip ? -liveEval.mate : liveEval.mate) : null;
+    const cp =
+      liveEval.cp != null ? (shouldFlip ? -liveEval.cp : liveEval.cp) : null;
+    const mate =
+      liveEval.mate != null
+        ? shouldFlip
+          ? -liveEval.mate
+          : liveEval.mate
+        : null;
     return { cp, mate };
   }, [liveEval, shouldFlip]);
 
   const evalLabel = useMemo(() => {
     if (!displayEval) return analyzing ? '...' : '—';
-    if (displayEval.mate != null && displayEval.mate !== 0) return `M${Math.abs(displayEval.mate)}`;
+    if (displayEval.mate != null && displayEval.mate !== 0)
+      return `M${Math.abs(displayEval.mate)}`;
     if (displayEval.cp != null) {
       const pawns = (displayEval.cp / 100).toFixed(1);
       return displayEval.cp > 0 ? `+${pawns}` : pawns;
@@ -229,7 +241,9 @@ export function GameInfoPanel({
           <span className="text-[9px] font-bold text-zinc-400 w-3">♚</span>
         </div>
         <div className="flex justify-between text-[9px] text-[var(--textSecondary)] font-medium">
-          <span className="font-bold text-[var(--color)] tabular-nums">{evalLabel}</span>
+          <span className="font-bold text-[var(--color)] tabular-nums">
+            {evalLabel}
+          </span>
           <span>
             {displayEval && displayEval.cp != null
               ? displayEval.cp > 0

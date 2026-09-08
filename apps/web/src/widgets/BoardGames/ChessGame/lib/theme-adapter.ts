@@ -5,10 +5,7 @@ import type { ChessTheme } from './theme';
 export function boardVars(theme: ChessTheme): CSSProperties {
   return {
     '--chess-board-bg': theme.boardBackground,
-    '--chess-light-square': theme.lightSquare,
-    '--chess-dark-square': theme.darkSquare,
     '--chess-selected-square': theme.selectedSquare,
-    '--chess-last-move': theme.lastMoveSquare,
     '--chess-valid-dot': theme.validMoveDot,
     '--chess-check-square': theme.checkSquare,
     '--chess-text-color': theme.textColor,

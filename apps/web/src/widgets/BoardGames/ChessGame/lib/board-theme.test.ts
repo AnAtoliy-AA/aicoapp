@@ -24,9 +24,11 @@ describe('BOARD_THEME_OPTIONS', () => {
 });
 
 describe('getBoardThemeCssVars', () => {
-  it('returns empty object for null theme', () => {
+  it('returns default theme when null', () => {
     const result = getBoardThemeCssVars(null);
-    expect(result).toEqual({});
+    const defaultTheme = BOARD_THEME_OPTIONS[0];
+    expect(result['--chess-light-square']).toBe(defaultTheme.lightSquare);
+    expect(result['--chess-dark-square']).toBe(defaultTheme.darkSquare);
   });
 
   it('returns all 5 css vars for a valid theme', () => {
