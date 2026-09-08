@@ -173,12 +173,7 @@ export const TIME_CONTROLS: TimeControlOption[] = [
   { type: 'blitz', initialSeconds: 300, incrementSeconds: 0 },
   { type: 'rapid', initialSeconds: 600, incrementSeconds: 0 },
   { type: 'rapid', initialSeconds: 900, incrementSeconds: 10 },
-  {
-    type: 'classical',
-    initialSeconds: 900,
-    incrementSeconds: 10,
-    disabled: true,
-  },
+  { type: 'classical', initialSeconds: 1800, incrementSeconds: 0 },
 ];
 
 export const CHESS_THEME_IDS = [
