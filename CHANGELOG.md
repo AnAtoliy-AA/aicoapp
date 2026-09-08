@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.53] - 2026-09-08
+
+### Fixed
+- wait for API response in replay list empty state test (ARC-000)
+
+
 ## [1.28.52] - 2026-09-08
 
 ### Fixed
