@@ -80,7 +80,7 @@ export interface ChessOptions {
 
 export type TimeControlType =
   'bullet' | 'blitz' | 'rapid' | 'classical' | 'daily';
-export type TimeIncrement = 0 | 1 | 3 | 5 | 10 | 15 | 30;
+export type TimeIncrement = 0 | 1 | 2 | 3 | 5 | 10 | 15 | 30;
 
 export interface TimeControl {
   type: TimeControlType;
@@ -120,6 +120,7 @@ export interface LegalMove {
 
 export interface ChessClientState {
   phase: ChessPhase;
+  gameCreatedAt: number;
   variant:
     | 'standard'
     | 'chess960'
@@ -161,20 +162,23 @@ export const PROMOTION_PIECES: PieceType[] = [
   'knight',
 ];
 
-export const TIME_CONTROLS: TimeControl[] = [
+export interface TimeControlOption extends TimeControl {
+  disabled?: boolean;
+}
+
+export const TIME_CONTROLS: TimeControlOption[] = [
   { type: 'bullet', initialSeconds: 60, incrementSeconds: 0 },
-  { type: 'bullet', initialSeconds: 60, incrementSeconds: 1 },
-  { type: 'bullet', initialSeconds: 120, incrementSeconds: 1 },
   { type: 'blitz', initialSeconds: 180, incrementSeconds: 0 },
+  { type: 'blitz', initialSeconds: 180, incrementSeconds: 2 },
   { type: 'blitz', initialSeconds: 300, incrementSeconds: 0 },
-  { type: 'blitz', initialSeconds: 300, incrementSeconds: 3 },
   { type: 'rapid', initialSeconds: 600, incrementSeconds: 0 },
   { type: 'rapid', initialSeconds: 900, incrementSeconds: 10 },
-  { type: 'classical', initialSeconds: 1800, incrementSeconds: 0 },
-  { type: 'daily', initialSeconds: 0, incrementSeconds: 0, daysPerMove: 1 },
-  { type: 'daily', initialSeconds: 0, incrementSeconds: 0, daysPerMove: 3 },
-  { type: 'daily', initialSeconds: 0, incrementSeconds: 0, daysPerMove: 7 },
-  { type: 'daily', initialSeconds: 0, incrementSeconds: 0, daysPerMove: 14 },
+  {
+    type: 'classical',
+    initialSeconds: 900,
+    incrementSeconds: 10,
+    disabled: true,
+  },
 ];
 
 export const CHESS_THEME_IDS = [

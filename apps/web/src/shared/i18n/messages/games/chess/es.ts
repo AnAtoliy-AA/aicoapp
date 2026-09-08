@@ -172,6 +172,7 @@ export const esMessages = {
       atomicDesc: 'Las capturas explotan piezas',
       noClock: 'Sin reloj',
       unlimitedTime: 'Tiempo ilimitado',
+      bullet: 'Bullet',
       blitz: 'Blitz',
       rapid: 'Rápido',
       classical: 'Clásico',
@@ -179,6 +180,7 @@ export const esMessages = {
       medium: 'Medio',
       hard: 'Difícil',
       botPersonality: 'Personalidad del Bot',
+      selectBot: 'Seleccionar bot',
     },
     profile: {
       notFound: 'Perfil no encontrado',

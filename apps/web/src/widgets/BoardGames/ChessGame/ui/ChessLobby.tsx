@@ -193,26 +193,27 @@ export function ChessLobby({
     bullet: t('games.chess_v1.lobby.bullet'),
     blitz: t('games.chess_v1.lobby.blitz'),
     rapid: t('games.chess_v1.lobby.rapid'),
-    daily: t('games.chess_v1.lobby.daily'),
     classical: t('games.chess_v1.lobby.classical'),
   };
 
   const timeControlOptions = [
     ...TIME_CONTROLS.map((tc) => ({
-      id: `tc-${tc.initialSeconds}-${tc.incrementSeconds}-${tc.daysPerMove ?? 0}`,
+      id: `tc-${tc.initialSeconds}-${tc.incrementSeconds}`,
       label: formatTimeControl(tc),
       description: TIME_CONTROL_LABELS[tc.type] ?? tc.type,
+      disabled: tc.disabled,
     })),
     {
       id: 'no-clock',
       label: t('games.chess_v1.lobby.noClock'),
       description: t('games.chess_v1.lobby.unlimitedTime'),
+      disabled: false,
     },
   ];
 
   const getSelectedTimeControl = () => {
     if (options.timeControl === null) return 'no-clock';
-    return `tc-${options.timeControl.initialSeconds}-${options.timeControl.incrementSeconds}-${options.timeControl.daysPerMove ?? 0}`;
+    return `tc-${options.timeControl.initialSeconds}-${options.timeControl.incrementSeconds}`;
   };
 
   const handleTimeControlChange = (value: string) => {
@@ -222,14 +223,10 @@ export function ChessLobby({
       const parts = value.split('-');
       const initial = Number(parts[1]);
       const increment = Number(parts[2]);
-      const daysPerMove = Number(parts[3]) || undefined;
       const tc = TIME_CONTROLS.find(
-        (t) =>
-          t.initialSeconds === initial &&
-          t.incrementSeconds === increment &&
-          (t.daysPerMove ?? 0) === (daysPerMove ?? 0),
+        (t) => t.initialSeconds === initial && t.incrementSeconds === increment,
       );
-      if (tc) setOption({ timeControl: tc });
+      if (tc && !tc.disabled) setOption({ timeControl: tc });
     }
   };
 
@@ -262,14 +259,62 @@ export function ChessLobby({
       </LobbyOptionSection>
 
       <LobbyOptionSection title={t('games.chess_v1.lobby.timeControl')}>
-        <LobbyChipGroup
-          options={timeControlOptions}
-          value={getSelectedTimeControl()}
-          onChange={handleTimeControlChange}
-          disabled={!isHost}
-          accentColor="#6366f1"
-          testIdPrefix="chess-time"
-        />
+        <div className="flex flex-col gap-3">
+          {(['bullet', 'blitz', 'rapid', 'classical'] as const).map(
+            (category) => {
+              const categoryTcs = timeControlOptions.filter(
+                (opt) => opt.description === TIME_CONTROL_LABELS[category],
+              );
+              if (categoryTcs.length === 0) return null;
+              return (
+                <div key={category} className="flex flex-col gap-1.5">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--textSecondary)] px-1">
+                    {TIME_CONTROL_LABELS[category]}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {categoryTcs.map((opt) => {
+                      const isSelected = getSelectedTimeControl() === opt.id;
+                      const isDisabled = opt.disabled;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          disabled={!isHost || isDisabled}
+                          onClick={() => handleTimeControlChange(opt.id)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                            isDisabled
+                              ? 'opacity-40 cursor-not-allowed border-[var(--glassBorder)] bg-[var(--glassBg)] text-[var(--textMuted)]'
+                              : isSelected
+                                ? 'border-[rgba(99,102,241,0.5)] bg-[rgba(99,102,241,0.15)] text-[var(--color)]'
+                                : 'border-[var(--glassBorder)] bg-[var(--glassBg)] text-[var(--textSecondary)] hover:bg-[var(--glassBgHover)] hover:text-[var(--color)] cursor-pointer'
+                          } ${!isHost && !isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            },
+          )}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={!isHost}
+                onClick={() => handleTimeControlChange('no-clock')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                  getSelectedTimeControl() === 'no-clock'
+                    ? 'border-[rgba(99,102,241,0.5)] bg-[rgba(99,102,241,0.15)] text-[var(--color)]'
+                    : 'border-[var(--glassBorder)] bg-[var(--glassBg)] text-[var(--textSecondary)] hover:bg-[var(--glassBgHover)] hover:text-[var(--color)] cursor-pointer'
+                } ${!isHost ? 'cursor-not-allowed opacity-50' : ''}`}
+              >
+                {t('games.chess_v1.lobby.noClock')}
+              </button>
+            </div>
+          </div>
+        </div>
       </LobbyOptionSection>
 
       <LobbyOptionSection title={t('games.chess_v1.lobby.botPersonality')}>
@@ -322,6 +367,7 @@ export function ChessLobby({
         maxPlayers={2}
         theme={LOBBY_THEME}
         enableBots
+        showDifficulty={false}
         labels={{
           startWithBotsLabel: t('games.chess_v1.lobby.startWithBots'),
         }}
