@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { memo, useState, useMemo } from 'react';
 import { Button } from '@arcadeum/ui';
 import { MoveList } from './MoveList';
 import {
@@ -81,7 +81,7 @@ function formatNps(nps: number | null | undefined): string {
   return `${nps} n/s`;
 }
 
-export function ChessGameConsole({
+function ChessGameConsoleImpl({
   snapshot,
   myColor,
   isGameOver,
@@ -394,3 +394,5 @@ export function ChessGameConsole({
     </div>
   );
 }
+
+export const ChessGameConsole = memo(ChessGameConsoleImpl);

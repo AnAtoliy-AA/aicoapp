@@ -11,24 +11,27 @@ import {
 } from '@/features/games/hooks';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { reorderRoomParticipants } from '@/shared/api/gamesApi';
-import type { ChessGameProps, ChessClientState } from '../types';
 import {
   FILES,
+  type ChessGameProps,
+  type ChessClientState,
   type File,
   type Rank,
   type BoardPosition,
   type PieceType,
 } from '../types';
-import { useChessState } from '../hooks/useChessState';
-import { useChessActions } from '../hooks/useChessActions';
-import { useChessSounds } from '../hooks/useChessSounds';
-import { useChessCoach } from '../hooks/useChessCoach';
-import { useStockfishAnalysis } from '../hooks/useStockfishAnalysis';
-import { useSquareClick } from '../hooks/useSquareClick';
-import { useChessPremoves } from '../hooks/useChessPremoves';
-import { useChessStreamerOverlays } from '../hooks/useChessStreamerOverlays';
-import { useChessGameSounds } from '../hooks/useChessGameSounds';
-import { useKeyboardMoveInput } from '../hooks/useKeyboardMoveInput';
+import {
+  useChessState,
+  useChessActions,
+  useChessSounds,
+  useChessCoach,
+  useStockfishAnalysis,
+  useSquareClick,
+  useChessPremoves,
+  useChessStreamerOverlays,
+  useChessGameSounds,
+  useKeyboardMoveInput,
+} from '../hooks';
 import { useStreamerMode } from '../lib/streamer-mode';
 import { calculateOptimisticChessState } from '../lib/optimisticMove';
 import { getChessA11yAnnouncement } from '../lib/a11yAnnouncement';
@@ -189,13 +192,16 @@ function ChessGameImpl({
     dismiss,
     toggle: toggleResult,
   } = useGameResultModal(session, result, resultMessages, isGameOver);
-  const [flipped, setFlipped] = useState(myColor === 'black');
+  const [userFlipped, setUserFlipped] = useState<boolean | null>(null);
+  const flipped = userFlipped ?? myColor === 'black';
   const [confirmMoves, setConfirmMoves] = useState(false);
   const [pendingMove, setPendingMove] = useState<{
     from: BoardPosition;
     to: BoardPosition;
   } | null>(null);
-  const toggleFlip = useCallback(() => setFlipped((f) => !f), []);
+  const toggleFlip = useCallback(() => {
+    setUserFlipped((prev) => !(prev ?? myColor === 'black'));
+  }, [myColor]);
   const lastMove = useMemo(() => {
     if (!displaySnapshot?.moveHistory.length) return null;
     const last =
@@ -263,13 +269,10 @@ function ChessGameImpl({
     setPendingPromotion,
   });
   const onSquareClick = useCallback(
-    (file: File, rank: Rank) => {
-      if (displayMyTurn) {
-        handleSquareClick(file, rank);
-      } else {
-        handlePremoveSquareClick(file, rank);
-      }
-    },
+    (file: File, rank: Rank) =>
+      displayMyTurn
+        ? handleSquareClick(file, rank)
+        : handlePremoveSquareClick(file, rank),
     [displayMyTurn, handleSquareClick, handlePremoveSquareClick],
   );
   const keyboardInput = useKeyboardMoveInput({
@@ -286,23 +289,12 @@ function ChessGameImpl({
   const handlePromotionSelect = useCallback(
     (pieceType: PieceType) => {
       if (!pendingPromotion) return;
-      applyOptimisticMove(
-        pendingPromotion.from.file,
-        pendingPromotion.from.rank,
-        pendingPromotion.to.file,
-        pendingPromotion.to.rank,
-        pieceType,
-      );
-      movePiece(
-        pendingPromotion.from.file,
-        pendingPromotion.from.rank,
-        pendingPromotion.to.file,
-        pendingPromotion.to.rank,
-        pieceType,
-      );
+      const { from, to } = pendingPromotion;
+      applyOptimisticMove(from.file, from.rank, to.file, to.rank, pieceType);
+      movePiece(from.file, from.rank, to.file, to.rank, pieceType);
       setPendingPromotion(null);
     },
-    [pendingPromotion, movePiece, applyOptimisticMove],
+    [pendingPromotion, applyOptimisticMove, movePiece],
   );
   const handlePieceDrop = useCallback(
     (fromFile: File, fromRank: Rank, toFile: File, toRank: Rank) => {
@@ -356,9 +348,7 @@ function ChessGameImpl({
       ),
     [displaySnapshot, isGameOver, currentUserId, resolveDisplayNameBound, t],
   );
-  const liveAlternatives = useMemo(() => {
-    return liveEval?.alternatives ?? null;
-  }, [liveEval]);
+  const liveAlternatives = liveEval?.alternatives ?? null;
   if (!room) return null;
   if (isLobby)
     return (

@@ -5,6 +5,7 @@ import type { GameMessageHandlerFn } from './game-message-handler.interface';
 import { ChessService } from './chess/chess.service';
 import { ChessStockfishService } from './chess/engine/chess-stockfish.service';
 import type { ChessOptions } from './engines/chess/chess.types';
+import type { File, Rank, PieceType } from './engines/chess/chess.constants';
 import {
   BaseGameGateway,
   extractRoomAndUser,
@@ -66,11 +67,11 @@ export class ChessGateway extends BaseGameGateway<ChessOptions> {
             );
           }
           await this.gameService.move(userId, roomId, {
-            fromFile: payload.fromFile as string,
-            fromRank: payload.fromRank as number,
-            toFile: payload.toFile as string,
-            toRank: payload.toRank as number,
-            promotion: payload.promotion as string | undefined,
+            fromFile: payload.fromFile as File,
+            fromRank: payload.fromRank as Rank,
+            toFile: payload.toFile as File,
+            toRank: payload.toRank as Rank,
+            promotion: payload.promotion as PieceType | undefined,
           });
           client.emit(
             'chess.session.moved',
