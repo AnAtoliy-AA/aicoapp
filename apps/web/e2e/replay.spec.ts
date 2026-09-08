@@ -26,10 +26,11 @@ test.describe('Game Replays', () => {
     const emptyState = page.getByText(/no replays|повторов пока|no hay|aucun/i);
     const replayCards = page.locator('[href^="/replay/"]');
 
-    const hasEmpty = await emptyState.isVisible().catch(() => false);
-    const hasCards = (await replayCards.count()) > 0;
-
-    expect(hasEmpty || hasCards).toBe(true);
+    await expect(async () => {
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasCards = (await replayCards.count()) > 0;
+      expect(hasEmpty || hasCards).toBe(true);
+    }).toPass({ intervals: [500, 1000, 2000] });
   });
 
   test('replays list page filter tabs change state', async ({ page }) => {
