@@ -345,7 +345,7 @@ export function SoloGameContainer({
           'w-full transition-colors duration-200',
           isFullscreen
             ? 'fixed inset-0 z-[1000] h-screen w-screen overflow-hidden bg-[var(--background)] p-1.5 sm:p-3 flex flex-col items-center justify-between'
-            : 'relative',
+            : 'relative isolate',
         )}
       >
         {resolvedBgImage && (

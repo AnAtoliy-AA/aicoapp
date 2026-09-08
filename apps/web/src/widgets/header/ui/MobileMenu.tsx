@@ -195,7 +195,7 @@ export default function MobileMenu({
               onClick={item.onClick}
             >
               {item.label}
-              {pendingFriendCount &&
+              {pendingFriendCount != null &&
                 pendingFriendCount > 0 &&
                 item.href.endsWith('/friends') && (
                   <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[var(--danger)] px-1.5 py-0.5 text-[10px] font-bold text-white min-w-[18px]">
