@@ -138,9 +138,11 @@ jobs:
             done
             git reset --hard "origin/$BRANCH"
 
-            echo "==> Stopping old pm2 processes (port 4000 conflict)..."
+            echo "==> Stopping old pm2 processes (ports 4000/4001 conflict with Docker)..."
             pm2 delete arcadeum-be 2>/dev/null || true
             pm2 delete arcadeum-be-dev 2>/dev/null || true
+            pm2 delete arcadeum-tg-bot 2>/dev/null || true
+            pm2 delete arcadeum-tg-bot-dev 2>/dev/null || true
             pm2 save 2>/dev/null || true
 
             echo "==> Installing Docker Compose plugin + buildx (if missing)..."
