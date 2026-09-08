@@ -135,11 +135,12 @@ function ChessBoardPanelImpl({
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
   const { activeBoardTheme } = useBoardThemePreference();
   const isFullscreen = useWidgetFullscreen();
+  const [createdAt] = useState(() => snapshot?.gameCreatedAt ?? 0);
   const liveClocks = useClockCountdown({
     clocks: snapshot?.clocks ?? null,
     currentTurnColor: snapshot?.currentTurnColor ?? 'white',
     isGameOver,
-    gameCreatedAt: snapshot?.gameCreatedAt ?? Date.now(),
+    gameCreatedAt: createdAt,
   });
 
   const { snapshot: sessionSnapshot } = useSessionTokens();
