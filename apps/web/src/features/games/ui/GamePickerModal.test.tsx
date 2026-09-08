@@ -12,13 +12,13 @@ const push = vi.fn();
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
-  usePathname: () => '/en',
 }));
 
 vi.mock('@/shared/config/useRoutes', () => ({
   useRoutes: () => ({
     gameRoom: (id: string) => `/games/rooms/${id}`,
   }),
+  useLocale: () => 'en',
 }));
 
 vi.mock('@/shared/lib/useTranslation', () => ({

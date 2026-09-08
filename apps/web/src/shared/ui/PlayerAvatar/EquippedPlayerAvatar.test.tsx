@@ -81,7 +81,9 @@ describe('EquippedPlayerAvatar', () => {
     expect(skin).toBeInTheDocument();
     // Localized prefix + resolved skin label, separated by the chip's middot.
     expect(skin.textContent ?? '').toContain('Skin · ');
-    expect(skin.textContent ?? '').toContain('items.game_skin.skin-neon.name');
+    expect(skin.textContent ?? '').toContain(
+      'pages.shop.items.game_skin.skin-neon.name',
+    );
   });
 
   it('falls back to fallbackAvatarUrl when catalog returns null', () => {

@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.54] - 2026-09-08
+
+### Fixed
+- restore pm2 tg-bot cleanup for port 4001 (ARC-000)
+- install docker compose plugin + buildx, fix .dockerignore (ARC-000)
+- fix prod deploy for Docker migration (ARC-000)
+
+
+## [1.28.53] - 2026-09-08
+
+### Fixed
+- wait for API response in replay list empty state test (ARC-000)
+
+
+## [1.28.52] - 2026-09-08
+
+### Fixed
+- prefix pages.shop to skinChip translation key (ARC-000)
+- fix timeout check for first move and clock reference (ARC-000) (ARC-000)
+- fix clock jumping, optimistic sync, game over freeze, and board orientation (ARC-000) (ARC-000)
+- rework clock system for independent player timers
+
+
+## [1.28.51] - 2026-09-08
+
+### Fixed
+- mobile menu zero suffix, solo bg image, and locale in game picker
+
+
 ## [1.28.50] - 2026-09-08
 
 ### Added

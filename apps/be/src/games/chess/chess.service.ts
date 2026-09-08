@@ -23,6 +23,7 @@ import type {
   TimeControlType,
   TimeIncrement,
   ChessState,
+  MovePayload,
 } from '../engines/chess/chess.types';
 import { ChessBotService } from '../engines/chess/chess-bot.service';
 import { ChessStockfishService } from './engine/chess-stockfish.service';
@@ -36,16 +37,13 @@ import {
 import { BaseGameService } from '../common/base-game.service';
 import { getBotPersonality, type BotPersonality } from '../engines/chess';
 
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 2;
-
 @Injectable()
 export class ChessService extends BaseGameService<ChessOptions> {
   protected readonly logger = new Logger(ChessService.name);
   readonly gameId = 'chess_v1';
   readonly gameName = 'Chess';
-  readonly minPlayers = MIN_PLAYERS;
-  readonly maxPlayers = MAX_PLAYERS;
+  readonly minPlayers = 2;
+  readonly maxPlayers = 2;
 
   protected readonly botService: ChessBotService;
 
@@ -86,13 +84,7 @@ export class ChessService extends BaseGameService<ChessOptions> {
       this.move.bind(this) as (
         userId: string,
         roomId: string,
-        payload: {
-          fromFile: string;
-          fromRank: number;
-          toFile: string;
-          toRank: number;
-          promotion?: string;
-        },
+        payload: MovePayload,
       ) => Promise<unknown>,
     );
   }
@@ -117,36 +109,21 @@ export class ChessService extends BaseGameService<ChessOptions> {
     return result;
   }
 
-  async move(
-    userId: string,
-    roomId: string,
-    payload: {
-      fromFile: string;
-      fromRank: number;
-      toFile: string;
-      toRank: number;
-      promotion?: string;
-    },
-  ) {
+  async move(userId: string, roomId: string, payload: MovePayload) {
     return this.runAction(userId, roomId, 'move', payload);
   }
-
   async drawOffer(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'draw_offer', {});
   }
-
   async drawAccept(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'draw_accept', {});
   }
-
   async takebackOffer(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'takeback_offer', {});
   }
-
   async takebackAccept(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'takeback_accept', {});
   }
-
   async takebackDecline(userId: string, roomId: string) {
     return this.runAction(userId, roomId, 'takeback_decline', {});
   }
@@ -332,42 +309,72 @@ export class ChessService extends BaseGameService<ChessOptions> {
     }
   }
 
+  private isTimeExpired(
+    elapsedMs: number,
+    remaining: number,
+    isDaily: boolean,
+    daysPerMove: number,
+  ): boolean {
+    return isDaily
+      ? elapsedMs / 86_400_000 >= daysPerMove
+      : Math.floor(elapsedMs / 1000) >= remaining;
+  }
+
   private async checkClockTimeout(session: GameSessionSummary) {
     const state = session.state as ChessState | undefined;
     if (!state || !state.clocks || this.isGameOver(state)) return;
 
     const isDaily = state.timeControl?.type === 'daily';
+    const daysPerMove = state.timeControl?.daysPerMove ?? 1;
     const currentClock = state.clocks[state.currentTurnColor];
     if (!currentClock) return;
 
-    // First move not made yet — check 20s abort window
-    if (currentClock.lastMoveTimestamp === 0) {
-      if (Date.now() - state.gameCreatedAt >= 20_000) {
-        const p = state.players.find((p) => p.color === state.currentTurnColor);
-        if (p) await this.runAction(p.playerId, session.roomId, 'forfeit', {});
-      }
+    const isFirstMove =
+      state.clocks.white.lastMoveTimestamp === 0 &&
+      state.clocks.black.lastMoveTimestamp === 0;
+
+    if (isFirstMove) {
+      const gca =
+        state.gameCreatedAt > 0
+          ? state.gameCreatedAt
+          : new Date(session.createdAt).getTime();
+      const elapsed = Date.now() - gca - 20_000;
+      if (
+        elapsed < 0 ||
+        !this.isTimeExpired(
+          elapsed,
+          currentClock.remainingSeconds,
+          isDaily,
+          daysPerMove,
+        )
+      )
+        return;
+      const p = state.players.find((p) => p.color === state.currentTurnColor);
+      if (p) await this.runAction(p.playerId, session.roomId, 'forfeit', {});
       return;
     }
 
-    const elapsedMs = Date.now() - currentClock.lastMoveTimestamp;
-
-    if (isDaily) {
-      const daysPerMove = state.timeControl?.daysPerMove ?? 1;
-      const elapsedDays = elapsedMs / (1000 * 60 * 60 * 24);
-      if (elapsedDays < daysPerMove) return;
-    } else {
-      const elapsed = Math.floor(elapsedMs / 1000);
-      const remaining = currentClock.remainingSeconds - elapsed;
-      if (remaining > 0) return;
-    }
+    const opponentClock =
+      state.clocks[state.currentTurnColor === 'white' ? 'black' : 'white'];
+    const turnStartedAt =
+      opponentClock?.lastMoveTimestamp > 0
+        ? opponentClock.lastMoveTimestamp
+        : state.gameCreatedAt > 0
+          ? state.gameCreatedAt
+          : new Date(session.createdAt).getTime();
+    if (
+      !this.isTimeExpired(
+        Date.now() - turnStartedAt,
+        currentClock.remainingSeconds,
+        isDaily,
+        daysPerMove,
+      )
+    )
+      return;
 
     const loser = state.players.find((p) => p.color === state.currentTurnColor);
-    const winner = state.players.find(
-      (p) => p.color !== state.currentTurnColor,
-    );
-    if (loser && winner) {
+    if (loser)
       await this.runAction(loser.playerId, session.roomId, 'forfeit', {});
-    }
   }
 
   private isGameOver(state: ChessState): boolean {
@@ -400,18 +407,18 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const rawTc = r.timeControl;
     let timeControl: ChessOptions['timeControl'] = null;
     if (rawTc && typeof rawTc === 'object') {
-      const validTypes: TimeControlType[] = [
+      const type: TimeControlType = [
         'bullet',
         'blitz',
         'rapid',
         'classical',
         'daily',
-      ];
-      const type = validTypes.includes(rawTc.type as TimeControlType)
+      ].includes(rawTc.type)
         ? (rawTc.type as TimeControlType)
         : 'blitz';
-      const validIncs: TimeIncrement[] = [0, 1, 3, 5, 10, 15, 30];
-      const inc = validIncs.includes(rawTc.incrementSeconds as TimeIncrement)
+      const inc: TimeIncrement = [0, 1, 3, 5, 10, 15, 30].includes(
+        rawTc.incrementSeconds,
+      )
         ? (rawTc.incrementSeconds as TimeIncrement)
         : 0;
       const daysPerMove =
@@ -465,22 +472,20 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const black = state.players.find((p) => p.color === 'black');
     if (!white || !black) return;
 
-    let result: 'white' | 'black' | 'draw';
-    if (
+    const isDraw =
       state.isDrawByAgreement ||
       state.isDrawByRepetition ||
       state.isDrawByFiftyMoveRule ||
       state.isInsufficientMaterial ||
-      state.isStalemate
-    ) {
-      result = 'draw';
-    } else if (state.winnerColor === 'white') {
-      result = 'white';
-    } else if (state.winnerColor === 'black') {
-      result = 'black';
-    } else {
-      return;
-    }
+      state.isStalemate;
+    const result = isDraw
+      ? 'draw'
+      : state.winnerColor === 'white'
+        ? 'white'
+        : state.winnerColor === 'black'
+          ? 'black'
+          : null;
+    if (!result) return;
 
     await this.tournamentService!.recordGameResult({
       tournamentId,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   Modal,
   ModalContent,
@@ -13,7 +13,7 @@ import {
 } from '@arcadeum/ui';
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { gamesApi } from '@/features/games/api';
-import { useRoutes } from '@/shared/config/useRoutes';
+import { useRoutes, useLocale } from '@/shared/config/useRoutes';
 import {
   useTranslation,
   type TranslationKey,
@@ -64,8 +64,7 @@ export function GamePickerModal({
   title,
 }: GamePickerModalProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const locale = pathname?.split('/')[1] ?? 'en';
+  const locale = useLocale();
   const routes = useRoutes();
   const { snapshot } = useSessionTokens();
   const { t } = useTranslation();

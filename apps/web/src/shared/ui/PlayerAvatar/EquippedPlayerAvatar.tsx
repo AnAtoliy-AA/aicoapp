@@ -48,7 +48,9 @@ export const EquippedPlayerAvatar = memo(function EquippedPlayerAvatar(
   const skinChip = cosmetics.skinChip
     ? {
         id: cosmetics.skinChip.id,
-        label: String(t(cosmetics.skinChip.label as TranslationKey)),
+        label: String(
+          t(`pages.shop.${cosmetics.skinChip.label}` as TranslationKey),
+        ),
         prefix: t('common.cosmetics.skin'),
       }
     : null;

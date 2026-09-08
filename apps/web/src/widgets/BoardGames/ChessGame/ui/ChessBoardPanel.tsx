@@ -15,7 +15,6 @@ import {
   getBoardThemeCssVars,
 } from '../lib/board-theme';
 import type { UseChessCoachResult } from '../hooks/useChessCoach';
-import { useClockCountdown } from '../hooks/useClockCountdown';
 import './styles/chess-arena.scss';
 import type { ChessClientState, BoardPosition, File, Rank } from '../types';
 import type { TranslationKey } from '@/shared/lib/useTranslation';
@@ -135,13 +134,7 @@ function ChessBoardPanelImpl({
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
   const { activeBoardTheme } = useBoardThemePreference();
   const isFullscreen = useWidgetFullscreen();
-  const [createdAt] = useState(() => snapshot?.gameCreatedAt ?? 0);
-  const liveClocks = useClockCountdown({
-    clocks: snapshot?.clocks ?? null,
-    currentTurnColor: snapshot?.currentTurnColor ?? 'white',
-    isGameOver,
-    gameCreatedAt: createdAt,
-  });
+  const createdAt = snapshot?.gameCreatedAt ?? 0;
 
   const { snapshot: sessionSnapshot } = useSessionTokens();
   const isAdmin = sessionSnapshot.role === 'admin';
@@ -165,30 +158,45 @@ function ChessBoardPanelImpl({
     [coach.hint],
   );
 
+  const boardThemeVars = useMemo(
+    () => getBoardThemeCssVars(activeBoardTheme),
+    [activeBoardTheme],
+  );
+
+  const {
+    topPlayer,
+    bottomPlayer,
+    topColor,
+    bottomColor,
+    topName,
+    bottomName,
+  } = useMemo(() => {
+    const players = snapshot?.players ?? [];
+    const white = players.find((p) => p.color === 'white');
+    const black = players.find((p) => p.color === 'black');
+    const top = isFlipped ? white : black;
+    const bottom = isFlipped ? black : white;
+    const tColor = isFlipped ? ('white' as const) : ('black' as const);
+    const bColor = isFlipped ? ('black' as const) : ('white' as const);
+    return {
+      topPlayer: top,
+      bottomPlayer: bottom,
+      topColor: tColor,
+      bottomColor: bColor,
+      topName: top?.playerId
+        ? resolveName(top.playerId)
+        : tColor === 'white'
+          ? 'White'
+          : 'Black',
+      bottomName: bottom?.playerId
+        ? resolveName(bottom.playerId)
+        : bColor === 'white'
+          ? 'White'
+          : 'Black',
+    };
+  }, [snapshot?.players, isFlipped, resolveName]);
+
   if (!snapshot) return null;
-
-  const players = snapshot.players ?? [];
-  const whitePlayer = players.find((p) => p.color === 'white');
-  const blackPlayer = players.find((p) => p.color === 'black');
-
-  const topPlayer = isFlipped ? whitePlayer : blackPlayer;
-  const bottomPlayer = isFlipped ? blackPlayer : whitePlayer;
-
-  const topColor = isFlipped ? 'white' : 'black';
-  const bottomColor = isFlipped ? 'black' : 'white';
-
-  const topName = topPlayer?.playerId
-    ? resolveName(topPlayer.playerId)
-    : topColor === 'white'
-      ? 'White'
-      : 'Black';
-  const bottomName = bottomPlayer?.playerId
-    ? resolveName(bottomPlayer.playerId)
-    : bottomColor === 'white'
-      ? 'White'
-      : 'Black';
-
-  const boardThemeVars = getBoardThemeCssVars(activeBoardTheme);
 
   const topPlayerHud = (
     <ChessPlayerHud
@@ -197,11 +205,9 @@ function ChessBoardPanelImpl({
       color={topColor}
       isActive={snapshot.currentTurnColor === topColor}
       isGameOver={isGameOver}
-      remainingSeconds={
-        liveClocks?.[topColor] ??
-        snapshot.clocks?.[topColor]?.remainingSeconds ??
-        null
-      }
+      clocks={snapshot.clocks}
+      currentTurnColor={snapshot.currentTurnColor}
+      gameCreatedAt={createdAt}
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
@@ -216,11 +222,9 @@ function ChessBoardPanelImpl({
       color={bottomColor}
       isActive={snapshot.currentTurnColor === bottomColor}
       isGameOver={isGameOver}
-      remainingSeconds={
-        liveClocks?.[bottomColor] ??
-        snapshot.clocks?.[bottomColor]?.remainingSeconds ??
-        null
-      }
+      clocks={snapshot.clocks}
+      currentTurnColor={snapshot.currentTurnColor}
+      gameCreatedAt={createdAt}
       incrementSeconds={snapshot.timeControl?.incrementSeconds}
       board={snapshot.board}
       pieceStyle={pieceStyle}
