@@ -138,26 +138,36 @@ jobs:
             done
             git reset --hard "origin/$BRANCH"
 
+            echo "==> Stopping old pm2 processes (port 4000 conflict)..."
+            pm2 delete arcadeum-be 2>/dev/null || true
+            pm2 delete arcadeum-be-dev 2>/dev/null || true
+            pm2 delete arcadeum-tg-bot 2>/dev/null || true
+            pm2 delete arcadeum-tg-bot-dev 2>/dev/null || true
+            pm2 save 2>/dev/null || true
+
             echo "==> Building and deploying with Docker Compose..."
             docker compose build be be-2 worker tg-bot
             docker compose up -d --remove-orphans
 
-            echo "==> Starting monitoring stack..."
-            docker compose -f docker-compose.monitoring.yml up -d --remove-orphans
-
             echo "==> Waiting for health checks..."
             sleep 10
 
+            echo "==> Starting monitoring stack..."
+            if [ -f monitoring/.env.monitoring ]; then
+              docker compose -f docker-compose.monitoring.yml up -d --remove-orphans
+              echo "==> Monitoring stack started"
+            else
+              echo "==> Skipping monitoring (monitoring/.env.monitoring not found)"
+            fi
+
             echo "==> Container status:"
             docker compose ps
-            docker compose -f docker-compose.monitoring.yml ps
+            docker compose -f docker-compose.monitoring.yml ps 2>/dev/null || true
 
             echo "==> Prod deploy done (branch: $BRANCH)!"
-            echo "==> Grafana: http://$(hostname -I | awk '{print $1}'):3001"
-            echo "==> Prometheus: http://$(hostname -I | awk '{print $1}'):9090"
 
   deploy-be-reserve:
-    name: Deploy Reserve Backend (Worker - Docker)
+    name: Deploy Reserve Backend (Worker)
     needs: changes
     if: needs.changes.outputs.be-or-tg == 'true'
     runs-on: ubuntu-latest
@@ -192,17 +202,21 @@ jobs:
             done
             git reset --hard "origin/$BRANCH"
 
-            echo "==> Building and deploying worker with Docker Compose..."
-            docker compose build worker
-            docker compose up -d worker --remove-orphans
+            pnpm install --frozen-lockfile
+            pnpm --filter @arcadeum/games-core build && pnpm --filter be build
 
-            echo "==> Waiting for health check..."
-            sleep 5
+            if [ ! -f "$DEPLOY_DIR/apps/be/dist/src/main.js" ]; then
+              echo "ERROR: BE build did not produce dist/src/main.js"
+              exit 1
+            fi
 
-            echo "==> Worker container status:"
-            docker compose ps worker
+            pm2 restart arcadeum-be-reserve || \
+              pm2 start /opt/arcadeum/scripts/start-be-reserve.sh --name arcadeum-be-reserve
+
+            pm2 save
 
             echo "==> Reserve BE deploy done (branch: $BRANCH)!"
+            pm2 list
 
   deploy-task-bot:
     name: Deploy Task Bot
