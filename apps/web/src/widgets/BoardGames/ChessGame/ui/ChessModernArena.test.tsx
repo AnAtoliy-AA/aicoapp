@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { ChessPieceIcon } from './ChessPieceIcon';
 import { EvalBar } from './EvalBar';
 import { ChessPlayerHud } from './ChessPlayerHud';
-import type { Board } from '../types';
+import type { Board, PlayerClock, PieceColor } from '../types';
 
 function createBoard(): Board {
   const board: Board = Array.from({ length: 8 }, () => Array(8).fill(null));
@@ -80,14 +80,20 @@ describe('ChessModernArena Components', () => {
 
   it('renders ChessPlayerHud with player info, clock, and material diff', () => {
     const board = createBoard();
+    const clocks: Record<PieceColor, PlayerClock> = {
+      white: { remainingSeconds: 185, lastMoveTimestamp: 0 },
+      black: { remainingSeconds: 300, lastMoveTimestamp: 0 },
+    };
     render(
       <ChessPlayerHud
         playerId="player-1"
         name="Grandmaster"
         color="white"
         isActive={true}
-        isGameOver={false}
-        remainingSeconds={185}
+        isGameOver={true}
+        clocks={clocks}
+        currentTurnColor="white"
+        gameCreatedAt={Date.now()}
         incrementSeconds={2}
         board={board}
       />,
@@ -100,14 +106,20 @@ describe('ChessModernArena Components', () => {
 
   it('displays low-time urgency on digital clock', () => {
     const board = createBoard();
+    const clocks: Record<PieceColor, PlayerClock> = {
+      white: { remainingSeconds: 300, lastMoveTimestamp: 0 },
+      black: { remainingSeconds: 8, lastMoveTimestamp: 0 },
+    };
     render(
       <ChessPlayerHud
         playerId="player-2"
         name="SpeedDemon"
         color="black"
         isActive={true}
-        isGameOver={false}
-        remainingSeconds={8}
+        isGameOver={true}
+        clocks={clocks}
+        currentTurnColor="black"
+        gameCreatedAt={Date.now()}
         board={board}
       />,
     );

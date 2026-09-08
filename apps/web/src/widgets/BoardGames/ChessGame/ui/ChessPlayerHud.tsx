@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { InGameAvatar } from '@/features/games/ui/InGameAvatar';
-import type { Board, PieceColor, PieceType } from '../types';
+import type { Board, PieceColor, PieceType, PlayerClock } from '../types';
 import type { ChessPieceStyle } from '../lib/piece-style';
 import { ChessPieceIcon } from './ChessPieceIcon';
+import { useClockCountdown } from '../hooks/useClockCountdown';
 
 interface ChessPlayerHudProps {
   playerId: string;
@@ -12,7 +13,9 @@ interface ChessPlayerHudProps {
   color: PieceColor;
   isActive: boolean;
   isGameOver: boolean;
-  remainingSeconds: number | null;
+  clocks: Record<PieceColor, PlayerClock> | null;
+  currentTurnColor: PieceColor;
+  gameCreatedAt: number;
   incrementSeconds?: number;
   board: Board;
   pieceStyle?: ChessPieceStyle;
@@ -47,18 +50,28 @@ function formatDigitalClock(seconds: number | null): string {
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
-export function ChessPlayerHud({
+function ChessPlayerHudImpl({
   playerId,
   name,
   color,
   isActive,
   isGameOver,
-  remainingSeconds,
+  clocks,
+  currentTurnColor,
+  gameCreatedAt,
   incrementSeconds = 0,
   board,
   pieceStyle = 'neo',
   rating,
 }: ChessPlayerHudProps) {
+  const liveClocks = useClockCountdown({
+    clocks,
+    currentTurnColor,
+    isGameOver,
+    gameCreatedAt,
+    incrementSeconds,
+  });
+  const remainingSeconds = clocks ? liveClocks[color] : null;
   const opponentColor: PieceColor = color === 'white' ? 'black' : 'white';
 
   const { capturedPieces, materialDiff } = useMemo(() => {
@@ -224,3 +237,5 @@ export function ChessPlayerHud({
     </div>
   );
 }
+
+export const ChessPlayerHud = memo(ChessPlayerHudImpl);

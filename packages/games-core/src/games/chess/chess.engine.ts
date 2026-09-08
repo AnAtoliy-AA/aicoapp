@@ -408,19 +408,21 @@ export class ChessEngine extends BaseGameEngine<ChessState> {
 
     if (newState.clocks) {
       const movingColor = state.currentTurnColor;
+      const opponentColor = movingColor === 'white' ? 'black' : 'white';
       const clock = { ...newState.clocks[movingColor] };
-      const isFirstMove = clock.lastMoveTimestamp === 0;
-      if (!isFirstMove) {
-        const elapsed = Math.floor(
-          (Date.now() - clock.lastMoveTimestamp) / 1000,
-        );
-        clock.remainingSeconds = Math.max(0, clock.remainingSeconds - elapsed);
-        const tc = (
-          state as unknown as { timeControl?: { incrementSeconds?: number } }
-        ).timeControl;
-        const increment = tc?.incrementSeconds ?? 0;
-        clock.remainingSeconds += increment;
-      }
+      const opponentClock = newState.clocks[opponentColor];
+      const referenceTime =
+        opponentClock.lastMoveTimestamp > 0
+          ? opponentClock.lastMoveTimestamp
+          : ((state as unknown as { gameCreatedAt?: number }).gameCreatedAt ??
+            Date.now());
+      const elapsed = Math.floor((Date.now() - referenceTime) / 1000);
+      clock.remainingSeconds = Math.max(0, clock.remainingSeconds - elapsed);
+      const tc = (
+        state as unknown as { timeControl?: { incrementSeconds?: number } }
+      ).timeControl;
+      const increment = tc?.incrementSeconds ?? 0;
+      clock.remainingSeconds += increment;
       clock.lastMoveTimestamp = Date.now();
       newState.clocks = { ...newState.clocks, [movingColor]: clock };
     }

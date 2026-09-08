@@ -332,34 +332,61 @@ export class ChessService extends BaseGameService<ChessOptions> {
     }
   }
 
+  private isTimeExpired(
+    elapsedMs: number,
+    remaining: number,
+    isDaily: boolean,
+    daysPerMove: number,
+  ): boolean {
+    return isDaily
+      ? elapsedMs / 86_400_000 >= daysPerMove
+      : Math.floor(elapsedMs / 1000) >= remaining;
+  }
+
   private async checkClockTimeout(session: GameSessionSummary) {
     const state = session.state as ChessState | undefined;
     if (!state || !state.clocks || this.isGameOver(state)) return;
 
     const isDaily = state.timeControl?.type === 'daily';
+    const daysPerMove = state.timeControl?.daysPerMove ?? 1;
     const currentClock = state.clocks[state.currentTurnColor];
     if (!currentClock) return;
 
-    // First move not made yet — check 20s abort window
+    const GRACE_MS = 20_000;
+
     if (currentClock.lastMoveTimestamp === 0) {
-      if (Date.now() - state.gameCreatedAt >= 20_000) {
-        const p = state.players.find((p) => p.color === state.currentTurnColor);
-        if (p) await this.runAction(p.playerId, session.roomId, 'forfeit', {});
-      }
+      const sinceCreation = Date.now() - state.gameCreatedAt;
+      if (sinceCreation < GRACE_MS) return;
+      if (
+        !this.isTimeExpired(
+          sinceCreation - GRACE_MS,
+          currentClock.remainingSeconds,
+          isDaily,
+          daysPerMove,
+        )
+      )
+        return;
+      const p = state.players.find((p) => p.color === state.currentTurnColor);
+      if (p) await this.runAction(p.playerId, session.roomId, 'forfeit', {});
       return;
     }
 
-    const elapsedMs = Date.now() - currentClock.lastMoveTimestamp;
-
-    if (isDaily) {
-      const daysPerMove = state.timeControl?.daysPerMove ?? 1;
-      const elapsedDays = elapsedMs / (1000 * 60 * 60 * 24);
-      if (elapsedDays < daysPerMove) return;
-    } else {
-      const elapsed = Math.floor(elapsedMs / 1000);
-      const remaining = currentClock.remainingSeconds - elapsed;
-      if (remaining > 0) return;
-    }
+    const opponentColor =
+      state.currentTurnColor === 'white' ? 'black' : 'white';
+    const opponentClock = state.clocks[opponentColor];
+    const turnStartedAt =
+      opponentClock?.lastMoveTimestamp > 0
+        ? opponentClock.lastMoveTimestamp
+        : state.gameCreatedAt;
+    if (
+      !this.isTimeExpired(
+        Date.now() - turnStartedAt,
+        currentClock.remainingSeconds,
+        isDaily,
+        daysPerMove,
+      )
+    )
+      return;
 
     const loser = state.players.find((p) => p.color === state.currentTurnColor);
     const winner = state.players.find(
