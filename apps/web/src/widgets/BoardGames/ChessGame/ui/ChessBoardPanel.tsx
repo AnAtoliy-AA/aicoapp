@@ -134,7 +134,7 @@ function ChessBoardPanelImpl({
   const { pieceStyle, setPieceStyle } = useChessPieceStylePreference();
   const { activeBoardTheme } = useBoardThemePreference();
   const isFullscreen = useWidgetFullscreen();
-  const [createdAt] = useState(() => snapshot?.gameCreatedAt ?? 0);
+  const createdAt = snapshot?.gameCreatedAt ?? 0;
 
   const { snapshot: sessionSnapshot } = useSessionTokens();
   const isAdmin = sessionSnapshot.role === 'admin';

@@ -44,7 +44,7 @@ const PIECE_ORDER: PieceType[] = ['queen', 'rook', 'bishop', 'knight', 'pawn'];
 
 function formatDigitalClock(seconds: number | null): string {
   if (seconds === null) return '--:--';
-  const total = Math.max(0, Math.floor(seconds));
+  const total = Math.max(0, Math.ceil(seconds));
   const m = Math.floor(total / 60);
   const s = total % 60;
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;

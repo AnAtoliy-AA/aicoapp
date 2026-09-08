@@ -56,9 +56,47 @@ export function calculateOptimisticChessState(
     }
   }
 
+  let optimisticClocks = snapshot.clocks;
+  if (snapshot.clocks) {
+    const movingColor = snapshot.currentTurnColor;
+    const opponentColor = movingColor === 'white' ? 'black' : 'white';
+    const activeClock = snapshot.clocks[movingColor];
+    const opponentClock = snapshot.clocks[opponentColor];
+    const now = Date.now();
+    const isFirstMove =
+      activeClock.lastMoveTimestamp === 0 &&
+      opponentClock.lastMoveTimestamp === 0;
+
+    let elapsed = 0;
+    if (isFirstMove) {
+      const gca = snapshot.gameCreatedAt ?? now;
+      const sinceCreation = Math.floor((now - gca) / 1000);
+      elapsed = Math.max(0, sinceCreation - 20);
+    } else {
+      const turnStartedAt =
+        opponentClock.lastMoveTimestamp > 0
+          ? opponentClock.lastMoveTimestamp
+          : (snapshot.gameCreatedAt ?? now);
+      elapsed = Math.max(0, Math.floor((now - turnStartedAt) / 1000));
+    }
+
+    const increment = snapshot.timeControl?.incrementSeconds ?? 0;
+    const newRemaining =
+      Math.max(0, activeClock.remainingSeconds - elapsed) + increment;
+
+    optimisticClocks = {
+      ...snapshot.clocks,
+      [movingColor]: {
+        remainingSeconds: newRemaining,
+        lastMoveTimestamp: now,
+      },
+    };
+  }
+
   return {
     ...snapshot,
     board: newBoard,
+    clocks: optimisticClocks,
     currentTurnColor: snapshot.currentTurnColor === 'white' ? 'black' : 'white',
     moveHistory: [
       ...snapshot.moveHistory,

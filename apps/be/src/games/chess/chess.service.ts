@@ -23,6 +23,7 @@ import type {
   TimeControlType,
   TimeIncrement,
   ChessState,
+  MovePayload,
 } from '../engines/chess/chess.types';
 import { ChessBotService } from '../engines/chess/chess-bot.service';
 import { ChessStockfishService } from './engine/chess-stockfish.service';
@@ -36,16 +37,13 @@ import {
 import { BaseGameService } from '../common/base-game.service';
 import { getBotPersonality, type BotPersonality } from '../engines/chess';
 
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 2;
-
 @Injectable()
 export class ChessService extends BaseGameService<ChessOptions> {
   protected readonly logger = new Logger(ChessService.name);
   readonly gameId = 'chess_v1';
   readonly gameName = 'Chess';
-  readonly minPlayers = MIN_PLAYERS;
-  readonly maxPlayers = MAX_PLAYERS;
+  readonly minPlayers = 2;
+  readonly maxPlayers = 2;
 
   protected readonly botService: ChessBotService;
 
@@ -86,13 +84,7 @@ export class ChessService extends BaseGameService<ChessOptions> {
       this.move.bind(this) as (
         userId: string,
         roomId: string,
-        payload: {
-          fromFile: string;
-          fromRank: number;
-          toFile: string;
-          toRank: number;
-          promotion?: string;
-        },
+        payload: MovePayload,
       ) => Promise<unknown>,
     );
   }
@@ -117,17 +109,7 @@ export class ChessService extends BaseGameService<ChessOptions> {
     return result;
   }
 
-  async move(
-    userId: string,
-    roomId: string,
-    payload: {
-      fromFile: string;
-      fromRank: number;
-      toFile: string;
-      toRank: number;
-      promotion?: string;
-    },
-  ) {
+  async move(userId: string, roomId: string, payload: MovePayload) {
     return this.runAction(userId, roomId, 'move', payload);
   }
 
@@ -371,9 +353,8 @@ export class ChessService extends BaseGameService<ChessOptions> {
       return;
     }
 
-    const opponentColor =
-      state.currentTurnColor === 'white' ? 'black' : 'white';
-    const opponentClock = state.clocks[opponentColor];
+    const opponentClock =
+      state.clocks[state.currentTurnColor === 'white' ? 'black' : 'white'];
     const turnStartedAt =
       opponentClock?.lastMoveTimestamp > 0
         ? opponentClock.lastMoveTimestamp
@@ -427,18 +408,18 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const rawTc = r.timeControl;
     let timeControl: ChessOptions['timeControl'] = null;
     if (rawTc && typeof rawTc === 'object') {
-      const validTypes: TimeControlType[] = [
+      const type: TimeControlType = [
         'bullet',
         'blitz',
         'rapid',
         'classical',
         'daily',
-      ];
-      const type = validTypes.includes(rawTc.type as TimeControlType)
+      ].includes(rawTc.type)
         ? (rawTc.type as TimeControlType)
         : 'blitz';
-      const validIncs: TimeIncrement[] = [0, 1, 3, 5, 10, 15, 30];
-      const inc = validIncs.includes(rawTc.incrementSeconds as TimeIncrement)
+      const inc: TimeIncrement = [0, 1, 3, 5, 10, 15, 30].includes(
+        rawTc.incrementSeconds,
+      )
         ? (rawTc.incrementSeconds as TimeIncrement)
         : 0;
       const daysPerMove =
@@ -492,22 +473,20 @@ export class ChessService extends BaseGameService<ChessOptions> {
     const black = state.players.find((p) => p.color === 'black');
     if (!white || !black) return;
 
-    let result: 'white' | 'black' | 'draw';
-    if (
+    const isDraw =
       state.isDrawByAgreement ||
       state.isDrawByRepetition ||
       state.isDrawByFiftyMoveRule ||
       state.isInsufficientMaterial ||
-      state.isStalemate
-    ) {
-      result = 'draw';
-    } else if (state.winnerColor === 'white') {
-      result = 'white';
-    } else if (state.winnerColor === 'black') {
-      result = 'black';
-    } else {
-      return;
-    }
+      state.isStalemate;
+    const result = isDraw
+      ? 'draw'
+      : state.winnerColor === 'white'
+        ? 'white'
+        : state.winnerColor === 'black'
+          ? 'black'
+          : null;
+    if (!result) return;
 
     await this.tournamentService!.recordGameResult({
       tournamentId,

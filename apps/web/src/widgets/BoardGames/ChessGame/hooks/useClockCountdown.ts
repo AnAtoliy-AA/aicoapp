@@ -24,7 +24,15 @@ function computeLiveClocks(
   clocks: Record<PieceColor, PlayerClock>,
   currentTurnColor: PieceColor,
   gameCreatedAt: number,
+  isGameOver: boolean,
 ): LiveClock {
+  if (isGameOver) {
+    return {
+      white: clocks.white.remainingSeconds,
+      black: clocks.black.remainingSeconds,
+    };
+  }
+
   const now = Date.now();
   const whiteClock = clocks.white;
   const blackClock = clocks.black;
@@ -33,8 +41,14 @@ function computeLiveClocks(
     whiteClock.lastMoveTimestamp > 0 || blackClock.lastMoveTimestamp > 0;
 
   if (!firstMoveMade) {
+    if (gameCreatedAt <= 0) {
+      return {
+        white: FIRST_MOVE_SECONDS,
+        black: blackClock.remainingSeconds,
+      };
+    }
     const sinceCreation = (now - gameCreatedAt) / 1000;
-    if (sinceCreation < FIRST_MOVE_SECONDS) {
+    if (sinceCreation <= FIRST_MOVE_SECONDS) {
       return {
         white: Math.max(0, FIRST_MOVE_SECONDS - sinceCreation),
         black: blackClock.remainingSeconds,
@@ -54,8 +68,10 @@ function computeLiveClocks(
   const turnStartedAt =
     opponentClock.lastMoveTimestamp > 0
       ? opponentClock.lastMoveTimestamp
-      : gameCreatedAt;
-  const elapsedSeconds = (now - turnStartedAt) / 1000;
+      : gameCreatedAt > 0
+        ? gameCreatedAt + FIRST_MOVE_DEADLINE_MS
+        : now;
+  const elapsedSeconds = Math.max(0, (now - turnStartedAt) / 1000);
   const activeRemaining = Math.max(
     0,
     activeClock.remainingSeconds - elapsedSeconds,
@@ -73,21 +89,22 @@ function computeLiveClocks(
   };
 }
 
-/**
- * Client-side countdown hook.
- *
- * Rules:
- * - Before ANY move: White shows 20s grace countdown, Black frozen at game time.
- * - After first move: active player's clock ticks, inactive player's frozen.
- * - When it's your move your clock counts; when it's not your move it stops.
- */
 export function useClockCountdown({
   clocks,
   currentTurnColor,
   isGameOver,
   gameCreatedAt,
 }: UseClockCountdownOptions): LiveClock {
-  const [live, setLive] = useState<LiveClock>(ZERO_CLOCK);
+  const [live, setLive] = useState<LiveClock>(() => {
+    if (!clocks) return ZERO_CLOCK;
+    return computeLiveClocks(
+      clocks,
+      currentTurnColor,
+      gameCreatedAt,
+      isGameOver,
+    );
+  });
+
   const inputsRef = useRef({
     clocks,
     currentTurnColor,
@@ -105,15 +122,28 @@ export function useClockCountdown({
         isGameOver: go,
         gameCreatedAt: gca,
       } = inputsRef.current;
-      if (go || !c) {
-        setLive(ZERO_CLOCK);
+      if (!c) {
+        setLive((prev) =>
+          prev.white === 0 && prev.black === 0 ? prev : ZERO_CLOCK,
+        );
         return;
       }
-      setLive(computeLiveClocks(c, ctc, gca));
+      const next = computeLiveClocks(c, ctc, gca, go);
+      setLive((prev) => {
+        if (
+          Math.ceil(prev.white) === Math.ceil(next.white) &&
+          Math.ceil(prev.black) === Math.ceil(next.black)
+        ) {
+          return prev;
+        }
+        return next;
+      });
     };
 
     tick();
-    const id = setInterval(tick, 1000);
+    if (isGameOver || !clocks) return;
+
+    const id = setInterval(tick, 250);
     return () => clearInterval(id);
   }, [isGameOver, clocks, currentTurnColor, gameCreatedAt]);
 
