@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - route game OpenGraph and Twitter images to hashed Next.js assets and enable static prerendering (ARC-946)
 
+## [1.29.5] - 2026-09-09
+
+### Added
+
+- add move preview warnings for captures and self-atari
+
+## [1.29.4] - 2026-09-09
+
+### Added
+
+- add interactive hero demo, comparison table, and invite modal
+- rework chess and game landing pages with SEO AEO GEO and OG images
+
 ## [1.29.3] - 2026-09-09
 
 ### Added

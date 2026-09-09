@@ -172,6 +172,9 @@ export const enMessages = {
       scoringTitle: 'Scoring',
       scoring:
         'Chinese area scoring: stones + surrounded territory, white starts with 7.5 komi points.',
+      territoryWarningTitle: 'Territory Warning',
+      territoryWarning:
+        'Filling your own territory is dangerous! A group with zero liberties is captured. If you surround yourself with no empty points, your opponent can capture all your stones with a single move.',
     },
   },
 };
