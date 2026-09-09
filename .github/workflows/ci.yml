@@ -239,3 +239,101 @@ jobs:
           path: |
             apps/web/playwright-report/
           retention-days: 30
+
+  lhci-audit:
+    name: Lighthouse (Shard ${{ matrix.shard }}/4)
+    needs: build
+    if: "${{ github.event_name == 'pull_request' }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: build-outputs
+
+      - name: Extract Build Artifacts
+        run: tar -xvf build-artifacts.tar
+
+      - name: Start Next.js server
+        run: |
+          pnpm --filter web start &
+          for i in $(seq 1 60); do
+            if curl -s http://localhost:3000/en > /dev/null 2>&1; then
+              echo "Server ready"
+              break
+            fi
+            if [ "$i" -eq 60 ]; then
+              echo "Server failed to start"
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Generate Lighthouse URLs from routes
+        run: node apps/web/scripts/generate-lhci-urls.mjs
+
+      - name: Shard URLs
+        run: |
+          node -e "
+            const urls = require('./apps/web/lighthouse-urls.json');
+            const shard = ${{ matrix.shard }};
+            const total = 4;
+            const perShard = Math.ceil(urls.length / total);
+            const start = (shard - 1) * perShard;
+            const shardUrls = urls.slice(start, start + perShard);
+            require('fs').writeFileSync('./apps/web/lighthouse-urls.json', JSON.stringify(shardUrls, null, 2));
+            console.log('Shard ' + shard + ': ' + shardUrls.length + ' URLs');
+          "
+
+      - name: Run Lighthouse CI
+        run: pnpm --filter web lhci
+
+      - name: Upload Lighthouse Reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports-${{ matrix.shard }}
+          path: .lighthouseci/
+          retention-days: 1
+
+  lhci-comment:
+    name: Lighthouse Report
+    needs: lhci-audit
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Download All Reports
+        uses: actions/download-artifact@v8
+        with:
+          pattern: lighthouse-reports-*
+          merge-multiple: true
+          path: .lighthouseci/
+
+      - name: Post PR comment
+        run: node scripts/lhci-comment.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
