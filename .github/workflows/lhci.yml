@@ -2,7 +2,7 @@ name: Lighthouse Audit
 
 on:
   pull_request:
-    branches: [staging, main]
+    branches: [staging, main, develop]
 
 concurrency:
   group: lhci-${{ github.head_ref || github.run_id }}
