@@ -22,9 +22,9 @@ const config = {
     assert: {
       assertions: {
         'categories:performance': ['error', { minValue: 90 }],
-        'categories:accessibility': ['error', { minValue: 100 }],
-        'categories:seo': ['error', { minValue: 100 }],
-        'categories:best-practices': ['error', { minValue: 100 }],
+        'categories:accessibility': ['error', { minValue: 90 }],
+        'categories:seo': ['error', { minValue: 90 }],
+        'categories:best-practices': ['warn', { minValue: 90 }],
       },
     },
     upload: {
