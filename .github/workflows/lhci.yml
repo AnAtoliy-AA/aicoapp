@@ -48,7 +48,7 @@ jobs:
           done
 
       - name: Run Lighthouse CI
-        run: pnpm --filter web audit
+        run: pnpm --filter web lhci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
@@ -70,3 +70,7 @@ jobs:
           name: lighthouse-reports
           path: .lighthouseci/
           retention-days: 14
+
+      - name: Cleanup Lighthouse reports
+        if: always()
+        run: rm -rf .lighthouseci/
