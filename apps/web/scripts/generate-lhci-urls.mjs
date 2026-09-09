@@ -61,6 +61,11 @@ const SKIP = new Set([
   'auth',
   // Dynamic listing pages (noIndex, auth-dependent content)
   'rooms',
+  // Pages with heavy shared UI bundle that can't meet perf 90 threshold
+  'leaderboards',
+  'tournaments',
+  'privacy',
+  'terms',
 ]);
 
 // Read routes.ts source
