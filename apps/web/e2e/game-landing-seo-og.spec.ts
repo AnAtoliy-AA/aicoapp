@@ -148,10 +148,10 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     );
     await expect(comparisonTable).toBeVisible();
     await expect(comparisonTable).toContainText(
-      'Arcadeum vs Chess.com vs Lichess',
+      'Arcadeum Chess Advantages & Capabilities',
     );
     await expect(comparisonTable).toContainText('Stockfish 19 NNUE Engine');
-    await expect(comparisonTable).toContainText('100% Free');
+    await expect(comparisonTable).toContainText('100% Free · Included');
 
     const puzzleTeaser = page.locator('[data-testid="chess-puzzle-teaser"]');
     await expect(puzzleTeaser).toBeVisible();

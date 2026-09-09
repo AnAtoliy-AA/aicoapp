@@ -20,7 +20,7 @@ describe('PlatformComparisonTable', () => {
     },
   ];
 
-  it('renders title, columns, and rows', () => {
+  it('renders title, columns, and rows in comparison mode', () => {
     render(
       <PlatformComparisonTable
         title="Platform Comparison"
@@ -45,11 +45,36 @@ describe('PlatformComparisonTable', () => {
     expect(screen.getByLabelText('Not supported')).toBeInTheDocument();
   });
 
-  it('returns null when rows or columns are empty', () => {
-    const { container: c1 } = render(<PlatformComparisonTable columns={[]} rows={mockRows} />);
-    expect(c1.firstChild).toBeNull();
+  it('renders in advantages-only single-column mode', () => {
+    const singleRow = [
+      {
+        feature: 'Unlimited Game Review',
+        hint: 'Accuracy and eval graph',
+        values: { arcadeum: 'Free & Unlimited' },
+      },
+      {
+        feature: 'Zero Ads',
+        values: { arcadeum: true },
+      },
+    ];
 
-    const { container: c2 } = render(<PlatformComparisonTable columns={mockColumns} rows={[]} />);
-    expect(c2.firstChild).toBeNull();
+    render(
+      <PlatformComparisonTable
+        title="Arcadeum Advantages"
+        kicker="Key Features"
+        rows={singleRow}
+      />,
+    );
+
+    expect(screen.getByText('Arcadeum Advantages')).toBeInTheDocument();
+    expect(screen.getByText('Key Features')).toBeInTheDocument();
+    expect(screen.getByText('Unlimited Game Review')).toBeInTheDocument();
+    expect(screen.getByText('Free & Unlimited')).toBeInTheDocument();
+    expect(screen.getByText('Included')).toBeInTheDocument();
+  });
+
+  it('returns null when rows are empty', () => {
+    const { container } = render(<PlatformComparisonTable rows={[]} />);
+    expect(container.firstChild).toBeNull();
   });
 });

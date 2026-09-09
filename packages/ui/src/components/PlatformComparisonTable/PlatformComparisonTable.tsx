@@ -19,11 +19,20 @@ export interface PlatformComparisonTableProps {
   title?: string;
   kicker?: string;
   subtitle?: string;
-  columns: PlatformComparisonColumn[];
+  columns?: PlatformComparisonColumn[];
   rows: PlatformComparisonRow[];
   className?: string;
   testId?: string;
 }
+
+const DEFAULT_COLUMNS: PlatformComparisonColumn[] = [
+  {
+    key: 'arcadeum',
+    name: 'Arcadeum',
+    isHighlighted: true,
+    badge: '100% Free · Included',
+  },
+];
 
 export function PlatformComparisonTable({
   title,
@@ -34,7 +43,10 @@ export function PlatformComparisonTable({
   className,
   testId = 'platform-comparison-table',
 }: PlatformComparisonTableProps) {
-  if (!rows || rows.length === 0 || !columns || columns.length === 0) return null;
+  const resolvedColumns = columns && columns.length > 0 ? columns : DEFAULT_COLUMNS;
+  const isSingleColumn = resolvedColumns.length === 1;
+
+  if (!rows || rows.length === 0) return null;
 
   return (
     <section
@@ -68,15 +80,22 @@ export function PlatformComparisonTable({
         <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-[var(--borderColor)] bg-[var(--surfaceBackground)]/60">
-              <th scope="col" className="p-4 text-xs font-bold uppercase tracking-wider text-[var(--foreground)] opacity-70 min-w-[200px]">
-                Feature
+              <th
+                scope="col"
+                className={cx(
+                  'p-4 text-xs font-bold uppercase tracking-wider text-[var(--foreground)] opacity-70',
+                  isSingleColumn ? 'w-full' : 'min-w-[200px]',
+                )}
+              >
+                Feature & Advantage
               </th>
-              {columns.map((col) => (
+              {resolvedColumns.map((col) => (
                 <th
                   key={col.key}
                   scope="col"
                   className={cx(
-                    'p-4 text-center min-w-[140px]',
+                    'p-4 text-center',
+                    isSingleColumn ? 'min-w-[220px]' : 'min-w-[140px]',
                     col.isHighlighted
                       ? 'bg-[var(--primary)]/15 border-x border-[var(--primary)]/30'
                       : '',
@@ -86,7 +105,9 @@ export function PlatformComparisonTable({
                     <span
                       className={cx(
                         'text-sm font-bold',
-                        col.isHighlighted ? 'text-[var(--primary)]' : 'text-[var(--foreground)]',
+                        col.isHighlighted
+                          ? 'text-[var(--primary)]'
+                          : 'text-[var(--foreground)]',
                       )}
                     >
                       {col.name}
@@ -122,7 +143,7 @@ export function PlatformComparisonTable({
                     ) : null}
                   </div>
                 </th>
-                {columns.map((col) => {
+                {resolvedColumns.map((col) => {
                   const val = row.values[col.key];
                   const isHighlighted = col.isHighlighted;
 
@@ -140,14 +161,15 @@ export function PlatformComparisonTable({
                         val ? (
                           <span
                             className={cx(
-                              'inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-black',
+                              'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black',
                               isHighlighted
                                 ? 'bg-[var(--success,#22c55e)]/20 text-[var(--success,#22c55e)] border border-[var(--success,#22c55e)]/40'
                                 : 'bg-[var(--surfaceBackground)] text-[var(--foreground)] opacity-80',
                             )}
                             aria-label="Supported"
                           >
-                            ✓
+                            <span>✓</span>
+                            {isSingleColumn ? <span>Included</span> : null}
                           </span>
                         ) : (
                           <span
@@ -161,7 +183,11 @@ export function PlatformComparisonTable({
                         <span
                           className={cx(
                             'text-xs sm:text-sm',
-                            isHighlighted ? 'text-[var(--foreground)] font-bold' : 'text-[var(--foreground)] opacity-80',
+                            isSingleColumn
+                              ? 'inline-flex items-center px-3 py-1 rounded-full bg-[var(--primary)]/15 text-[var(--foreground)] font-bold border border-[var(--primary)]/30'
+                              : isHighlighted
+                              ? 'text-[var(--foreground)] font-bold'
+                              : 'text-[var(--foreground)] opacity-80',
                           )}
                         >
                           {val ?? '—'}
