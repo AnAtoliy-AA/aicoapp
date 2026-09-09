@@ -11,12 +11,6 @@ export function LivePulseBadge() {
 
   useEffect(() => {
     void fetchLiveStats();
-    const interval = setInterval(() => {
-      void fetchLiveStats();
-    }, 30_000);
-    return () => {
-      clearInterval(interval);
-    };
   }, [fetchLiveStats]);
 
   const formattedOnline = stats.onlineUsers.toLocaleString();

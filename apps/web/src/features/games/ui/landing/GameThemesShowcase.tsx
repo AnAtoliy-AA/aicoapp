@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
+import { cx } from '@arcadeum/ui/utils/cx';
 import type { GameThemesShowcaseProps } from './types';
 import { GameArt } from '@/features/games/ui/create/redesign/art/GameArt';
 import type { GameId } from '@/features/games/ui/create/redesign/data/themes';
+import { useGameLandingTheme } from './GameLandingThemeContext';
 import { SeaBattleFieldSvg } from './SeaBattleFieldSvg';
 
 interface ThemeVisualPreset {
@@ -127,6 +131,8 @@ export function GameThemesShowcase({
   createRoomLabel = 'Play with Theme',
   comingSoon = false,
 }: GameThemesShowcaseProps) {
+  const { theme: activeTheme, setTheme } = useGameLandingTheme();
+
   if (!themes || themes.length === 0) return null;
 
   const isSeaBattle = gameId === 'sea_battle_v1';
@@ -158,10 +164,27 @@ export function GameThemesShowcase({
               ? `${baseHref}${separator}theme=${theme.id}`
               : undefined;
           const visual = getThemeVisual(theme.id);
+          const isCurrent = activeTheme === theme.id;
 
-          const CardContent = (
+          return (
             <div
-              className={`box-border flex flex-col justify-between h-full p-3 sm:p-4 rounded-2xl bg-[var(--glassBg)] border ${visual.accentBorder} backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group overflow-hidden`}
+              key={theme.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => setTheme(theme.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setTheme(theme.id);
+                }
+              }}
+              data-testid={`theme-card-${theme.id}`}
+              className={cx(
+                'box-border flex flex-col justify-between h-full p-3 sm:p-4 rounded-2xl bg-[var(--glassBg)] border backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group overflow-hidden cursor-pointer text-left',
+                isCurrent
+                  ? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/50 shadow-lg'
+                  : visual.accentBorder,
+              )}
             >
               <div className="box-border flex flex-col gap-3">
                 <div className="box-border h-36 sm:h-44 w-full rounded-xl border border-[var(--borderColor)] flex flex-col items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform shadow-inner bg-[var(--background)] p-1">
@@ -206,7 +229,11 @@ export function GameThemesShowcase({
                     <span className="box-border text-sm sm:text-base font-bold text-[var(--foreground)] truncate">
                       {theme.name}
                     </span>
-                    {theme.tag ? (
+                    {isCurrent ? (
+                      <span className="box-border text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[var(--primary)] text-[var(--primaryForeground,white)]">
+                        Previewing
+                      </span>
+                    ) : theme.tag ? (
                       <span className="box-border text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[var(--primary)]/10 text-[var(--primary)]">
                         {theme.tag}
                       </span>
@@ -221,28 +248,24 @@ export function GameThemesShowcase({
               </div>
 
               {href ? (
-                <div className="box-border pt-3 mt-1 border-t border-[var(--borderColor)]/40">
-                  <span className="box-border text-xs font-semibold text-[var(--primary)] group-hover:underline inline-flex items-center gap-1">
+                <div className="box-border pt-3 mt-1 border-t border-[var(--borderColor)]/40 flex items-center justify-between">
+                  <Link
+                    href={href}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTheme(theme.id);
+                    }}
+                    className="box-border text-xs font-semibold text-[var(--primary)] hover:underline inline-flex items-center gap-1 no-underline"
+                  >
                     {createRoomLabel} →
+                  </Link>
+                  <span className="box-border text-[10px] uppercase tracking-wider font-semibold text-[var(--foreground)] opacity-60 group-hover:opacity-100 transition-opacity">
+                    {isCurrent ? 'Active' : 'Preview'}
                   </span>
                 </div>
               ) : null}
             </div>
           );
-
-          if (href) {
-            return (
-              <Link
-                key={theme.id}
-                href={href}
-                className="box-border block text-inherit no-underline"
-              >
-                {CardContent}
-              </Link>
-            );
-          }
-
-          return <div key={theme.id}>{CardContent}</div>;
         })}
       </div>
     </section>

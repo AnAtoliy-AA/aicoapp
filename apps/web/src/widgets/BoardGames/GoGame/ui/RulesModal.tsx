@@ -32,6 +32,10 @@ export function RulesModal({ open, onClose }: RulesModalProps) {
       title: t('games.go_v1.rules.scoringTitle'),
       body: t('games.go_v1.rules.scoring'),
     },
+    {
+      title: t('games.go_v1.rules.territoryWarningTitle'),
+      body: t('games.go_v1.rules.territoryWarning'),
+    },
   ];
 
   return (

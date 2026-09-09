@@ -115,6 +115,7 @@ export async function navigateTo(
 }
 
 export async function clearState(page: Page): Promise<void> {
+  await page.context().clearCookies();
   await page.addInitScript(() => {
     window.localStorage.clear();
     window.sessionStorage.clear();

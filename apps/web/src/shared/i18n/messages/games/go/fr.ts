@@ -172,6 +172,9 @@ export const frMessages = {
       scoringTitle: 'Comptage',
       scoring:
         'Comptage par aire chinois : pierres + territoire entouré ; les blancs débutent avec 7,5 points de komi.',
+      territoryWarningTitle: 'Avertissement Territoire',
+      territoryWarning:
+        'Remplir votre propre territoire est dangereux ! Un groupe sans liberté est capturé. Si vous vous entourez sans points vides, votre adversaire pourra capturer toutes vos pierres en un seul coup.',
     },
   },
 };

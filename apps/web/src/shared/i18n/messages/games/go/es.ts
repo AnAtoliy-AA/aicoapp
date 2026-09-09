@@ -175,6 +175,9 @@ export const esMessages = {
       scoringTitle: 'Puntuación',
       scoring:
         'Puntuación por área china: piedras + territorio rodeado; las blancas empiezan con 7.5 de komi.',
+      territoryWarningTitle: 'Advertencia de Territorio',
+      territoryWarning:
+        '¡Rellenar tu propio territorio es peligroso! Un grupo sin libertades es capturado. Si te rodeas sin puntos vacíos, tu oponente podrá capturar todas tus piedras con un solo movimiento.',
     },
   },
 };

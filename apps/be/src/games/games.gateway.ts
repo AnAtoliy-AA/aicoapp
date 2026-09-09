@@ -123,7 +123,7 @@ export class GamesGateway {
       this.logger.debug(
         `Authenticated user ${authUserId} connected to games namespace`,
       );
-      this.realtime.trackSocket(authUserId, client.id);
+      void this.realtime.trackSocket(authUserId, client.id);
     } else {
       const anonId =
         typeof client.handshake?.query?.anonId === 'string'
@@ -131,7 +131,7 @@ export class GamesGateway {
           : undefined;
       const guestId = anonId || `guest_${client.id}`;
       (client.data as Record<string, unknown>).anonId = guestId;
-      this.realtime.trackSocket(guestId, client.id);
+      void this.realtime.trackSocket(guestId, client.id);
       this.logger.verbose(
         `Client connected to games namespace: ${client.id} (${guestId})`,
       );
@@ -159,11 +159,19 @@ export class GamesGateway {
     }
 
     void client.join(this.realtime.lobbyChannel());
-    if (this.liveStatsService) {
-      void this.liveStatsService.getLiveStats().then((stats) => {
-        this.liveStatsService?.broadcastLiveStats(stats);
-      });
-    }
+
+    client.on('ping', () => {
+      const uid = (client.data as Record<string, unknown>)?.userId as
+        string | undefined;
+      const aid = (client.data as Record<string, unknown>)?.anonId as
+        string | undefined;
+      void this.realtime.refreshSocket(
+        client.id,
+        uid || aid || `guest_${client.id}`,
+      );
+    });
+
+    this.liveStatsService?.scheduleBroadcast();
   }
 
   handleDisconnect(client: Socket): void {
@@ -175,14 +183,10 @@ export class GamesGateway {
       string | undefined;
     const activeUserId = userId || anonId || `guest_${client.id}`;
     if (activeUserId) {
-      this.realtime.untrackSocket(activeUserId, client.id);
+      void this.realtime.untrackSocket(activeUserId, client.id);
       void this.matchmakingService.leaveQueue(activeUserId);
     }
-    if (this.liveStatsService) {
-      void this.liveStatsService.getLiveStats().then((stats) => {
-        this.liveStatsService?.broadcastLiveStats(stats);
-      });
-    }
+    this.liveStatsService?.scheduleBroadcast();
     if (!activeUserId || !this.server) return;
 
     for (const room of client.rooms) {
@@ -432,12 +436,15 @@ export class GamesGateway {
       gameId: string;
       variant?: string;
       ranked?: boolean;
+      rating?: number;
     },
   ): void {
     const userId = extractString(payload, 'userId');
     const gameId = extractString(payload, 'gameId');
     const variant = payload.variant ? String(payload.variant) : undefined;
     const ranked = payload.ranked === true;
+    const rating =
+      typeof payload.rating === 'number' ? payload.rating : undefined;
 
     this.validateUserId(client, userId);
 
@@ -455,6 +462,7 @@ export class GamesGateway {
       ranked,
       undefined,
       ip,
+      rating,
     );
     client.emit(
       'games.matchmaking.joined',

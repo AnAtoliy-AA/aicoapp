@@ -7,6 +7,7 @@ import { JsonLd } from '@/shared/ui/JsonLd';
 import { buildPageMetadata } from '@/shared/seo/buildPageMetadata';
 import { buildVideoGameJsonLd } from '@/shared/seo/videoGameJsonLd';
 import { buildHowToJsonLd } from '@/shared/seo/howToJsonLd';
+import { buildFaqPageJsonLd } from '@/shared/seo/faqPageJsonLd';
 import ChessLanding from './ChessLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
@@ -40,7 +41,8 @@ export async function generateMetadata({
           url: `${appConfig.siteUrl}/${locale}/games/chess/opengraph-image`,
           width: 1200,
           height: 630,
-          alt: landingMeta?.title ?? 'Chess — free multiplayer on Arcadeum',
+          alt:
+            landingMeta?.title ?? 'Chess — free multiplayer on Arcadeum Games',
         },
       ],
     },
@@ -109,6 +111,19 @@ export default async function ChessLandingRoute({ params }: PageProps) {
         'Online Chess Game Free',
         'Play Chess No Download',
       ],
+      featureList: [
+        'Stockfish 19 Engine with SFNNv16 NNUE',
+        'Standard & Chess960 (Fischer Random)',
+        '20 AI Bot Personalities (250–3200 Elo)',
+        'Bullet, Blitz, Rapid, and Daily Correspondence',
+        'Puzzle Rush & Tactical Training',
+        'Interactive Analysis Board with Engine Evaluation',
+        'Custom Board Editor & FEN/PGN Import',
+        'Game Review with Accuracy Scores and Move Classification',
+        'Syzygy 7-Piece Endgame Tablebases',
+        'Real-time Auto-Matchmaking',
+        '100% Free with Zero Downloads or Forced Signup',
+      ],
       breadcrumb: {
         home: messages.navigation?.homeTab ?? 'Home',
         games: messages.navigation?.gamesTab ?? 'Games',
@@ -137,6 +152,16 @@ export default async function ChessLandingRoute({ params }: PageProps) {
       locale,
       pageUrl: chessPageUrl,
     }),
+    ...(landing?.faq
+      ? buildFaqPageJsonLd({
+          pageName: gameName,
+          pageUrl: chessPageUrl,
+          faqs: Object.values(landing.faq).map((f) => ({
+            question: (f as { question: string; answer: string }).question,
+            answer: (f as { question: string; answer: string }).answer,
+          })),
+        })
+      : []),
   ];
 
   const comingSoon = await isGameComingSoon(CHESS_SLUG);
