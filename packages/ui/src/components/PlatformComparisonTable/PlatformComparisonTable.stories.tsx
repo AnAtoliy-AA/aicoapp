@@ -17,11 +17,11 @@ type Story = StoryObj<typeof PlatformComparisonTable>;
 
 export const ArcadeumAdvantagesOnly: Story = {
   args: {
-    title: 'Arcadeum Chess Advantages & Capabilities',
+    title: 'Arcadeum Games Chess Advantages & Capabilities',
     kicker: 'Platform Features',
     subtitle: 'Grandmaster-grade engine analysis and competitive features included for all players.',
     columns: [
-      { key: 'arcadeum', name: 'Arcadeum', isHighlighted: true, badge: '100% Free · Included' },
+      { key: 'arcadeum', name: 'Arcadeum Games', isHighlighted: true, badge: '100% Free · Included' },
     ],
     rows: [
       {
@@ -64,7 +64,7 @@ export const MultiPlatformComparison: Story = {
     kicker: 'Feature Matrix',
     subtitle: 'Transparent feature comparison.',
     columns: [
-      { key: 'arcadeum', name: 'Arcadeum', isHighlighted: true, badge: 'Recommended' },
+      { key: 'arcadeum', name: 'Arcadeum Games', isHighlighted: true, badge: 'Recommended' },
       { key: 'traditional', name: 'Traditional Platforms' },
     ],
     rows: [

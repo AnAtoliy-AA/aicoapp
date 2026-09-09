@@ -4,11 +4,22 @@ import {
   renderGameOgCard,
 } from '@/shared/seo/ogImageTemplate';
 import { getTranslations } from '@/shared/i18n/server';
-import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  isLocale,
+  type Locale,
+} from '@/shared/i18n';
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = 'Go (Weiqi / Baduk) — free online board game on Arcadeum';
+export const alt =
+  'Go (Weiqi / Baduk) — free online board game on Arcadeum Games';
+
+export const dynamic = 'force-static';
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -48,9 +59,8 @@ function GoVisual() {
           borderRadius: 14,
           border: '2px solid rgba(245, 158, 11, 0.6)',
           boxShadow: '0 16px 40px rgba(0,0,0,0.7)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(8, 1fr)',
-          gridTemplateRows: 'repeat(8, 1fr)',
+          display: 'flex',
+          flexWrap: 'wrap',
           position: 'relative',
           padding: 16,
         }}
@@ -59,6 +69,9 @@ function GoVisual() {
           <div
             key={i}
             style={{
+              display: 'flex',
+              width: 38.5,
+              height: 38.5,
               borderRight: '1px solid rgba(0,0,0,0.3)',
               borderBottom: '1px solid rgba(0,0,0,0.3)',
             }}
@@ -69,6 +82,7 @@ function GoVisual() {
           <div
             key={idx}
             style={{
+              display: 'flex',
               position: 'absolute',
               left: 16 + s.c * 38.5 - 16,
               top: 16 + s.r * 38.5 - 16,

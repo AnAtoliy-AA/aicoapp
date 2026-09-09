@@ -37,6 +37,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
     >
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           inset: 0,
           backgroundImage:
@@ -48,6 +49,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
 
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           right: -80,
           top: -80,
@@ -61,6 +63,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
 
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           left: -100,
           bottom: -100,
@@ -74,6 +77,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
 
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           inset: 20,
           border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -83,6 +87,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
 
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           top: 20,
           left: 20,
@@ -95,6 +100,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
       />
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           bottom: 20,
           right: 20,
@@ -120,6 +126,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div
               style={{
+                display: 'flex',
                 width: 10,
                 height: 10,
                 borderRadius: '50%',
@@ -140,6 +147,7 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
             </span>
             <span
               style={{
+                display: 'flex',
                 padding: '4px 10px',
                 borderRadius: 999,
                 background: 'rgba(255, 255, 255, 0.06)',
@@ -156,6 +164,8 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
 
           <div
             style={{
+              display: 'flex',
+              alignItems: 'center',
               padding: '6px 14px',
               borderRadius: 8,
               background: `${accent}18`,

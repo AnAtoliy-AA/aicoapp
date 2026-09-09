@@ -60,13 +60,13 @@ describe('PlatformComparisonTable', () => {
 
     render(
       <PlatformComparisonTable
-        title="Arcadeum Advantages"
+        title="Arcadeum Games Advantages"
         kicker="Key Features"
         rows={singleRow}
       />,
     );
 
-    expect(screen.getByText('Arcadeum Advantages')).toBeInTheDocument();
+    expect(screen.getByText('Arcadeum Games Advantages')).toBeInTheDocument();
     expect(screen.getByText('Key Features')).toBeInTheDocument();
     expect(screen.getByText('Unlimited Game Review')).toBeInTheDocument();
     expect(screen.getByText('Free & Unlimited')).toBeInTheDocument();

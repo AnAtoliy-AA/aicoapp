@@ -41,7 +41,8 @@ export async function generateMetadata({
           url: `${appConfig.siteUrl}/${locale}/games/chess/opengraph-image`,
           width: 1200,
           height: 630,
-          alt: landingMeta?.title ?? 'Chess — free multiplayer on Arcadeum',
+          alt:
+            landingMeta?.title ?? 'Chess — free multiplayer on Arcadeum Games',
         },
       ],
     },

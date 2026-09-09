@@ -4,12 +4,22 @@ import {
   renderGameOgCard,
 } from '@/shared/seo/ogImageTemplate';
 import { getTranslations } from '@/shared/i18n/server';
-import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  isLocale,
+  type Locale,
+} from '@/shared/i18n';
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 export const alt =
-  'Chess — free multiplayer with Stockfish 19 analysis on Arcadeum';
+  'Chess — free multiplayer with Stockfish 19 analysis on Arcadeum Games';
+
+export const dynamic = 'force-static';
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -41,16 +51,8 @@ function ChessPieceSvg({ code }: { code: PieceCode }) {
     case 'p':
       return (
         <svg width="26" height="26" viewBox="0 0 45 45">
-          <circle
-            cx="22.5"
-            cy="15"
-            r="5"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.5"
-          />
           <path
-            d="M16 35c0-5 3-7 6.5-7s6.5 2 6.5 7H16z"
+            d="M22.5 10a5 5 0 1 0 0.001 0 M16 35c0-5 3-7 6.5-7s6.5 2 6.5 7H16z"
             fill={fill}
             stroke={stroke}
             strokeWidth="1.5"

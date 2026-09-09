@@ -72,7 +72,7 @@ export const esMessages = {
         stockfish: {
           question: '¿Qué es Stockfish 19?',
           answer:
-            'Stockfish 19 es la última versión del motor de ajedrez de código abierto más fuerte del mundo. Utiliza la arquitectura de red neuronal SFNNv16 y alimenta todo el análisis en tiempo real, la revisión de partidas y la dificultad de los bots IA en Arcadeum.',
+            'Stockfish 19 es la última versión del motor de ajedrez de código abierto más fuerte del mundo. Utiliza la arquitectura de red neuronal SFNNv16 y alimenta todo el análisis en tiempo real, la revisión de partidas y la dificultad de los bots IA en Arcadeum Games.',
         },
         takeback: {
           question: '¿Puedo deshacer un movimiento?',
@@ -86,7 +86,7 @@ export const esMessages = {
         },
       },
       advantages: {
-        kicker: 'Por qué los jugadores eligen Arcadeum',
+        kicker: 'Por qué los jugadores eligen Arcadeum Games',
         title: 'Todo lo que necesitas para jugar, aprender y mejorar',
         items: [
           {

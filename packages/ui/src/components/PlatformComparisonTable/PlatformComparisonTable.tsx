@@ -28,7 +28,7 @@ export interface PlatformComparisonTableProps {
 const DEFAULT_COLUMNS: PlatformComparisonColumn[] = [
   {
     key: 'arcadeum',
-    name: 'Arcadeum',
+    name: 'Arcadeum Games',
     isHighlighted: true,
     badge: '100% Free · Included',
   },

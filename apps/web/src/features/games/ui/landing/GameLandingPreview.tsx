@@ -50,7 +50,7 @@ export function GameLandingPreview({
   testId,
 }: Props) {
   const { t } = useTranslation();
-  const { theme, cycleTheme } = useGameLandingTheme();
+  const { theme, cycleTheme, cyclePrevTheme } = useGameLandingTheme();
   const themeName = themeNames?.[theme] ?? themeDisplayName(theme);
   const resolvedLabel = label ?? t(labelKey);
   const resolvedCycleHint = cycleHint ?? t(cycleHintKey);
@@ -85,34 +85,38 @@ export function GameLandingPreview({
       <div className="box-border m-0 mt-3 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--textSecondary)] select-none">
         <button
           type="button"
-          onClick={cycleTheme}
+          onClick={cyclePrevTheme}
           aria-label="Previous theme"
           data-testid="prev-theme-button"
-          className="box-border flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[11px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
+          className="box-border flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[12px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
         >
           ‹
         </button>
-        <span
-          className="box-border h-1.5 w-1.5 rounded-full bg-[var(--primary)] shadow-[0_0_6px_var(--primary)]"
-          aria-hidden="true"
-        />
-        <span>{resolvedLabel}</span>
-        <span aria-hidden="true">·</span>
-        <button
-          type="button"
-          onClick={cycleTheme}
-          aria-label={resolvedAria}
-          data-testid="current-theme-button"
-          className="box-border cursor-pointer bg-transparent border-none p-0 text-[13px] font-semibold normal-case tracking-normal text-[var(--foreground)] hover:text-[var(--primary)] transition-colors"
-        >
-          {themeName}
-        </button>
+        <div className="box-border flex w-[210px] shrink-0 items-center justify-center gap-1.5 px-1 text-center">
+          <span
+            className="box-border h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)] shadow-[0_0_6px_var(--primary)]"
+            aria-hidden="true"
+          />
+          <span className="shrink-0">{resolvedLabel}</span>
+          <span aria-hidden="true" className="shrink-0">
+            ·
+          </span>
+          <button
+            type="button"
+            onClick={cycleTheme}
+            aria-label={resolvedAria}
+            data-testid="current-theme-button"
+            className="box-border truncate cursor-pointer bg-transparent border-none p-0 text-[13px] font-semibold normal-case tracking-normal text-[var(--foreground)] hover:text-[var(--primary)] transition-colors"
+          >
+            {themeName}
+          </button>
+        </div>
         <button
           type="button"
           onClick={cycleTheme}
           aria-label="Next theme"
           data-testid="next-theme-button"
-          className="box-border flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[11px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
+          className="box-border flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[12px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
         >
           ›
         </button>

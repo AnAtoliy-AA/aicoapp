@@ -8,7 +8,8 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = 'Tic-Tac-Toe — free online 2-player multiplayer on Arcadeum';
+export const alt =
+  'Tic-Tac-Toe — free online 2-player multiplayer on Arcadeum Games';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -37,9 +38,10 @@ function TicTacToeVisual() {
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 100px)',
-          gridTemplateRows: 'repeat(3, 100px)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          width: 348,
+          height: 348,
           gap: 10,
           background: 'rgba(6, 182, 212, 0.1)',
           padding: 14,
@@ -53,6 +55,8 @@ function TicTacToeVisual() {
           <div
             key={idx}
             style={{
+              width: 100,
+              height: 100,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
