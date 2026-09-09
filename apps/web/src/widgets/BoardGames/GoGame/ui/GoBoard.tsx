@@ -1,9 +1,10 @@
 'use client';
 
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { cx } from '@arcadeum/ui/utils/cx';
 import { useBoardKeyboardNavigation } from '@/shared/lib/a11y';
 import { STAR_POINTS, type Cell, type Point, type StoneColor } from '../types';
+import { previewMove, type MovePreview } from '../lib/movePreview';
 
 interface GoBoardProps {
   board: Cell[][];
@@ -28,6 +29,9 @@ interface CellProps {
   myColor: StoneColor | null;
   focusProps: Record<string, unknown>;
   onCellClick: (row: number, col: number) => void;
+  onHover: (row: number, col: number) => void;
+  onHoverEnd: () => void;
+  preview: MovePreview | null;
 }
 
 const CellRenderer = memo(function CellRenderer({
@@ -42,15 +46,35 @@ const CellRenderer = memo(function CellRenderer({
   myColor,
   focusProps,
   onCellClick,
+  onHover,
+  onHoverEnd,
+  preview,
 }: CellProps) {
   const handleClick = useCallback(() => {
     if (!disabled && cell === null) onCellClick(row, col);
   }, [disabled, cell, onCellClick, row, col]);
 
+  const handleMouseEnter = useCallback(() => {
+    if (!disabled && cell === null && myColor) onHover(row, col);
+  }, [disabled, cell, myColor, onHover, row, col]);
+
+  const handleMouseLeave = useCallback(() => {
+    onHoverEnd();
+  }, [onHoverEnd]);
+
   const isLeftEdge = col === 0;
   const isRightEdge = col === size - 1;
   const isTopEdge = row === 0;
   const isBottomEdge = row === size - 1;
+
+  const showWarning = preview && !disabled && cell === null && !isKo && myColor;
+  const warningText = showWarning
+    ? preview.isSelfCapture
+      ? 'Self-capture!'
+      : preview.capturedStones > 0
+        ? `Capture ${preview.capturedStones}`
+        : null
+    : null;
 
   return (
     <button
@@ -60,6 +84,8 @@ const CellRenderer = memo(function CellRenderer({
       data-board-cell={`${row}:${col}`}
       disabled={disabled || cell !== null}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={cx(
         'group relative m-0 flex flex-1 h-full w-full min-h-0 min-w-0 items-center justify-center p-0 border-0 bg-transparent aspect-square outline-none',
         disabled || cell !== null ? 'cursor-default' : 'cursor-pointer',
@@ -137,6 +163,20 @@ const CellRenderer = memo(function CellRenderer({
           className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[50%] w-[50%] rounded-full border-2 border-dashed border-red-500/80 z-10"
         />
       ) : null}
+
+      {warningText && preview ? (
+        <span
+          aria-hidden="true"
+          className={cx(
+            'pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[10px] font-bold z-30 shadow-lg',
+            preview.isSelfCapture
+              ? 'bg-red-600 text-white'
+              : 'bg-amber-500 text-black',
+          )}
+        >
+          {warningText}
+        </span>
+      ) : null}
     </button>
   );
 });
@@ -151,11 +191,26 @@ function GoBoardImpl({
   ariaLabel = 'Go board',
   onCellClick,
 }: GoBoardProps) {
+  const [hoveredCell, setHoveredCell] = useState<Point | null>(null);
+
   const stars = useMemo(() => {
     const set = new Set<string>();
     for (const [r, c] of STAR_POINTS[size] ?? []) set.add(`${r}:${c}`);
     return set;
   }, [size]);
+
+  const preview = useMemo(() => {
+    if (!hoveredCell || !myColor || disabled) return null;
+    return previewMove(board, myColor, hoveredCell.row, hoveredCell.col);
+  }, [board, hoveredCell, myColor, disabled]);
+
+  const handleHover = useCallback((row: number, col: number) => {
+    setHoveredCell({ row, col });
+  }, []);
+
+  const handleHoverEnd = useCallback(() => {
+    setHoveredCell(null);
+  }, []);
 
   const handleActivate = useCallback(
     ({ row, col }: { row: number; col: number }) => {
@@ -209,6 +264,13 @@ function GoBoardImpl({
                 myColor={myColor}
                 focusProps={getCellProps(rowIdx, colIdx)}
                 onCellClick={onCellClick}
+                onHover={handleHover}
+                onHoverEnd={handleHoverEnd}
+                preview={
+                  hoveredCell?.row === rowIdx && hoveredCell?.col === colIdx
+                    ? preview
+                    : null
+                }
               />
             ))}
           </div>
