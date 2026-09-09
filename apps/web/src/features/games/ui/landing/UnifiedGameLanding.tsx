@@ -9,12 +9,14 @@ import { GameFaqSection } from './GameFaqSection';
 import { GameRelatedGames } from './GameRelatedGames';
 import { GameFinalCta } from './GameFinalCta';
 import { GameLandingThemeProvider } from './GameLandingThemeContext';
+import { GameSpecTable } from '@arcadeum/ui';
 import type { UnifiedGameLandingProps } from './types';
 
 export function UnifiedGameLanding({
   breadcrumbs,
   accentGlow = 'blue',
   hero,
+  specifications,
   highlights,
   howToPlay,
   themes,
@@ -35,6 +37,7 @@ export function UnifiedGameLanding({
           eyebrow={hero.eyebrow}
           subtitle={hero.subtitle}
           intro={hero.intro}
+          directAnswer={hero.directAnswer}
           category={hero.category}
           playersBadge={hero.playersBadge}
           durationBadge={hero.durationBadge}
@@ -51,6 +54,14 @@ export function UnifiedGameLanding({
           heroVisual={hero.heroVisual}
           comingSoon={comingSoon}
         />
+
+        {specifications ? (
+          <GameSpecTable
+            title={specifications.title}
+            kicker={specifications.kicker}
+            items={specifications.items}
+          />
+        ) : null}
 
         {highlights ? (
           <GameHighlightsGrid

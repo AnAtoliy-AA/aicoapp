@@ -1,7 +1,7 @@
 'use client';
 
-import { getChessTheme } from '@/widgets/BoardGames/ChessGame/lib/theme';
 import { GameLandingPreview } from '@/features/games/ui/landing/GameLandingPreview';
+import styles from './ChessLanding.module.scss';
 
 const DEMO_BOARD: Array<Array<string | null>> = [
   ['r', 'n', 'b', 'q', 'k', 'b', null, 'r'],
@@ -33,32 +33,16 @@ export function ChessLandingPreview() {
   return (
     <GameLandingPreview
       testId="chess-landing-preview"
-      render={(themeId) => {
-        const theme = getChessTheme(themeId);
+      render={() => {
         return (
-          <div
-            aria-hidden="true"
-            className="box-border w-full max-w-[320px] mx-auto aspect-square p-2.5 rounded-2xl border shadow-xl grid grid-cols-8 grid-rows-8 gap-0.5"
-            style={{
-              background: theme.boardBackground,
-              borderColor: theme.textColor + '40',
-            }}
-          >
+          <div aria-hidden="true" className={styles.boardContainer}>
             {DEMO_BOARD.map((row, rowIdx) =>
               row.map((cell, colIdx) => {
                 const isLight = (rowIdx + colIdx) % 2 === 0;
                 return (
                   <div
                     key={`${rowIdx}-${colIdx}`}
-                    className="box-border flex items-center justify-center rounded-sm text-lg sm:text-xl font-bold select-none"
-                    style={{
-                      background: isLight
-                        ? theme.lightSquare
-                        : theme.darkSquare,
-                      color: isLight
-                        ? theme.darkPieceColor
-                        : theme.lightPieceColor,
-                    }}
+                    className={isLight ? styles.squareLight : styles.squareDark}
                   >
                     {cell ? PIECE_GLYPHS[cell] : ''}
                   </div>

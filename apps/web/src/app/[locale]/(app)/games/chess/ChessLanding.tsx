@@ -192,6 +192,8 @@ export default function ChessLanding({
         subtitle: landing.hero.subtitle,
         intro:
           'Powered by Stockfish 19 — the strongest open-source chess engine. Play bullet, blitz, rapid, or daily games. Analyze with real-time engine eval, review games with accuracy scores, solve puzzles, and compete in tournaments. Every feature is free, no install required.',
+        directAnswer:
+          'Arcadeum Chess is a free, web-based multiplayer chess platform featuring Stockfish 19 NNUE engine analysis, 20 AI bot personalities, Chess960, live matchmaking, and puzzle tactics—playable instantly with zero downloads or account creation required.',
         category: 'Board Game',
         playersBadge: '2 Players',
         durationBadge: '10–30 min',
@@ -218,6 +220,46 @@ export default function ChessLanding({
         roomsHref,
         createRoomHref,
         heroVisual: <ChessLandingPreview />,
+      }}
+      specifications={{
+        title: 'Arcadeum Chess Technical Specifications',
+        kicker: 'Key Facts & Engine',
+        items: [
+          {
+            label: 'Engine',
+            value: 'Stockfish 19 NNUE',
+            badge: 'SFNNv16',
+            hint: '3500+ Elo rated strength',
+          },
+          {
+            label: 'Variants',
+            value: 'Standard & Chess960',
+            badge: 'Fischer Random',
+            hint: 'Full castling & 960 start positions',
+          },
+          {
+            label: 'Time Controls',
+            value: '1+0 to 14-day Daily',
+            hint: 'Bullet, Blitz, Rapid, Classical',
+          },
+          {
+            label: 'AI Bots',
+            value: '20 Personalities',
+            badge: '250–3200 Elo',
+            hint: 'From beginner to grandmaster',
+          },
+          {
+            label: 'Endgame Tablebases',
+            value: 'Syzygy 7-Piece',
+            hint: '100% theoretical endgame accuracy',
+          },
+          {
+            label: 'Cost & Access',
+            value: '100% Free · Zero Ads',
+            badge: 'No Signup',
+            hint: 'Instant room sharing & guest play',
+          },
+        ],
       }}
       highlights={{
         title: 'Built for Serious Chess Players',

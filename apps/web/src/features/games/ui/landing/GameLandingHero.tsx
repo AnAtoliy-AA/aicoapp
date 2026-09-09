@@ -15,6 +15,7 @@ export function GameLandingHero({
   eyebrow,
   subtitle,
   intro,
+  directAnswer,
   category,
   playersBadge,
   durationBadge,
@@ -84,6 +85,17 @@ export function GameLandingHero({
               <p className="box-border m-0 text-sm sm:text-base text-[var(--foreground)] opacity-85 leading-relaxed max-w-2xl">
                 {intro}
               </p>
+            ) : null}
+            {directAnswer ? (
+              <div className="box-border flex flex-col gap-1.5 p-4 rounded-2xl border border-[var(--primary)]/30 bg-[var(--primary)]/10 backdrop-blur-sm max-w-2xl">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+                  <span>✦</span>
+                  <span>Quick Overview</span>
+                </div>
+                <p className="m-0 text-sm font-medium text-[var(--foreground)] opacity-95 leading-relaxed">
+                  {directAnswer}
+                </p>
+              </div>
             ) : null}
           </div>
 

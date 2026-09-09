@@ -68,4 +68,5 @@ export * from './components/ProfileMenu';
 export * from './components/TableOfContents';
 export * from './components/AnimatedDice';
 export * from './components/InfiniteScroll';
+export * from './components/GameSpecTable';
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { GameSpecTableProps } from '@arcadeum/ui';
 
 export interface BreadcrumbItem {
   label: string;
@@ -27,6 +28,7 @@ export interface GameLandingHeroProps {
   eyebrow?: string;
   subtitle?: string;
   intro?: string;
+  directAnswer?: string;
   category?: string;
   playersBadge?: string;
   durationBadge?: string;
@@ -41,9 +43,7 @@ export interface GameLandingHeroProps {
   roomsHref: string;
   createRoomHref?: string;
   heroVisual?: ReactNode;
-  /** Initial shared theme id preselected on the hero preview + play CTAs. */
   initialTheme?: string;
-  /** Game disabled by admin — quickplay buttons are rendered disabled. */
   comingSoon?: boolean;
 }
 
@@ -181,6 +181,7 @@ export interface UnifiedGameLandingProps {
     | 'orange'
     | 'blue';
   hero: GameLandingHeroProps;
+  specifications?: GameSpecTableProps;
   highlights?: GameHighlightsGridProps;
   howToPlay?: {
     title?: string;
