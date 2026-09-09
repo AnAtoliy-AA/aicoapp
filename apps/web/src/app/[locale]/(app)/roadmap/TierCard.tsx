@@ -41,7 +41,7 @@ export function StatusBadge({ status }: { status: TierFeature['status'] }) {
       <Typography
         variant="caption"
         uiSize="xs"
-        alpha="medium"
+        alpha="high"
         className="text-[11px]"
       >
         {t('pages.roadmap.statusBadges.planned')}
@@ -115,7 +115,7 @@ export function TierCard({
                   </Typography>
                 </div>
               </div>
-              <Typography variant="caption" alpha="medium" className="text-xs">
+              <Typography variant="caption" alpha="high" className="text-xs">
                 {tier.effort}
               </Typography>
             </div>
@@ -177,7 +177,7 @@ export function TierCard({
                     <Typography
                       variant="body"
                       uiSize="sm"
-                      alpha="medium"
+                      alpha="high"
                       className="leading-relaxed"
                     >
                       {f.desc}
@@ -192,7 +192,7 @@ export function TierCard({
                   <Typography
                     variant="caption"
                     uiSize="xs"
-                    alpha="medium"
+                    alpha="high"
                     className="font-mono text-[11px]"
                   >
                     {f.effort}

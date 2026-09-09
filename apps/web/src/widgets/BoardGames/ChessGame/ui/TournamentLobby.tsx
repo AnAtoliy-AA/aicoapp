@@ -81,7 +81,7 @@ export function ChessTournamentLobby({
 
       {!isLoading && tournaments.length === 0 && (
         <GlassCard className="p-4 text-center">
-          <Typography variant="body" alpha="medium">
+          <Typography variant="body" alpha="high">
             {t?.noTournaments ?? 'No tournaments available yet.'}
           </Typography>
         </GlassCard>
@@ -125,7 +125,7 @@ export function ChessTournamentLobby({
 
       {completedTournaments.length > 0 && (
         <div className="flex flex-col gap-2">
-          <Typography variant="caption" alpha="medium" className="font-bold">
+          <Typography variant="caption" alpha="high" className="font-bold">
             {t?.completed ?? 'COMPLETED'}
           </Typography>
           {completedTournaments.map((tournament) => (

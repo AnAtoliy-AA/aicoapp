@@ -115,7 +115,7 @@ export default function DevelopersPageContent({
                       <Typography variant="heading" uiSize="md" weight="700">
                         {feat?.title}
                       </Typography>
-                      <Typography variant="body" uiSize="sm" alpha="medium">
+                      <Typography variant="body" uiSize="sm" alpha="high">
                         {feat?.description}
                       </Typography>
                     </div>
@@ -130,7 +130,7 @@ export default function DevelopersPageContent({
               <Typography variant="heading" uiSize="lg" weight="800">
                 {cta?.title ?? 'Start Building on Arcadeum'}
               </Typography>
-              <Typography variant="body" uiSize="sm" alpha="medium">
+              <Typography variant="body" uiSize="sm" alpha="high">
                 {cta?.description ??
                   'Explore our open-source tools or join fellow developers in our Discord channel.'}
               </Typography>

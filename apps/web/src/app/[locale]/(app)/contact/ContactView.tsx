@@ -175,7 +175,7 @@ export default function ContactView({
                   />
                   {hero?.eyebrow ?? 'Player support'}
                 </span>
-                <Typography variant="caption" alpha="medium">
+                <Typography variant="caption" alpha="high">
                   arcadeum.games / contact
                 </Typography>
               </div>

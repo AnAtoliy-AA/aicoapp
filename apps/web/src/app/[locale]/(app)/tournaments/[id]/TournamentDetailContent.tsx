@@ -131,7 +131,7 @@ export default function TournamentDetailContent({
               className="flex flex-col items-start gap-2 p-5"
               data-testid="bracket-error"
             >
-              <Typography variant="body" alpha="medium">
+              <Typography variant="body" alpha="high">
                 {error.message}
               </Typography>
             </div>
@@ -142,7 +142,7 @@ export default function TournamentDetailContent({
               className="flex flex-col items-center p-5"
               data-testid="bracket-empty"
             >
-              <Typography variant="body" alpha="medium">
+              <Typography variant="body" alpha="high">
                 {bracketT?.empty ?? t?.comingSoon}
               </Typography>
             </div>

@@ -182,7 +182,7 @@ export function RoadmapFeaturesTable({ tiers }: { tiers: Tier[] }) {
                   <Typography
                     variant="body"
                     uiSize="sm"
-                    alpha="medium"
+                    alpha="high"
                     className="leading-relaxed line-clamp-2"
                   >
                     {f.desc}

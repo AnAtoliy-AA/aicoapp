@@ -91,7 +91,7 @@ export function RoadmapPhaseTimeline({
                 <Typography
                   variant="body"
                   uiSize="sm"
-                  alpha="medium"
+                  alpha="high"
                   className="leading-relaxed"
                 >
                   {p.features}
@@ -119,7 +119,7 @@ export function RoadmapPhaseTimeline({
                 >
                   {p.days}
                 </Typography>
-                <Typography variant="caption" uiSize="xs" alpha="medium">
+                <Typography variant="caption" uiSize="xs" alpha="high">
                   {t('pages.roadmap.timeline.daysEst')}
                 </Typography>
               </div>

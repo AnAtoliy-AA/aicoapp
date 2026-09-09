@@ -29,7 +29,7 @@ export default async function ChatRoute({
       <Suspense
         fallback={
           <div className="flex flex-col p-7 items-center">
-            <Typography uiSize="md" alpha="medium">
+            <Typography uiSize="md" alpha="high">
               Loading...
             </Typography>
           </div>

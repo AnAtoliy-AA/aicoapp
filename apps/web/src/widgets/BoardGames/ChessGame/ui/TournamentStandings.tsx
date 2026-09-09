@@ -85,7 +85,7 @@ export function TournamentStandings({
       )}
 
       {!isLoading && standings.length === 0 && (
-        <Typography variant="body" alpha="medium" className="text-center p-2">
+        <Typography variant="body" alpha="high" className="text-center p-2">
           No standings yet.
         </Typography>
       )}

@@ -144,7 +144,7 @@ export function AdminStatisticsView({
                 {t?.title ?? 'Platform Analytics & Statistics'}
               </PageTitle>
             </div>
-            <Typography variant="body" uiSize="md" alpha="medium">
+            <Typography variant="body" uiSize="md" alpha="high">
               {t?.subtitle ??
                 'Real-time intelligence on MAU, DAU, engagement retention, playtime, and treasury flow'}
             </Typography>

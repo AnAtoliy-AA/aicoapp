@@ -50,7 +50,7 @@ export function AdminShopTable({
         className="flex flex-col items-center justify-center p-8 border border-[var(--borderColor)]"
         data-testid="admin-shop-empty"
       >
-        <Typography variant="body" uiSize="md" alpha="medium">
+        <Typography variant="body" uiSize="md" alpha="high">
           {labels.empty}
         </Typography>
       </GlassCard>

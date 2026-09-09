@@ -1,3 +1,5 @@
+export const revalidate = 300;
+
 import { buildPageMetadata } from '@/shared/seo/buildPageMetadata';
 import { PageBreadcrumb } from '@/shared/seo/PageBreadcrumb';
 import { isLocale } from '@/shared/i18n';

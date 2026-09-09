@@ -235,7 +235,7 @@ export default function BlogPageContent({
 
               {filteredPosts.length === 0 ? (
                 <GlassCard className="p-8 text-center">
-                  <Typography variant="body" uiSize="md" alpha="medium">
+                  <Typography variant="body" uiSize="md" alpha="high">
                     No articles found matching your query.
                   </Typography>
                 </GlassCard>
@@ -275,7 +275,7 @@ export default function BlogPageContent({
                           <Typography
                             variant="body"
                             uiSize="sm"
-                            alpha="medium"
+                            alpha="high"
                             className="line-clamp-3 leading-relaxed"
                           >
                             {post.excerpt}
@@ -307,7 +307,7 @@ export default function BlogPageContent({
                   <Typography variant="heading" uiSize="lg" weight="800">
                     {newsletter.title}
                   </Typography>
-                  <Typography variant="body" uiSize="sm" alpha="medium">
+                  <Typography variant="body" uiSize="sm" alpha="high">
                     {newsletter.subtitle}
                   </Typography>
                 </div>
@@ -344,7 +344,7 @@ export default function BlogPageContent({
                 <Typography variant="heading" uiSize="lg" weight="800">
                   {cta.title}
                 </Typography>
-                <Typography variant="body" uiSize="sm" alpha="medium">
+                <Typography variant="body" uiSize="sm" alpha="high">
                   {cta.description}
                 </Typography>
               </div>

@@ -48,14 +48,14 @@ export function RoadmapHero({ stats }: { stats: RoadmapData['stats'] }) {
         <Typography
           variant="body"
           uiSize="md"
-          alpha="medium"
+          alpha="high"
           className="max-w-2xl leading-relaxed"
         >
           {t('pages.roadmap.subtitle')}
         </Typography>
 
         <div className="self-start px-3 py-1 rounded-full bg-[var(--bgCard)]/80 border border-[var(--glassBorder)]">
-          <Typography variant="caption" uiSize="xs" alpha="medium">
+          <Typography variant="caption" uiSize="xs" alpha="high">
             {t('pages.roadmap.canonicalNotice')}
           </Typography>
         </div>
@@ -129,7 +129,7 @@ export function RoadmapHero({ stats }: { stats: RoadmapData['stats'] }) {
                 <Typography
                   variant="caption"
                   uiSize="xs"
-                  alpha="medium"
+                  alpha="high"
                   className="truncate"
                 >
                   {stat.label}

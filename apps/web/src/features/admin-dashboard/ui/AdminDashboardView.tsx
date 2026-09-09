@@ -252,7 +252,7 @@ export function AdminDashboardView({ data, t }: AdminDashboardViewProps) {
             <PageTitle size="lg" gradient>
               {t?.title ?? 'Command Center'}
             </PageTitle>
-            <Typography variant="body" uiSize="md" alpha="medium">
+            <Typography variant="body" uiSize="md" alpha="high">
               {t?.subtitle ??
                 'System health, key metrics, and administrative modules overview'}
             </Typography>
@@ -329,7 +329,7 @@ export function AdminDashboardView({ data, t }: AdminDashboardViewProps) {
           >
             {t?.modulesTitle ?? 'Administrative Modules'}
           </Typography>
-          <Typography variant="body" uiSize="sm" alpha="medium">
+          <Typography variant="body" uiSize="sm" alpha="high">
             {t?.modulesSubtitle ??
               'Direct access to manage games, players, transactions, and security'}
           </Typography>
@@ -373,7 +373,7 @@ export function AdminDashboardView({ data, t }: AdminDashboardViewProps) {
                     <Typography
                       variant="body"
                       uiSize="xs"
-                      alpha="medium"
+                      alpha="high"
                       className="line-clamp-2"
                     >
                       {mod.description}
