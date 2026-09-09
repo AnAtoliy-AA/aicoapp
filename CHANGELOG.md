@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.5] - 2026-09-09
+
+### Added
+- add move preview warnings for captures and self-atari
+
+
 ## [1.29.4] - 2026-09-09
 
 ### Added
