@@ -13,12 +13,6 @@ export function HomeLivePulse() {
 
   useEffect(() => {
     void fetchLiveStats();
-    const interval = setInterval(() => {
-      void fetchLiveStats();
-    }, 30_000);
-    return () => {
-      clearInterval(interval);
-    };
   }, [fetchLiveStats]);
 
   return (

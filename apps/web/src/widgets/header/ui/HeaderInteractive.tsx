@@ -46,7 +46,11 @@ const NotificationBell = dynamic(
   { ssr: false },
 );
 import LanguageSwitcher from '@/widgets/header/ui/LanguageSwitcher';
-import { LivePulseBadge, LiveActivityPopover } from '@/features/live-stats';
+import {
+  LivePulseBadge,
+  LiveActivityPopover,
+  useLiveStatsWs,
+} from '@/features/live-stats';
 
 import {
   DesktopOnly,
@@ -78,6 +82,8 @@ export function HeaderInteractive({
     useMobileMenu();
   const pendingFriendCount = usePendingFriendRequestCount();
   const { snapshot } = useSessionTokens();
+
+  useLiveStatsWs();
 
   useEffect(() => {
     if (!isAuthenticated) return;
