@@ -315,3 +315,5 @@ export function renderOgCard(opts: RenderOpts): ImageResponse {
     { ...OG_SIZE },
   );
 }
+
+export { renderGameOgCard, type GameOgCardOpts } from './renderGameOgCard';

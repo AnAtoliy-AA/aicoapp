@@ -19,6 +19,7 @@ interface Props {
   cycleHintKey?: TranslationKey;
   cycleAriaLabelKey?: TranslationKey;
   themeNames?: Partial<Record<string, string>>;
+  interactive?: boolean;
   className?: string;
   testId?: string;
 }
@@ -44,6 +45,7 @@ export function GameLandingPreview({
   cycleHintKey = 'games.landing.cycleHint',
   cycleAriaLabelKey = 'games.landing.cycleAriaLabel',
   themeNames,
+  interactive = false,
   className,
   testId,
 }: Props) {
@@ -64,15 +66,21 @@ export function GameLandingPreview({
         className,
       )}
     >
-      <button
-        type="button"
-        onClick={cycleTheme}
-        aria-label={resolvedAria}
-        data-testid={testId}
-        className="box-border inline-block cursor-pointer rounded-md transition-transform duration-200 ease-out hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--primary)]"
-      >
-        {render(theme)}
-      </button>
+      {interactive ? (
+        <div data-testid={testId} className="box-border inline-block w-full">
+          {render(theme)}
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={cycleTheme}
+          aria-label={resolvedAria}
+          data-testid={testId}
+          className="box-border inline-block cursor-pointer rounded-md transition-transform duration-200 ease-out hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--primary)]"
+        >
+          {render(theme)}
+        </button>
+      )}
 
       <p className="box-border m-0 mt-3 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--textSecondary)] select-none">
         <span

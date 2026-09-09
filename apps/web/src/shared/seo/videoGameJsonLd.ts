@@ -16,19 +16,15 @@ interface BuildVideoGameJsonLdInput {
   alternateName?: string[];
   /** Locale to render breadcrumbs in. */
   locale: Locale;
-  /** Display strings for the breadcrumb. */
   breadcrumb: {
     home: string;
     games: string;
     game: string;
   };
+  featureList?: string[];
+  screenshot?: string;
 }
 
-/**
- * Build a VideoGame + BreadcrumbList structured data block for a game
- * detail page. Matches the schema Google uses to render game rich
- * results in SERPs.
- */
 export function buildVideoGameJsonLd({
   gameId,
   gameName,
@@ -37,12 +33,16 @@ export function buildVideoGameJsonLd({
   maxPlayers = 6,
   genre = 'Strategy',
   alternateName,
+  featureList,
+  screenshot,
   locale,
   breadcrumb,
 }: BuildVideoGameJsonLdInput): Record<string, unknown>[] {
   const routes = buildRoutes(locale);
   const pageUrl = `${appConfig.siteUrl}${routes.gameDetail(gameId)}`;
-  const image = `${appConfig.siteUrl}/logo.png`;
+  const image =
+    screenshot ??
+    `${appConfig.siteUrl}/${locale}/games/${gameId.replace(/_v\d+$/, '')}/opengraph-image`;
 
   return [
     {
@@ -54,7 +54,8 @@ export function buildVideoGameJsonLd({
       url: pageUrl,
       image,
       genre,
-      gamePlatform: ['Web Browser'],
+      inLanguage: locale,
+      gamePlatform: ['Web Browser', 'Desktop', 'Mobile'],
       operatingSystem: 'Any',
       applicationCategory: 'GameApplication',
       playMode: ['MultiPlayer', 'SinglePlayer'],
@@ -67,6 +68,7 @@ export function buildVideoGameJsonLd({
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
       },
       publisher: {
         '@type': 'Organization',
@@ -77,6 +79,7 @@ export function buildVideoGameJsonLd({
         '@type': 'WebPage',
         url: `${appConfig.siteUrl}${routes.support}`,
       },
+      ...(featureList && featureList.length > 0 ? { featureList } : {}),
     },
     {
       '@context': 'https://schema.org',

@@ -1,0 +1,183 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { Button } from '@arcadeum/ui';
+import styles from './ChessLanding.module.scss';
+
+type BoardState = Array<Array<string | null>>;
+
+const PUZZLE_START_BOARD: BoardState = [
+  ['r', null, null, null, 'r', null, 'k', null],
+  ['p', 'p', 'p', null, null, 'p', 'p', 'p'],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, 'Q', null],
+  [null, null, null, null, null, null, null, null],
+  ['P', 'P', 'P', null, null, 'P', 'P', 'P'],
+  [null, null, null, 'R', null, null, null, 'K'],
+];
+
+const PUZZLE_SOLVED_BOARD: BoardState = [
+  ['r', null, null, null, 'r', null, 'k', null],
+  ['p', 'p', 'p', null, null, 'Q', 'p', 'p'],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  ['P', 'P', 'P', null, null, 'P', 'P', 'P'],
+  [null, null, null, 'R', null, null, null, 'K'],
+];
+
+const PIECE_GLYPHS: Record<string, string> = {
+  K: '♔',
+  Q: '♕',
+  R: '♖',
+  B: '♗',
+  N: '♘',
+  P: '♙',
+  k: '♚',
+  q: '♛',
+  r: '♜',
+  b: '♝',
+  n: '♞',
+  p: '♟',
+};
+
+interface ChessPuzzleTeaserProps {
+  playHref: string;
+}
+
+export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
+  const [isSolved, setIsSolved] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+
+  const handleSolve = () => {
+    setIsSolved(true);
+  };
+
+  const handleReset = () => {
+    setIsSolved(false);
+    setShowHint(false);
+  };
+
+  const currentBoard = isSolved ? PUZZLE_SOLVED_BOARD : PUZZLE_START_BOARD;
+
+  return (
+    <section
+      data-testid="chess-puzzle-teaser"
+      className="relative overflow-hidden rounded-[24px] border border-[var(--glassBorder)] bg-[var(--glassBg)] p-6 sm:p-8 backdrop-blur-md"
+    >
+      <header className="mb-6 flex flex-col gap-1.5">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+          Tactics of the Day
+        </span>
+        <h3 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
+          Solve the Daily Chess Puzzle
+        </h3>
+        <p className="m-0 text-sm text-[var(--foreground)] opacity-75 max-w-2xl">
+          Test your tactical sharpness. White to move — find the devastating
+          decisive sequence.
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <div className="md:col-span-6 flex flex-col items-center">
+          <div
+            aria-label="Puzzle Chess Board"
+            className={styles.boardContainer}
+          >
+            {currentBoard.map((row, rowIdx) =>
+              row.map((cell, colIdx) => {
+                const isLight = (rowIdx + colIdx) % 2 === 0;
+                const isSolutionTarget = rowIdx === 1 && colIdx === 5;
+
+                return (
+                  <button
+                    type="button"
+                    key={`${rowIdx}-${colIdx}`}
+                    onClick={
+                      isSolutionTarget && !isSolved ? handleSolve : undefined
+                    }
+                    className={`${isLight ? styles.squareLight : styles.squareDark} ${
+                      isSolved && isSolutionTarget
+                        ? styles.squareMoved
+                        : showHint && isSolutionTarget
+                          ? styles.squareSelectable
+                          : ''
+                    }`}
+                  >
+                    {cell ? PIECE_GLYPHS[cell] : ''}
+                  </button>
+                );
+              }),
+            )}
+          </div>
+        </div>
+
+        <div className="md:col-span-6 flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-[var(--primary)]/15 px-3 py-1 text-xs font-bold text-[var(--primary)]">
+              White to Move
+            </span>
+            <span className="rounded-full bg-[var(--surfaceBackground)] px-3 py-1 text-xs font-medium text-[var(--foreground)] opacity-75">
+              Rating: 1750
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2 rounded-xl border border-[var(--borderColor)] bg-[var(--surfaceBackground)]/40 p-4">
+            {isSolved ? (
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm font-bold text-[var(--success,#22c55e)]">
+                  Brilliant!! 1. Qxf7+!
+                </span>
+                <p className="m-0 text-xs text-[var(--foreground)] opacity-85 leading-relaxed">
+                  Queen penetrates the vulnerable f7 square with check,
+                  deflecting the black king or forcing checkmate with the
+                  back-rank rook invasion!
+                </p>
+              </div>
+            ) : showHint ? (
+              <p className="m-0 text-xs text-[var(--foreground)] opacity-85 leading-relaxed">
+                Hint: Look at the weak f7 pawn protected only by the black king,
+                and your rook controlling the d-file!
+              </p>
+            ) : (
+              <p className="m-0 text-xs text-[var(--foreground)] opacity-75 leading-relaxed">
+                Click on the winning square (f7) or use the buttons below to
+                test your solution.
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2.5">
+            {!isSolved ? (
+              <>
+                <Button variant="primary" size="sm" onClick={handleSolve}>
+                  Solve Move (1. Qxf7+)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowHint(!showHint)}
+                >
+                  {showHint ? 'Hide Hint' : 'Show Hint'}
+                </Button>
+              </>
+            ) : (
+              <Button variant="secondary" size="sm" onClick={handleReset}>
+                Reset Puzzle
+              </Button>
+            )}
+
+            <Link href={playHref} className="inline-flex">
+              <Button variant="victory" size="sm">
+                Play Puzzle Rush ➔
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
