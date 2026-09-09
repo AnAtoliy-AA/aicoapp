@@ -329,6 +329,8 @@ export const enMessages = {
     findOpponent: 'Find Opponent',
     findOpponentHint: 'Join the queue to find a real opponent',
     alsoSearching: 'Players also searching in',
+    friendsSearching: 'Friends looking for opponent',
+    friendsInOtherGames: 'Friends in other games',
   },
   ranking: {
     ratingUpdated: 'Rating updated',

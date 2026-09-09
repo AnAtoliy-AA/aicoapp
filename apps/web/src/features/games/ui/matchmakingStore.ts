@@ -10,6 +10,7 @@ export interface MatchmakingStatus {
   estimatedWaitSeconds: number;
   activeQueues?: Record<string, number>;
   openRoomsCount?: number;
+  friendsInQueue?: Array<{ userId: string; gameId: string; rating?: number }>;
 }
 
 export interface MatchmakingState {
@@ -20,6 +21,7 @@ export interface MatchmakingState {
   ranked: boolean | null;
   startTime: number | null;
   activeQueues: Record<string, number>;
+  friendsInQueue: Array<{ userId: string; gameId: string; rating?: number }>;
   startQueue: (gameId: string, variant?: string, ranked?: boolean) => void;
   stopQueue: () => void;
   setMinimized: (minimized: boolean) => void;
@@ -34,6 +36,7 @@ export const useMatchmakingStore = create<MatchmakingState>((set) => ({
   ranked: null,
   startTime: null,
   activeQueues: {},
+  friendsInQueue: [],
   startQueue: (gameId, variant, ranked) => {
     set({
       isQueued: true,
@@ -43,6 +46,7 @@ export const useMatchmakingStore = create<MatchmakingState>((set) => ({
       ranked: ranked ?? null,
       startTime: Date.now(),
       activeQueues: {},
+      friendsInQueue: [],
     });
   },
   stopQueue: () => {
@@ -54,12 +58,16 @@ export const useMatchmakingStore = create<MatchmakingState>((set) => ({
       ranked: null,
       startTime: null,
       activeQueues: {},
+      friendsInQueue: [],
     });
   },
   setMinimized: (minimized) => {
     set({ isMinimized: minimized });
   },
   setStatus: (status) => {
-    set({ activeQueues: status.activeQueues ?? {} });
+    set({
+      activeQueues: status.activeQueues ?? {},
+      friendsInQueue: status.friendsInQueue ?? [],
+    });
   },
 }));

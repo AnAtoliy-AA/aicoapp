@@ -334,6 +334,8 @@ export const esMessages = {
     findOpponent: 'Encontrar oponente',
     findOpponentHint: 'Únete a la cola para encontrar un oponente real',
     alsoSearching: 'Jugadores también buscando en',
+    friendsSearching: 'Amigos buscando oponente',
+    friendsInOtherGames: 'Amigos en otros juegos',
   },
   ranking: {
     ratingUpdated: 'Rating actualizado',

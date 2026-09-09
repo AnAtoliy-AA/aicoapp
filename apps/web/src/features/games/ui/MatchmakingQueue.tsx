@@ -15,6 +15,7 @@ import {
   trackSocialQuickplayStarted,
 } from '@/shared/analytics/funnel';
 import { gamesApi } from '@/features/games/api';
+import { useRankingStore } from '@/features/ranking/store/rankingStore';
 import {
   useMatchmakingStore,
   type MatchmakingStatus,
@@ -27,6 +28,7 @@ export function useMatchmaking() {
   const { snapshot } = useSessionTokens();
   const router = useRouter();
   const routes = useRoutes();
+  const ratings = useRankingStore((s) => s.ratings);
 
   const isQueued = useMatchmakingStore((s) => s.isQueued);
   const isMinimized = useMatchmakingStore((s) => s.isMinimized);
@@ -35,6 +37,7 @@ export function useMatchmaking() {
   const ranked = useMatchmakingStore((s) => s.ranked);
   const startTime = useMatchmakingStore((s) => s.startTime);
   const activeQueues = useMatchmakingStore((s) => s.activeQueues);
+  const friendsInQueue = useMatchmakingStore((s) => s.friendsInQueue);
   const startQueue = useMatchmakingStore((s) => s.startQueue);
   const stopQueue = useMatchmakingStore((s) => s.stopQueue);
   const setMinimized = useMatchmakingStore((s) => s.setMinimized);
@@ -51,6 +54,8 @@ export function useMatchmaking() {
       }
       if (!userId) return;
 
+      const userRating = ratings[targetGameId]?.elo;
+
       startQueue(targetGameId, targetVariant, isRanked);
       trackSocialMatchmakingJoined(targetGameId);
       void emitEncrypted(gameSocket, 'games.matchmaking.join', {
@@ -58,9 +63,10 @@ export function useMatchmaking() {
         gameId: targetGameId,
         variant: targetVariant,
         ranked: isRanked,
+        rating: userRating,
       });
     },
-    [snapshot.userId, startQueue],
+    [snapshot.userId, ratings, startQueue],
   );
 
   const leaveQueue = useCallback(async () => {
@@ -109,6 +115,7 @@ export function useMatchmaking() {
     ranked,
     startTime,
     activeQueues,
+    friendsInQueue,
     joinQueue,
     leaveQueue,
     setMinimized,
@@ -126,6 +133,7 @@ export function MatchmakingQueueModal() {
     isMinimized,
     gameId,
     activeQueues,
+    friendsInQueue,
     leaveQueue,
     joinQueue,
     setMinimized,
@@ -133,6 +141,7 @@ export function MatchmakingQueueModal() {
     switchGame,
     startTime,
   } = useMatchmaking();
+  const ratings = useRankingStore((s) => s.ratings);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -202,6 +211,9 @@ export function MatchmakingQueueModal() {
     ([id, count]) => id !== gameId && count > 0,
   );
 
+  const friendsInThisGame = friendsInQueue.filter((f) => f.gameId === gameId);
+  const friendsInOtherGames = friendsInQueue.filter((f) => f.gameId !== gameId);
+
   if (isMinimized) {
     return createPortal(
       <MatchmakingFloatingBar
@@ -225,9 +237,16 @@ export function MatchmakingQueueModal() {
         className="fixed left-1/2 top-1/2 z-[1300] w-[92%] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[var(--background)] shadow-2xl overflow-hidden"
       >
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--borderColor)]">
-          <span className="text-sm font-semibold text-[var(--foreground)]">
-            {gameLabel && <span className="capitalize">{gameLabel}</span>}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-[var(--foreground)]">
+              {gameLabel && <span className="capitalize">{gameLabel}</span>}
+            </span>
+            {gameId && ratings[gameId] && (
+              <span className="rounded-md bg-[var(--primary)]/10 px-2 py-0.5 text-[11px] font-bold text-[var(--primary)]">
+                {ratings[gameId].elo}
+              </span>
+            )}
+          </div>
           <button
             type="button"
             onClick={() => setMinimized(true)}
@@ -260,6 +279,58 @@ export function MatchmakingQueueModal() {
           >
             {formatTime(elapsed)}
           </p>
+
+          {friendsInThisGame.length > 0 && (
+            <div className="w-full flex flex-col gap-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-400 text-center">
+                {t('games.matchmaking.friendsSearching')}
+              </span>
+              <div className="flex flex-wrap justify-center gap-1.5">
+                {friendsInThisGame.map((f) => (
+                  <span
+                    key={f.userId}
+                    className="flex items-center gap-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-300"
+                  >
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                    </span>
+                    {f.userId.slice(0, 8)}
+                    {f.rating !== undefined && (
+                      <span className="text-emerald-400/60">{f.rating}</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {friendsInOtherGames.length > 0 && (
+            <div className="w-full flex flex-col gap-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-[var(--textSecondary)] text-center">
+                {t('games.matchmaking.friendsInOtherGames')}
+              </span>
+              <div className="flex flex-wrap justify-center gap-1.5">
+                {friendsInOtherGames.map((f) => {
+                  const label = f.gameId.replace('_v1', '').replace(/_/g, ' ');
+                  return (
+                    <button
+                      key={f.userId}
+                      type="button"
+                      onClick={() => switchGame(f.gameId)}
+                      className="flex items-center gap-1.5 rounded-lg bg-[var(--backgroundHover)] border border-[var(--borderColor)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--borderColor)]"
+                    >
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                      </span>
+                      <span className="capitalize">{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {otherGames.length > 0 && (
             <div className="w-full flex flex-col gap-2">

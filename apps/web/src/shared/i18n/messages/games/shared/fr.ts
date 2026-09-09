@@ -337,6 +337,8 @@ export const frMessages = {
     findOpponent: 'Trouver un adversaire',
     findOpponentHint: 'Rejoignez la file pour trouver un vrai adversaire',
     alsoSearching: 'Joueurs aussi à la recherche dans',
+    friendsSearching: 'Amis à la recherche d\u2019un adversaire',
+    friendsInOtherGames: 'Amis dans d\u2019autres jeux',
   },
   ranking: {
     ratingUpdated: 'Classement mis à jour',

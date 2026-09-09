@@ -329,6 +329,8 @@ export const byMessages = {
     findOpponent: 'Знайсці суперніка',
     findOpponentHint: 'Далучайцеся да чаргі, каб знайсці рэальнага суперніка',
     alsoSearching: 'Гульцы таксама шукаюць у',
+    friendsSearching: 'Сябры шукаюць суперніка',
+    friendsInOtherGames: 'Сябры ў іншых гульнях',
   },
   ranking: {
     ratingUpdated: 'Рэйтынг абноўлены',

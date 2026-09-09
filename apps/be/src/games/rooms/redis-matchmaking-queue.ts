@@ -7,6 +7,7 @@ export interface RedisQueueEntry {
   gameId: string;
   variant?: string;
   ranked?: boolean;
+  rating?: number;
   ip?: string;
   timestamp: number;
 }
@@ -14,6 +15,9 @@ export interface RedisQueueEntry {
 const QUEUE_PREFIX = 'mm:queue:';
 const QUEUE_INDEX_PREFIX = 'mm:queue:index';
 const ENTRY_TTL_SECONDS = 60;
+const RATING_RANGE_INITIAL = 100;
+const RATING_RANGE_EXPAND = 50;
+const RATING_RANGE_MAX = 300;
 
 /**
  * Redis-backed matchmaking queue for horizontal scaling.
@@ -34,6 +38,7 @@ export class RedisMatchmakingQueue {
       gameId: entry.gameId,
       variant: entry.variant,
       ranked: entry.ranked,
+      rating: entry.rating,
       ip: entry.ip,
       timestamp: entry.timestamp,
     };
@@ -75,13 +80,37 @@ export class RedisMatchmakingQueue {
     excludeUserId: string,
     ip?: string,
     isProd = false,
+    myRating?: number,
   ): Promise<QueueEntry | null> {
     const key = this.queueKey(gameId, variant, ranked);
     const members = await redis.zrange(key, 0, -1);
     if (members.length === 0) return null;
 
-    for (const member of members) {
-      const entry = JSON.parse(member) as RedisQueueEntry;
+    const entries = members.map((m) => JSON.parse(m) as RedisQueueEntry);
+
+    // Rating-based matching: prefer same rating, then expand window
+    if (myRating !== undefined) {
+      const ratedEntries = entries.filter((e) => e.rating !== undefined);
+      if (ratedEntries.length > 0) {
+        // Try to find a match within expanding rating window
+        for (
+          let range = RATING_RANGE_INITIAL;
+          range <= RATING_RANGE_MAX;
+          range += RATING_RANGE_EXPAND
+        ) {
+          const match = ratedEntries.find((e) => {
+            if (e.userId === excludeUserId) return false;
+            if (isProd && ip && e.ip && ip === e.ip) return false;
+            const diff = Math.abs((e.rating ?? 1200) - myRating);
+            return diff <= range;
+          });
+          if (match) return { ...match, timeoutId: undefined };
+        }
+      }
+    }
+
+    // Fallback: first-come-first-served (no rating or no rated matches)
+    for (const entry of entries) {
       if (entry.userId === excludeUserId) continue;
       if (isProd && ip && entry.ip && ip === entry.ip) continue;
       return { ...entry, timeoutId: undefined };
@@ -152,5 +181,43 @@ export class RedisMatchmakingQueue {
     const key = this.queueKey(gameId, variant, ranked);
     const members = await redis.zrange(key, 0, -1);
     return members.map((m) => (JSON.parse(m) as RedisQueueEntry).userId);
+  }
+
+  async getAllQueuedUserIds(redis: Redis): Promise<string[]> {
+    const keys = await redis.keys(`${QUEUE_PREFIX}*`);
+    const userIds = new Set<string>();
+    for (const key of keys) {
+      const members = await redis.zrange(key, 0, -1);
+      for (const m of members) {
+        userIds.add((JSON.parse(m) as RedisQueueEntry).userId);
+      }
+    }
+    return [...userIds];
+  }
+
+  async getQueuedFriends(
+    redis: Redis,
+    friendIds: string[],
+  ): Promise<Array<{ userId: string; gameId: string; rating?: number }>> {
+    if (friendIds.length === 0) return [];
+    const keys = await redis.keys(`${QUEUE_PREFIX}*`);
+    const results: Array<{ userId: string; gameId: string; rating?: number }> =
+      [];
+    const friendSet = new Set(friendIds);
+
+    for (const key of keys) {
+      const members = await redis.zrange(key, 0, -1);
+      for (const m of members) {
+        const entry = JSON.parse(m) as RedisQueueEntry;
+        if (friendSet.has(entry.userId)) {
+          results.push({
+            userId: entry.userId,
+            gameId: entry.gameId,
+            rating: entry.rating,
+          });
+        }
+      }
+    }
+    return results;
   }
 }

@@ -450,6 +450,8 @@ export const ruMessages = {
     findOpponentHint:
       'Присоединяйтесь к очереди, чтобы найти реального соперника',
     alsoSearching: 'Также ищут в',
+    friendsSearching: 'Друзья ищут соперника',
+    friendsInOtherGames: 'Друзья в других играх',
   },
   ranking: {
     ratingUpdated: 'Рейтинг обновлён',
