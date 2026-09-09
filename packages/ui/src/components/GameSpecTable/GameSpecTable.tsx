@@ -42,9 +42,9 @@ export function GameSpecTable({
             </span>
           ) : null}
           {title ? (
-            <h3 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
+            <h2 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
               {title}
-            </h3>
+            </h2>
           ) : null}
         </header>
       ) : null}
@@ -55,7 +55,7 @@ export function GameSpecTable({
             key={item.label}
             className="flex flex-col gap-1.5 rounded-xl border border-[var(--borderColor)] bg-[var(--surfaceBackground)]/40 p-4 transition-colors hover:border-[var(--primary)]/50"
           >
-            <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--foreground)] opacity-70">
+            <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--foreground)] opacity-85">
               {item.icon ? (
                 <span className="text-base text-[var(--primary)]" aria-hidden="true">
                   {item.icon}
@@ -72,7 +72,7 @@ export function GameSpecTable({
               {item.value}
             </dd>
             {item.hint ? (
-              <span className="text-xs text-[var(--foreground)] opacity-60 leading-normal">
+              <span className="text-xs text-[var(--foreground)] opacity-80 leading-normal">
                 {item.hint}
               </span>
             ) : null}
