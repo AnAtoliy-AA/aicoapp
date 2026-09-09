@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { readFileSync } = require('node:fs');
 const { resolve } = require('node:path');
 
