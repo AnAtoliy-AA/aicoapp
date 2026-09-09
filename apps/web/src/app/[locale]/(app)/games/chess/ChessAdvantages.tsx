@@ -28,7 +28,7 @@ export function ChessAdvantages({ advantages }: Props) {
   return (
     <section className="py-12">
       <div className="flex flex-col gap-2 mb-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
           {advantages.kicker}
         </span>
         <h2 className="m-0 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--foreground)]">

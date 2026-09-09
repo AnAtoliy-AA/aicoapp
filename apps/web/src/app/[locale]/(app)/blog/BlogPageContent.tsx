@@ -109,7 +109,7 @@ export default function BlogPageContent({
             <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[var(--gold)] opacity-10 blur-3xl" />
 
             <div className="relative z-10 flex flex-col items-start gap-4 md:max-w-3xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--glassBorder)] bg-[var(--glassBg)] px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--glassBorder)] bg-[var(--glassBg)] px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color)]">
                 📰 {blog?.subtitle ?? 'Guides, Updates & Stories'}
               </span>
               <PageTitle size="xl" gradient>

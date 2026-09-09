@@ -55,7 +55,7 @@ export function RoadmapPhaseTimeline({
                 <div className="flex flex-wrap items-center gap-2">
                   <div className="px-2.5 py-0.5 rounded-full bg-[var(--primary)]/15 border border-[var(--primary)]/30 flex items-center justify-center shrink-0">
                     <Typography
-                      className="font-bold text-[var(--primary)] text-xs font-mono"
+                      className="font-bold text-[var(--color)] text-xs font-mono"
                       variant="caption"
                       uiSize="xs"
                     >

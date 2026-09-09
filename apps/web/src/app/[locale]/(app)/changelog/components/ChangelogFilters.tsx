@@ -114,7 +114,7 @@ export function ChangelogFilters({
             variant="link"
             size="sm"
             onClick={onClearFilters}
-            className="text-xs text-[var(--primary)] p-0 h-auto"
+            className="text-xs text-[var(--color)] p-0 h-auto"
           >
             {t('pages.changelog.filters.clearFilters')}
           </Button>

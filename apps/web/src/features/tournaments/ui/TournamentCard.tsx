@@ -185,7 +185,7 @@ export function TournamentCard({
 
       <Link
         href={`/tournaments/${encodeURIComponent(item.id)}`}
-        className="self-start text-[12px] font-bold text-[var(--primary)] underline-offset-2 hover:underline"
+        className="self-start text-[12px] font-bold text-[var(--color)] underline-offset-2 hover:underline"
         data-testid={`view-bracket-${item.id}`}
       >
         {labels.viewBracket} →

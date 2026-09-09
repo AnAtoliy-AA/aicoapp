@@ -142,7 +142,7 @@ export function GameThemesShowcase({
     <section className="box-border flex flex-col gap-6 py-8">
       <div className="box-border flex flex-col gap-1">
         {kicker ? (
-          <span className="box-border text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+          <span className="box-border text-xs font-bold uppercase tracking-wider text-[var(--color)]">
             {kicker}
           </span>
         ) : null}
@@ -234,7 +234,7 @@ export function GameThemesShowcase({
                         Previewing
                       </span>
                     ) : theme.tag ? (
-                      <span className="box-border text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[var(--primary)]/10 text-[var(--primary)]">
+                      <span className="box-border text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[var(--primary)]/10 text-[var(--color)]">
                         {theme.tag}
                       </span>
                     ) : null}
@@ -255,7 +255,7 @@ export function GameThemesShowcase({
                       e.stopPropagation();
                       setTheme(theme.id);
                     }}
-                    className="box-border text-xs font-semibold text-[var(--primary)] hover:underline inline-flex items-center gap-1 no-underline"
+                    className="box-border text-xs font-semibold text-[var(--color)] hover:underline inline-flex items-center gap-1 no-underline"
                   >
                     {createRoomLabel} →
                   </Link>

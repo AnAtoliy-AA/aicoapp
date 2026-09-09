@@ -131,7 +131,7 @@ export default async function GamesCatalogRoute({ params }: PageProps) {
           <div className="box-border relative flex flex-col gap-8 py-8 sm:py-12">
             {/* Header / Intro */}
             <div className="box-border flex flex-col items-center text-center gap-4 max-w-3xl mx-auto">
-              <span className="box-border px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20 shadow-sm">
+              <span className="box-border px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[var(--primary)]/10 text-[var(--color)] border border-[var(--primary)]/20 shadow-sm">
                 🎮 Multiplayer Games Directory
               </span>
               <h1 className="box-border m-0 text-3xl sm:text-4xl md:text-5xl font-black text-[var(--foreground)] tracking-tight">

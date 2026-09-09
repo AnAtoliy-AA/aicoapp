@@ -349,7 +349,7 @@ export function AdminDashboardView({ data, t }: AdminDashboardViewProps) {
               <GlassCard className="p-5 h-full border border-[var(--borderColor)] group-hover:border-[var(--primary)] group-hover:bg-[rgba(255,255,255,0.06)] transition-all duration-200 flex flex-col justify-between gap-4">
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-row items-center justify-between">
-                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[rgba(87,195,255,0.12)] text-[var(--primary)] group-hover:scale-105 transition-transform">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[rgba(87,195,255,0.12)] text-[var(--color)] group-hover:scale-105 transition-transform">
                       {mod.icon}
                     </div>
                     <Badge
@@ -381,7 +381,7 @@ export function AdminDashboardView({ data, t }: AdminDashboardViewProps) {
                   </div>
                 </div>
 
-                <div className="flex flex-row items-center justify-end text-[var(--primary)] text-xs font-semibold gap-1 pt-2 border-t border-[var(--borderColor)] group-hover:translate-x-0.5 transition-transform">
+                <div className="flex flex-row items-center justify-end text-[var(--color)] text-xs font-semibold gap-1 pt-2 border-t border-[var(--borderColor)] group-hover:translate-x-0.5 transition-transform">
                   <span>{t?.openPanel ?? 'Open Panel'}</span>
                   <span>→</span>
                 </div>

@@ -138,7 +138,7 @@ export default function ClansPageContent({
       {myClan && (
         <section className="mb-8">
           <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--primary)]/10 text-xl font-bold text-[var(--primary)]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--primary)]/10 text-xl font-bold text-[var(--color)]">
               {myClan.avatarUrl ? (
                 <Image
                   src={myClan.avatarUrl}

@@ -30,7 +30,7 @@ export function SpectatorOverlay({
           </Typography>
         </div>
         {engineEval && (
-          <Typography variant="caption" uiSize="xs" className="text-[var(--primary)]">
+          <Typography variant="caption" uiSize="xs" className="text-[var(--color)]">
             {engineEval}
           </Typography>
         )}

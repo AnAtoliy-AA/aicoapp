@@ -37,7 +37,7 @@ export function GameSpecTable({
       {kicker || title ? (
         <header className="mb-6 flex flex-col gap-1">
           {kicker ? (
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
               {kicker}
             </span>
           ) : null}
@@ -63,7 +63,7 @@ export function GameSpecTable({
               ) : null}
               <span>{item.label}</span>
               {item.badge ? (
-                <span className="ml-auto rounded-full bg-[var(--primary)]/15 px-2 py-0.5 text-[10px] font-bold text-[var(--primary)]">
+                <span className="ml-auto rounded-full bg-[var(--primary)]/15 px-2 py-0.5 text-[10px] font-bold text-[var(--color)]">
                   {item.badge}
                 </span>
               ) : null}

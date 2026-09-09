@@ -25,7 +25,7 @@ export function ChangelogStats({
       label: t('pages.changelog.stats.latestVersion'),
       value: `v${latestVersion}`,
       icon: '🚀',
-      accent: 'text-[var(--primary)]',
+      accent: 'text-[var(--color)]',
       bg: 'bg-[var(--primary)]/10 border-[var(--primary)]/20',
     },
     {

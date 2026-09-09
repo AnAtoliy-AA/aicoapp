@@ -12,7 +12,7 @@ export function GameStrategySection({
     <section className="box-border flex flex-col gap-6 py-8">
       <div className="box-border flex flex-col gap-1">
         {kicker ? (
-          <span className="box-border text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+          <span className="box-border text-xs font-bold uppercase tracking-wider text-[var(--color)]">
             {kicker}
           </span>
         ) : null}
@@ -33,7 +33,7 @@ export function GameStrategySection({
             className="box-border flex flex-col gap-2.5 p-5 rounded-2xl bg-[var(--glassBg)] border border-[var(--borderColor)] backdrop-blur-md transition-all duration-200 hover:border-[var(--primary)]/50 hover:shadow-sm"
           >
             <div className="box-border flex items-center justify-between">
-              <span className="box-border text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--primary)]">
+              <span className="box-border text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--color)]">
                 Tip #{index + 1}
               </span>
             </div>

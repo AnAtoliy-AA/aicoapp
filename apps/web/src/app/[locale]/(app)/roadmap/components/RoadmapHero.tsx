@@ -73,7 +73,7 @@ export function RoadmapHero({ stats }: { stats: RoadmapData['stats'] }) {
           <Typography
             variant="label"
             uiSize="sm"
-            className="font-extrabold text-[var(--primary)]"
+            className="font-extrabold text-[var(--color)]"
           >
             {completionPercent}%
           </Typography>
@@ -97,7 +97,7 @@ export function RoadmapHero({ stats }: { stats: RoadmapData['stats'] }) {
             : isInProgress
               ? 'text-[var(--warning)]'
               : isFeatures
-                ? 'text-[var(--primary)]'
+                ? 'text-[var(--color)]'
                 : 'text-[var(--foregroundSecondary)]';
 
           const bgStyle = isImplemented

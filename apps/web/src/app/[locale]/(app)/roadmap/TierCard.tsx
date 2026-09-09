@@ -98,7 +98,7 @@ export function TierCard({
                   <Typography
                     variant="caption"
                     uiSize="xs"
-                    className="text-[var(--primary)] font-semibold"
+                    className="text-[var(--color)] font-semibold"
                   >
                     {t('pages.roadmap.tiers.featuresCount', {
                       count: tier.features.length,
@@ -168,7 +168,7 @@ export function TierCard({
                       {f.title}
                     </Typography>
                     {f.arc && (
-                      <span className="px-1.5 py-0.2 rounded font-mono text-[10px] font-semibold bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/25">
+                      <span className="px-1.5 py-0.2 rounded font-mono text-[10px] font-semibold bg-[var(--primary)]/15 text-[var(--color)] border border-[var(--primary)]/25">
                         {f.arc}
                       </span>
                     )}

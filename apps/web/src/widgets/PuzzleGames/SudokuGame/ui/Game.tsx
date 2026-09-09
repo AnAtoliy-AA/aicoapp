@@ -324,7 +324,7 @@ function SudokuKeypad({
                 isCompleted
                   ? 'border-dashed border-[var(--borderColor)] bg-[var(--backgroundHover)] opacity-30 cursor-not-allowed'
                   : notesMode
-                    ? 'border-[var(--primary)]/40 bg-[var(--primary)]/15 text-[var(--primary)] hover:bg-[var(--primary)]/25 active:scale-95'
+                    ? 'border-[var(--primary)]/40 bg-[var(--primary)]/15 text-[var(--color)] hover:bg-[var(--primary)]/25 active:scale-95'
                     : 'border-[var(--glassBorder)] bg-[var(--glassBg)] text-[var(--color)] hover:border-[var(--primary)]/50 hover:bg-[var(--glassBgHover)] active:scale-95',
                 'disabled:opacity-40 disabled:cursor-not-allowed',
               )}
@@ -354,7 +354,7 @@ function SudokuKeypad({
           className={cx(
             'flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:text-sm font-bold transition-all',
             notesMode
-              ? 'border-[var(--primary)] bg-[var(--primary)]/20 text-[var(--primary)] shadow-md shadow-[var(--primary)]/20 ring-1 ring-[var(--primary)]'
+              ? 'border-[var(--primary)] bg-[var(--primary)]/20 text-[var(--color)] shadow-md shadow-[var(--primary)]/20 ring-1 ring-[var(--primary)]'
               : 'border-[var(--glassBorder)] bg-[var(--glassBg)] text-[var(--color)] hover:border-[var(--primary)] hover:bg-[var(--glassBgHover)]',
           )}
         >

@@ -172,7 +172,7 @@ export function GameThemePicker({
                   'text-[11px] font-medium text-[var(--foreground)] leading-tight truncate w-full',
                   layout === 'grid' &&
                     'max-[800px]:text-[13px] max-[800px]:font-semibold max-[800px]:whitespace-nowrap max-[800px]:text-center max-[800px]:leading-tight max-[800px]:!overflow-visible',
-                  active && 'max-[800px]:text-[var(--primary)]',
+                  active && 'max-[800px]:text-[var(--color)]',
                 )}
               >
                 {resolveName(option)}

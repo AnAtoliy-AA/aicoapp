@@ -80,7 +80,7 @@ export function GameLandingHero({
               {title}
             </h1>
             {subtitle ? (
-              <p className="box-border m-0 text-lg sm:text-xl font-medium text-[var(--primary)] leading-snug">
+              <p className="box-border m-0 text-lg sm:text-xl font-medium text-[var(--color)] leading-snug">
                 {subtitle}
               </p>
             ) : null}
@@ -91,7 +91,7 @@ export function GameLandingHero({
             ) : null}
             {directAnswer ? (
               <div className="box-border flex flex-col gap-1.5 p-4 rounded-2xl border border-[var(--primary)]/30 bg-[var(--primary)]/10 backdrop-blur-sm max-w-2xl">
-                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--color)]">
                   <span>✦</span>
                   <span>Quick Overview</span>
                 </div>

@@ -13,7 +13,7 @@ export function GameHowToPlay({
       {kicker || title ? (
         <div className="box-border flex flex-col gap-1">
           {kicker ? (
-            <span className="box-border text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+            <span className="box-border text-xs font-bold uppercase tracking-wider text-[var(--color)]">
               {kicker}
             </span>
           ) : null}
@@ -57,7 +57,7 @@ export function GameHowToPlay({
 
             {step.tip ? (
               <div className="box-border mt-2 p-2.5 rounded-xl bg-[var(--primary)]/5 border border-[var(--primary)]/20 text-xs text-[var(--foreground)] opacity-95">
-                <span className="font-semibold text-[var(--primary)]">
+                <span className="font-semibold text-[var(--color)]">
                   Pro Tip:{' '}
                 </span>
                 {step.tip}

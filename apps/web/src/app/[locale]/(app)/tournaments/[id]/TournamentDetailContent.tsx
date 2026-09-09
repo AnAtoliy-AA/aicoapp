@@ -80,7 +80,7 @@ export default function TournamentDetailContent({
         <div className="flex flex-col items-stretch gap-4">
           <Link
             href={routes.tournaments}
-            className="self-start text-[13px] font-bold text-[var(--primary)] underline-offset-2 hover:underline"
+            className="self-start text-[13px] font-bold text-[var(--color)] underline-offset-2 hover:underline"
             data-testid="back-to-tournaments"
           >
             ← {bracketT?.backToList}

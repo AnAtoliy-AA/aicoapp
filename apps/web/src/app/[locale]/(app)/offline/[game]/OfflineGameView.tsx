@@ -175,7 +175,7 @@ function OfflineNotice({
         {message}
       </p>
       <a
-        className="text-sm text-[var(--primary)] underline-offset-4 hover:underline"
+        className="text-sm text-[var(--color)] underline-offset-4 hover:underline"
         href="../games"
       >
         {linkLabel}

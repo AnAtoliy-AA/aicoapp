@@ -28,7 +28,7 @@ export function SoloGameLanding({
   gamesHref,
   homeHref,
   accentGlowClass = 'from-emerald-500/15 via-teal-500/10',
-  accentTextClass = 'text-[var(--primary)] bg-[var(--primary)]/15',
+  accentTextClass = 'text-[var(--color)] bg-[var(--primary)]/15',
 }: SoloGameLandingProps) {
   if (!copy) return null;
 
@@ -51,7 +51,7 @@ export function SoloGameLanding({
       <Container size="lg">
         {/* Hero */}
         <header className="flex flex-col items-center gap-5 py-14 text-center sm:py-20">
-          <span className="rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+          <span className="rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color)]">
             {copy.tagline}
           </span>
           <h1 className="m-0 max-w-3xl text-4xl font-black tracking-tight text-[var(--foreground)] sm:text-5xl md:text-6xl">

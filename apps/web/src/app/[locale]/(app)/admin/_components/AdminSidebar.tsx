@@ -110,7 +110,7 @@ export function AdminSidebar({ labels }: AdminSidebarProps) {
                   weight={active ? '800' : '700'}
                   className={`truncate ${
                     active
-                      ? 'text-[var(--primary)]'
+                      ? 'text-[var(--color)]'
                       : 'text-[var(--colorText,#ffffff)]'
                   }`}
                 >

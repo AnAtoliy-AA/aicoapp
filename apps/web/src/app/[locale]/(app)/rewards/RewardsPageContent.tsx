@@ -283,7 +283,7 @@ export default function RewardsPageContent({
                           'font-bold',
                           quest?.completed
                             ? 'text-[var(--success)]'
-                            : 'text-[var(--primary)]',
+                            : 'text-[var(--color)]',
                         )}
                       >
                         {quest?.completed ? '✓ Completed' : 'In Progress'}

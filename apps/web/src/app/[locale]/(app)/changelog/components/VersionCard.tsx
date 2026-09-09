@@ -46,7 +46,7 @@ const SECTION_COLOR_CONFIG: Record<
     dot: 'bg-pink-400',
   },
   Refactored: {
-    text: 'text-[var(--primary)]',
+    text: 'text-[var(--color)]',
     bg: 'bg-[var(--primary)]/10',
     border: 'border-[var(--primary)]/30',
     dot: 'bg-[var(--primary)]',
@@ -86,7 +86,7 @@ function formatItemContent(item: string) {
           return (
             <span
               key={index}
-              className="inline-flex items-center px-1.5 py-0.2 mx-0.5 rounded font-mono text-[11px] font-semibold bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/25"
+              className="inline-flex items-center px-1.5 py-0.2 mx-0.5 rounded font-mono text-[11px] font-semibold bg-[var(--primary)]/15 text-[var(--color)] border border-[var(--primary)]/25"
             >
               {part}
             </span>
@@ -149,7 +149,7 @@ export function VersionCard({
               <Typography
                 variant="label"
                 uiSize="sm"
-                className="font-bold text-[var(--primary)] font-mono"
+                className="font-bold text-[var(--color)] font-mono"
               >
                 v{entry.version}
               </Typography>

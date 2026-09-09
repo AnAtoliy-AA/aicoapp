@@ -90,7 +90,7 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
       className="relative overflow-hidden rounded-[24px] border border-[var(--glassBorder)] bg-[var(--glassBg)] p-6 sm:p-8 backdrop-blur-md"
     >
       <header className="mb-6 flex flex-col gap-1.5">
-        <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
           Tactics of the Day
         </span>
         <h2 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
@@ -143,7 +143,7 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
 
         <div className="md:col-span-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[var(--primary)]/15 px-3 py-1 text-xs font-bold text-[var(--primary)]">
+            <span className="rounded-full bg-[var(--primary)]/15 px-3 py-1 text-xs font-bold text-[var(--color)]">
               White to Move
             </span>
             <span className="rounded-full bg-[var(--surfaceBackground)] px-3 py-1 text-xs font-medium text-[var(--foreground)] opacity-95">
