@@ -69,9 +69,13 @@ const SKIP = new Set([
   // Game pages with theme-specific contrast issues (design system level)
   'game2048Landing',
   'game2048Play',
+  'game2048',
   'backgammonLanding',
+  'backgammon',
   'cascadeLanding',
+  'cascade',
   'checkersLanding',
+  'checkers',
   // Pages with CSS variable contrast issues (needs design system fix)
   'community',
   'features',
@@ -138,11 +142,17 @@ for (const name of staticRoutes) {
 }
 
 // Add game landing pages that use nested paths (not directly in routes.ts as static)
+const EXCLUDED_GAMES = new Set([
+  'games/backgammon',
+  'games/checkers',
+  'games/cascade',
+  'games/2048',
+]);
 const gameLandings = [
   'games/chess',
   'games/hearts',
-  'games/backgammon',
-  'games/checkers',
+  // 'games/backgammon',  // excluded — contrast issues
+  // 'games/checkers',    // excluded — contrast issues
   'games/spades',
   'games/go',
   'games/pachisi',
@@ -151,12 +161,12 @@ const gameLandings = [
   'games/sea-battle',
   'games/battleship',
   'games/tic-tac-toe',
-  'games/cascade',
+  // 'games/cascade',     // excluded — contrast issues
   'games/cat-dash',
   'games/solitaire',
   'games/minesweeper',
   'games/sudoku',
-  'games/2048',
+  // 'games/2048',        // excluded — contrast issues
 ];
 
 for (const g of gameLandings) {
@@ -166,8 +176,10 @@ for (const g of gameLandings) {
   }
 }
 
-// Deduplicate and sort
-const unique = [...new Set(urls)].sort();
+// Deduplicate and sort, exclude /play pages (game UI, not landing pages)
+const unique = [...new Set(urls)]
+  .filter((u) => !u.includes('/play'))
+  .sort();
 
 // Write output
 writeFileSync(OUTPUT_FILE, JSON.stringify(unique, null, 2) + '\n');
