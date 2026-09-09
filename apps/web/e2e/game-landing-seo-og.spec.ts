@@ -86,6 +86,14 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     );
   });
 
+  test('root opengraph image route responds successfully with png content-type', async ({
+    request,
+  }) => {
+    const rootOg = await request.get('/en/opengraph-image');
+    expect(rootOg.status()).toBe(200);
+    expect(rootOg.headers()['content-type']).toContain('image/png');
+  });
+
   test('chess landing interactive hero demo executes move and receives Stockfish 19 reply', async ({
     page,
   }) => {

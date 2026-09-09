@@ -114,7 +114,6 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
           width: 560,
           height: '100%',
           position: 'relative',
-          zIndex: 2,
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -288,7 +287,6 @@ export function renderGameOgCard(opts: GameOgCardOpts): ImageResponse {
           width: 480,
           height: 480,
           position: 'relative',
-          zIndex: 2,
         }}
       >
         <div
