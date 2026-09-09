@@ -1,0 +1,72 @@
+name: Lighthouse Audit
+
+on:
+  pull_request:
+    branches: [staging, main]
+
+concurrency:
+  group: lhci-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build web app
+        run: pnpm turbo run build --filter=web
+
+      - name: Start Next.js server
+        run: |
+          pnpm --filter web start &
+          for i in $(seq 1 60); do
+            if curl -s http://localhost:3000/en > /dev/null 2>&1; then
+              echo "Server ready"
+              break
+            fi
+            if [ "$i" -eq 60 ]; then
+              echo "Server failed to start"
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Run Lighthouse CI
+        run: pnpm --filter web audit
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Run axe-core tests
+        run: pnpm --filter web test:audit
+
+      - name: Post PR comment
+        if: always() && github.event_name == 'pull_request'
+        run: node scripts/lhci-comment.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
+      - name: Upload Lighthouse reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 14
