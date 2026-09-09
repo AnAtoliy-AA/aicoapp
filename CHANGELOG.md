@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.4] - 2026-09-09
+
+### Added
+- add interactive hero demo, comparison table, and invite modal
+- rework chess and game landing pages with SEO AEO GEO and OG images
+
+
 ## [1.29.3] - 2026-09-09
 
 ### Added
