@@ -8,6 +8,7 @@ import {
   EN_SLUGS,
   SUPPORTED_LOCALES,
 } from './src/shared/config/locale-slugs';
+import { buildGameOgRewrites } from './src/shared/seo/gameOgRewrites';
 
 // Build rewrite rules that map localized URLs (`/fr/jeux/...`) to the
 // English filesystem directories Next.js actually serves
@@ -445,9 +446,7 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return {
-      // Run BEFORE Next.js route matching so /fr/jeux is served by the
-      // /fr/games filesystem directory.
-      beforeFiles: buildLocaleRewrites(),
+      beforeFiles: [...buildLocaleRewrites(), ...buildGameOgRewrites()],
       afterFiles: [
         {
           source: '/.well-known/security.txt',

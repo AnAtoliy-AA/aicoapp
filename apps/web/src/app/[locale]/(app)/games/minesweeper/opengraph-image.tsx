@@ -9,7 +9,7 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 export const alt =
-  'Minesweeper — free online retro logic mine puzzle on Arcadeum';
+  'Minesweeper — free online retro logic mine puzzle on Arcadeum Games';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -49,10 +49,9 @@ function MinesweeperVisual() {
           borderRadius: 16,
           background: '#1e293b',
           border: '3px solid #38bdf8',
-          padding: 10,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gridTemplateRows: 'repeat(4, 1fr)',
+          padding: 11,
+          display: 'flex',
+          flexWrap: 'wrap',
           gap: 8,
           boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
         }}
@@ -61,6 +60,8 @@ function MinesweeperVisual() {
           <div
             key={i}
             style={{
+              width: 68.5,
+              height: 68.5,
               borderRadius: 8,
               background:
                 c === ' ' ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.12)',

@@ -8,7 +8,7 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = '2048 — free online sliding tile puzzle on Arcadeum';
+export const alt = '2048 — free online sliding tile puzzle on Arcadeum Games';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -53,10 +53,9 @@ function Grid2048Visual() {
           height: 320,
           borderRadius: 16,
           background: '#bbada0',
-          padding: 10,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gridTemplateRows: 'repeat(4, 1fr)',
+          padding: 11,
+          display: 'flex',
+          flexWrap: 'wrap',
           gap: 8,
           boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
         }}
@@ -65,6 +64,8 @@ function Grid2048Visual() {
           <div
             key={idx}
             style={{
+              width: 68.5,
+              height: 68.5,
               borderRadius: 8,
               background: t.bg,
               display: 'flex',

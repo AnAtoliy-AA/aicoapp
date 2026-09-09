@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 import { GameLandingPreview } from '@/features/games/ui/landing/GameLandingPreview';
+import { useGameLandingTheme } from '@/features/games/ui/landing/GameLandingThemeContext';
+import {
+  getChessTheme,
+  boardVars,
+} from '@/widgets/BoardGames/ChessGame/lib/theme';
 import { Button } from '@arcadeum/ui';
 import styles from './ChessLanding.module.scss';
 
@@ -95,6 +100,7 @@ export function ChessLandingPreview() {
   const [highlightSquares, setHighlightSquares] = useState<
     Array<[number, number]>
   >([]);
+  const { theme: contextTheme } = useGameLandingTheme();
 
   const handlePlayMove = (preset: MovePreset) => {
     const next = cloneBoard(INITIAL_BOARD);
@@ -121,7 +127,11 @@ export function ChessLandingPreview() {
     <GameLandingPreview
       testId="chess-landing-preview"
       interactive
-      render={() => {
+      render={(themeId) => {
+        const resolvedThemeId = themeId || contextTheme;
+        const currentTheme = getChessTheme(resolvedThemeId);
+        const vars = boardVars(currentTheme);
+
         return (
           <div className={styles.demoWrapper}>
             <div className={styles.evalHeader}>
@@ -145,6 +155,7 @@ export function ChessLandingPreview() {
             <div
               aria-label="Interactive Chess Board"
               className={styles.boardContainer}
+              style={vars}
             >
               {board.map((row, rowIdx) =>
                 row.map((cell, colIdx) => {
@@ -152,6 +163,7 @@ export function ChessLandingPreview() {
                   const isHighlighted = highlightSquares.some(
                     ([r, c]) => r === rowIdx && c === colIdx,
                   );
+                  const isWhite = cell ? cell === cell.toUpperCase() : false;
 
                   return (
                     <div
@@ -160,7 +172,15 @@ export function ChessLandingPreview() {
                         isLight ? styles.squareLight : styles.squareDark
                       } ${isHighlighted ? styles.squareMoved : ''}`}
                     >
-                      {cell ? PIECE_GLYPHS[cell] : ''}
+                      {cell ? (
+                        <span
+                          className={
+                            isWhite ? styles.pieceWhite : styles.pieceBlack
+                          }
+                        >
+                          {PIECE_GLYPHS[cell]}
+                        </span>
+                      ) : null}
                     </div>
                   );
                 }),

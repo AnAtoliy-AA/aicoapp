@@ -9,7 +9,7 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 export const alt =
-  'Pachisi (Ludo) — free multiplayer cross-and-circle board game on Arcadeum';
+  'Pachisi (Ludo) — free multiplayer cross-and-circle board game on Arcadeum Games';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -37,15 +37,16 @@ function PachisiVisual() {
           background: 'rgba(255, 255, 255, 0.05)',
           border: '2px solid rgba(234, 179, 8, 0.5)',
           boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gridTemplateRows: 'repeat(3, 1fr)',
+          display: 'flex',
+          flexWrap: 'wrap',
           gap: 6,
           padding: 8,
         }}
       >
         <div
           style={{
+            width: 97,
+            height: 97,
             background: '#ef4444',
             borderRadius: 12,
             display: 'flex',
@@ -58,6 +59,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 12,
             display: 'flex',
@@ -70,6 +73,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: '#10b981',
             borderRadius: 12,
             display: 'flex',
@@ -82,6 +87,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 12,
             display: 'flex',
@@ -94,6 +101,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: '#f59e0b',
             borderRadius: 12,
             display: 'flex',
@@ -108,6 +117,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 12,
             display: 'flex',
@@ -120,6 +131,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: '#3b82f6',
             borderRadius: 12,
             display: 'flex',
@@ -132,6 +145,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 12,
             display: 'flex',
@@ -144,6 +159,8 @@ function PachisiVisual() {
         </div>
         <div
           style={{
+            width: 97,
+            height: 97,
             background: '#eab308',
             borderRadius: 12,
             display: 'flex',

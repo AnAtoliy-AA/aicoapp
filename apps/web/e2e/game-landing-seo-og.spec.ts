@@ -86,6 +86,14 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     );
   });
 
+  test('root opengraph image route responds successfully with png content-type', async ({
+    request,
+  }) => {
+    const rootOg = await request.get('/en/opengraph-image');
+    expect(rootOg.status()).toBe(200);
+    expect(rootOg.headers()['content-type']).toContain('image/png');
+  });
+
   test('chess landing interactive hero demo executes move and receives Stockfish 19 reply', async ({
     page,
   }) => {
@@ -148,10 +156,10 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     );
     await expect(comparisonTable).toBeVisible();
     await expect(comparisonTable).toContainText(
-      'Arcadeum vs Chess.com vs Lichess',
+      'Arcadeum Chess Advantages & Capabilities',
     );
     await expect(comparisonTable).toContainText('Stockfish 19 NNUE Engine');
-    await expect(comparisonTable).toContainText('100% Free');
+    await expect(comparisonTable).toContainText('100% Free · Included');
 
     const puzzleTeaser = page.locator('[data-testid="chess-puzzle-teaser"]');
     await expect(puzzleTeaser).toBeVisible();
@@ -166,5 +174,30 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     await solveBtn.click();
 
     await expect(puzzleTeaser).toContainText('Brilliant!! 1. Qxf7+!');
+  });
+
+  test('chess landing theme cycling and showcase preview selection work', async ({
+    page,
+  }) => {
+    await navigateTo(page, routes.chessLanding);
+
+    const cycleBtn = page.locator('[data-testid="cycle-theme-button"]');
+    await expect(cycleBtn).toBeVisible();
+
+    const currentThemeBtn = page.locator(
+      '[data-testid="current-theme-button"]',
+    );
+    const initialThemeName = await currentThemeBtn.textContent();
+
+    await cycleBtn.click();
+    await expect(currentThemeBtn).not.toHaveText(initialThemeName ?? '');
+
+    const cyberpunkCard = page.locator('[data-testid="theme-card-cyberpunk"]');
+    await expect(cyberpunkCard).toBeVisible();
+    await cyberpunkCard.scrollIntoViewIfNeeded();
+    await cyberpunkCard.click();
+
+    await expect(cyberpunkCard).toContainText('Previewing');
+    await expect(currentThemeBtn).toHaveText('Cyberpunk');
   });
 });
