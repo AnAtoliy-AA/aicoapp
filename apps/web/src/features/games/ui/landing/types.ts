@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react';
-import type { GameSpecTableProps } from '@arcadeum/ui';
+import type {
+  GameSpecTableProps,
+  PlatformComparisonTableProps,
+} from '@arcadeum/ui';
 
 export interface BreadcrumbItem {
   label: string;
@@ -182,6 +185,7 @@ export interface UnifiedGameLandingProps {
     | 'blue';
   hero: GameLandingHeroProps;
   specifications?: GameSpecTableProps;
+  comparison?: PlatformComparisonTableProps;
   highlights?: GameHighlightsGridProps;
   howToPlay?: {
     title?: string;

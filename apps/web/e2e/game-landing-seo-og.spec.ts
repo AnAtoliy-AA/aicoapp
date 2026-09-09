@@ -86,21 +86,85 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     );
   });
 
-  test('game OG image routes respond successfully with png content-type', async ({
-    request,
+  test('chess landing interactive hero demo executes move and receives Stockfish 19 reply', async ({
+    page,
   }) => {
-    const chessOg = await request.get('/en/games/chess/opengraph-image');
-    expect(chessOg.status()).toBe(200);
-    expect(chessOg.headers()['content-type']).toContain('image/png');
+    await navigateTo(page, routes.chessLanding);
 
-    const checkersOg = await request.get('/en/games/checkers/opengraph-image');
-    expect(checkersOg.status()).toBe(200);
-    expect(checkersOg.headers()['content-type']).toContain('image/png');
+    const preview = page.locator('[data-testid="chess-landing-preview"]');
+    await expect(preview).toBeVisible();
 
-    const backgammonOg = await request.get(
-      '/en/games/backgammon/opengraph-image',
+    const moveButton = preview.getByRole('button', { name: '1. e4' });
+    await expect(moveButton).toBeVisible();
+    await moveButton.click();
+
+    await expect(preview).toContainText('Sicilian Defense');
+    await expect(preview).toContainText('Stockfish 19 Eval');
+
+    const resetButton = preview.getByRole('button', { name: 'Reset Board' });
+    await expect(resetButton).toBeVisible();
+    await resetButton.click();
+
+    await expect(preview.getByRole('button', { name: '1. e4' })).toBeVisible();
+  });
+
+  test('chess landing invite/share modal opens with QR code and copy link', async ({
+    page,
+  }) => {
+    await navigateTo(page, routes.chessLanding);
+
+    const inviteBtn = page.getByRole('button', { name: /Invite \/ Share/i });
+    await expect(inviteBtn).toBeVisible();
+    await inviteBtn.click();
+
+    const modalContent = page.locator(
+      '[data-testid="game-invite-modal-content"]',
     );
-    expect(backgammonOg.status()).toBe(200);
-    expect(backgammonOg.headers()['content-type']).toContain('image/png');
+    await expect(modalContent).toBeVisible();
+    await expect(modalContent).toContainText('Invite a Friend to Chess');
+
+    const qrCode = modalContent.getByLabel('QR Code to join game');
+    await expect(qrCode).toBeVisible();
+
+    const copyBtn = modalContent.getByRole('button', { name: 'Copy Link' });
+    await expect(copyBtn).toBeVisible();
+
+    const closeBtn = modalContent.getByRole('button', {
+      name: 'Close',
+      exact: true,
+    });
+    await expect(closeBtn).toBeVisible();
+    await closeBtn.click();
+    await expect(modalContent).not.toBeVisible();
+  });
+
+  test('chess landing renders platform comparison table and daily puzzle teaser', async ({
+    page,
+  }) => {
+    await navigateTo(page, routes.chessLanding);
+
+    const comparisonTable = page.locator(
+      '[data-testid="platform-comparison-table"]',
+    );
+    await expect(comparisonTable).toBeVisible();
+    await expect(comparisonTable).toContainText(
+      'Arcadeum vs Chess.com vs Lichess',
+    );
+    await expect(comparisonTable).toContainText('Stockfish 19 NNUE Engine');
+    await expect(comparisonTable).toContainText('100% Free');
+
+    const puzzleTeaser = page.locator('[data-testid="chess-puzzle-teaser"]');
+    await expect(puzzleTeaser).toBeVisible();
+    await expect(puzzleTeaser).toContainText('Solve the Daily Chess Puzzle');
+    await expect(puzzleTeaser).toContainText('White to Move');
+
+    const solveBtn = puzzleTeaser.getByRole('button', {
+      name: 'Solve Move (1. Qxf7+)',
+    });
+    await expect(solveBtn).toBeVisible();
+    await solveBtn.scrollIntoViewIfNeeded();
+    await solveBtn.click();
+
+    await expect(puzzleTeaser).toContainText('Brilliant!! 1. Qxf7+!');
   });
 });

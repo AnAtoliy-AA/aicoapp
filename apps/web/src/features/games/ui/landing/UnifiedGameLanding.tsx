@@ -9,7 +9,7 @@ import { GameFaqSection } from './GameFaqSection';
 import { GameRelatedGames } from './GameRelatedGames';
 import { GameFinalCta } from './GameFinalCta';
 import { GameLandingThemeProvider } from './GameLandingThemeContext';
-import { GameSpecTable } from '@arcadeum/ui';
+import { GameSpecTable, PlatformComparisonTable } from '@arcadeum/ui';
 import type { UnifiedGameLandingProps } from './types';
 
 export function UnifiedGameLanding({
@@ -17,6 +17,7 @@ export function UnifiedGameLanding({
   accentGlow = 'blue',
   hero,
   specifications,
+  comparison,
   highlights,
   howToPlay,
   themes,
@@ -60,6 +61,16 @@ export function UnifiedGameLanding({
             title={specifications.title}
             kicker={specifications.kicker}
             items={specifications.items}
+          />
+        ) : null}
+
+        {comparison ? (
+          <PlatformComparisonTable
+            title={comparison.title}
+            kicker={comparison.kicker}
+            subtitle={comparison.subtitle}
+            columns={comparison.columns}
+            rows={comparison.rows}
           />
         ) : null}
 

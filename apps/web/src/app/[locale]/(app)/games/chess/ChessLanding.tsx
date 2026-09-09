@@ -7,6 +7,7 @@ import { getTranslatedSharedThemes } from '@/features/games/lib/shared-themes';
 import type { Locale } from '@/shared/i18n';
 import { ChessLandingPreview } from './ChessLandingPreview';
 import { ChessAdvantages } from './ChessAdvantages';
+import { ChessPuzzleTeaser } from './ChessPuzzleTeaser';
 
 type ChessMsg = ChessMessages['chess_v1'];
 type Landing = ChessMsg['landing'];
@@ -261,6 +262,85 @@ export default function ChessLanding({
           },
         ],
       }}
+      comparison={{
+        title: 'Arcadeum vs Chess.com vs Lichess',
+        kicker: 'Platform Comparison',
+        subtitle:
+          'Compare features directly. Experience grandmaster-grade engine power with zero subscriptions or advertisements.',
+        columns: [
+          {
+            key: 'arcadeum',
+            name: 'Arcadeum',
+            isHighlighted: true,
+            badge: '100% Free',
+            subtext: 'Next-Gen Web',
+          },
+          {
+            key: 'chesscom',
+            name: 'Chess.com',
+            subtext: 'Commercial',
+          },
+          {
+            key: 'lichess',
+            name: 'Lichess',
+            subtext: 'Legacy Web',
+          },
+        ],
+        rows: [
+          {
+            feature: 'Stockfish 19 NNUE Engine',
+            hint: 'SFNNv16 neural architecture',
+            values: {
+              arcadeum: 'Stockfish 19',
+              chesscom: 'Stockfish 16 (Diamond)',
+              lichess: 'Stockfish 16',
+            },
+          },
+          {
+            feature: 'Unlimited Game Review & Accuracy',
+            hint: 'Move classification & eval graphs',
+            values: {
+              arcadeum: 'Free Unlimited',
+              chesscom: '1 / day (Paywalled)',
+              lichess: 'Free Unlimited',
+            },
+          },
+          {
+            feature: '100% Ad-Free Experience',
+            values: {
+              arcadeum: true,
+              chesscom: false,
+              lichess: true,
+            },
+          },
+          {
+            feature: 'Instant Guest Play (No Signup)',
+            hint: 'Share link and play instantly',
+            values: {
+              arcadeum: true,
+              chesscom: false,
+              lichess: true,
+            },
+          },
+          {
+            feature: '20 AI Bot Personalities',
+            hint: 'Rated 250 to 3200 Elo',
+            values: {
+              arcadeum: 'All Free',
+              chesscom: 'Diamond Required',
+              lichess: 'Engine Levels',
+            },
+          },
+          {
+            feature: '7-Piece Syzygy Endgame Tablebases',
+            values: {
+              arcadeum: true,
+              chesscom: false,
+              lichess: true,
+            },
+          },
+        ],
+      }}
       highlights={{
         title: 'Built for Serious Chess Players',
         kicker: 'Key Features',
@@ -320,9 +400,12 @@ export default function ChessLanding({
         backToGamesLabel: landing.hero.backToGames ?? 'All Games',
       }}
       extraSection={
-        landing.advantages ? (
-          <ChessAdvantages advantages={landing.advantages} />
-        ) : undefined
+        <div className="flex flex-col gap-16">
+          <ChessPuzzleTeaser playHref={roomsHref} />
+          {landing.advantages ? (
+            <ChessAdvantages advantages={landing.advantages} />
+          ) : null}
+        </div>
       }
     />
   );

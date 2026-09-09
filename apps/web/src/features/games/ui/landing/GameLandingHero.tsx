@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { QuickplayCta } from '@/features/games/ui/QuickplayCta';
 import { Badge, Button } from '@arcadeum/ui';
@@ -8,6 +9,7 @@ import { useGameLandingTheme } from './GameLandingThemeContext';
 import { AIvsAIViewer } from '@/features/games/ui/AIvsAIViewer';
 import { isAiVsAiSupported } from '@/features/games/lib/aiVsAi';
 import { GameLandingLiveStats } from './GameLandingLiveStats';
+import { GameInviteModal } from './GameInviteModal';
 
 export function GameLandingHero({
   gameId,
@@ -33,6 +35,7 @@ export function GameLandingHero({
   comingSoon = false,
 }: GameLandingHeroProps) {
   const { theme } = useGameLandingTheme();
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const createHref = createRoomHref
     ? createRoomHref.includes('?')
@@ -141,6 +144,14 @@ export function GameLandingHero({
                 </Link>
               )
             ) : null}
+
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setIsInviteOpen(true)}
+            >
+              Invite / Share 🔗
+            </Button>
           </div>
 
           {chips && chips.length > 0 ? (
@@ -165,6 +176,13 @@ export function GameLandingHero({
           </div>
         ) : null}
       </div>
+
+      <GameInviteModal
+        open={isInviteOpen}
+        onClose={() => setIsInviteOpen(false)}
+        gameId={gameId}
+        gameTitle={title}
+      />
     </header>
   );
 }
