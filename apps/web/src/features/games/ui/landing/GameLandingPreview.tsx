@@ -82,24 +82,51 @@ export function GameLandingPreview({
         </button>
       )}
 
-      <p className="box-border m-0 mt-3 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--textSecondary)] select-none">
+      <div className="box-border m-0 mt-3 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--textSecondary)] select-none">
+        <button
+          type="button"
+          onClick={cycleTheme}
+          aria-label="Previous theme"
+          data-testid="prev-theme-button"
+          className="box-border flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[11px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
+        >
+          ‹
+        </button>
         <span
           className="box-border h-1.5 w-1.5 rounded-full bg-[var(--primary)] shadow-[0_0_6px_var(--primary)]"
           aria-hidden="true"
         />
         <span>{resolvedLabel}</span>
         <span aria-hidden="true">·</span>
-        <span className="box-border text-[13px] font-semibold normal-case tracking-normal text-[var(--foreground)]">
+        <button
+          type="button"
+          onClick={cycleTheme}
+          aria-label={resolvedAria}
+          data-testid="current-theme-button"
+          className="box-border cursor-pointer bg-transparent border-none p-0 text-[13px] font-semibold normal-case tracking-normal text-[var(--foreground)] hover:text-[var(--primary)] transition-colors"
+        >
           {themeName}
-        </span>
-      </p>
+        </button>
+        <button
+          type="button"
+          onClick={cycleTheme}
+          aria-label="Next theme"
+          data-testid="next-theme-button"
+          className="box-border flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[11px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
+        >
+          ›
+        </button>
+      </div>
 
-      <span
-        className="box-border mt-1 select-none whitespace-nowrap rounded-full border border-[var(--primary)]/40 bg-[var(--primary)]/20 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--foreground)] opacity-85"
-        aria-hidden="true"
+      <button
+        type="button"
+        onClick={cycleTheme}
+        aria-label={resolvedAria}
+        data-testid="cycle-theme-button"
+        className="box-border mt-1.5 cursor-pointer select-none whitespace-nowrap rounded-full border border-[var(--primary)]/40 bg-[var(--primary)]/20 hover:bg-[var(--primary)]/35 hover:scale-105 active:scale-95 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--foreground)] transition-all"
       >
         {resolvedCycleHint}
-      </span>
+      </button>
     </div>
   );
 }

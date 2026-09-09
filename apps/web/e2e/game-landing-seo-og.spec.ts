@@ -167,4 +167,29 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
 
     await expect(puzzleTeaser).toContainText('Brilliant!! 1. Qxf7+!');
   });
+
+  test('chess landing theme cycling and showcase preview selection work', async ({
+    page,
+  }) => {
+    await navigateTo(page, routes.chessLanding);
+
+    const cycleBtn = page.locator('[data-testid="cycle-theme-button"]');
+    await expect(cycleBtn).toBeVisible();
+
+    const currentThemeBtn = page.locator(
+      '[data-testid="current-theme-button"]',
+    );
+    const initialThemeName = await currentThemeBtn.textContent();
+
+    await cycleBtn.click();
+    await expect(currentThemeBtn).not.toHaveText(initialThemeName ?? '');
+
+    const cyberpunkCard = page.locator('[data-testid="theme-card-cyberpunk"]');
+    await expect(cyberpunkCard).toBeVisible();
+    await cyberpunkCard.scrollIntoViewIfNeeded();
+    await cyberpunkCard.click();
+
+    await expect(cyberpunkCard).toContainText('Previewing');
+    await expect(currentThemeBtn).toHaveText('Cyberpunk');
+  });
 });
