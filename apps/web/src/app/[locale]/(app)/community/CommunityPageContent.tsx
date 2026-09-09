@@ -208,7 +208,7 @@ export default function CommunityPageContent({
               </PageTitle>
 
               {t?.subtitle && (
-                <Typography variant="subheading" uiSize="md" alpha="medium">
+                <Typography variant="subheading" uiSize="md" alpha="high">
                   {t.subtitle}
                 </Typography>
               )}
@@ -236,7 +236,7 @@ export default function CommunityPageContent({
                 >
                   {displayPlayersCount}
                 </Typography>
-                <Typography variant="caption" alpha="medium">
+                <Typography variant="caption" alpha="high">
                   {stats.playersLabel ?? 'Active Players'}
                 </Typography>
               </div>
@@ -253,7 +253,7 @@ export default function CommunityPageContent({
                 >
                   {displayDiscordCount}
                 </Typography>
-                <Typography variant="caption" alpha="medium">
+                <Typography variant="caption" alpha="high">
                   {stats.discordLabel ?? 'Discord Gamers'}
                 </Typography>
               </div>
@@ -270,7 +270,7 @@ export default function CommunityPageContent({
                 >
                   {stats.githubStars ?? 'Open Source'}
                 </Typography>
-                <Typography variant="caption" alpha="medium">
+                <Typography variant="caption" alpha="high">
                   {stats.githubLabel ?? 'Community Driven'}
                 </Typography>
               </div>
@@ -309,7 +309,7 @@ export default function CommunityPageContent({
               <Typography variant="heading" uiSize="md">
                 Official Networks & Socials
               </Typography>
-              <Typography variant="caption" alpha="medium">
+              <Typography variant="caption" alpha="high">
                 {NETWORK_CONFIGS.length} Channels Connected
               </Typography>
             </div>
@@ -371,7 +371,7 @@ export default function CommunityPageContent({
                             <Typography
                               variant="body"
                               uiSize="sm"
-                              alpha="medium"
+                              alpha="high"
                               className="line-clamp-3 text-xs leading-relaxed"
                             >
                               {description}

@@ -62,7 +62,7 @@ export function FeaturesCategoryFilter({
           >
             {clearFiltersText}
           </button>
-          <Typography variant="caption" uiSize="xs" alpha="medium">
+          <Typography variant="caption" uiSize="xs" alpha="high">
             {filteredCount} of {totalCount} sections match
           </Typography>
         </div>

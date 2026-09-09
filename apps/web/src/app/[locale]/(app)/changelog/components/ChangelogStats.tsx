@@ -81,7 +81,7 @@ export function ChangelogStats({
             <Typography
               variant="caption"
               uiSize="xs"
-              alpha="medium"
+              alpha="high"
               className="truncate"
             >
               {stat.label}

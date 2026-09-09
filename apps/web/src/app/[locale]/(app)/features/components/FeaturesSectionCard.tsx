@@ -100,7 +100,7 @@ export function FeaturesSectionCard({
                 <Typography
                   variant="caption"
                   uiSize="xs"
-                  alpha="medium"
+                  alpha="high"
                   className="text-[var(--foregroundSecondary)]"
                 >
                   {section.totalCount} feature items

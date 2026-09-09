@@ -57,7 +57,7 @@ export function FeaturesHero({
         <Typography
           variant="body"
           uiSize="md"
-          alpha="medium"
+          alpha="high"
           className="max-w-3xl leading-relaxed text-[var(--foregroundSecondary)]"
         >
           {subtitle}

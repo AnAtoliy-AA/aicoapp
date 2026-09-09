@@ -156,7 +156,7 @@ export function VersionCard({
             </div>
 
             {entry.date && (
-              <Typography variant="caption" uiSize="sm" alpha="medium">
+              <Typography variant="caption" uiSize="sm" alpha="high">
                 {entry.date}
               </Typography>
             )}
@@ -200,7 +200,7 @@ export function VersionCard({
             </div>
 
             <div className="px-2.5 py-0.5 rounded-full bg-[var(--bgCard)] border border-[var(--glassBorder)] shrink-0">
-              <Typography variant="caption" uiSize="xs" alpha="medium">
+              <Typography variant="caption" uiSize="xs" alpha="high">
                 {totalChanges} {t('pages.changelog.card.changes')}
               </Typography>
             </div>
