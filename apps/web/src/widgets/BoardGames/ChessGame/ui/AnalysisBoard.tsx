@@ -376,7 +376,7 @@ export function AnalysisBoard() {
           />
           {analyzing ? 'Analyzing...' : `Depth ${eval_?.depth ?? 0}`}
           {eval_?.pv?.[0] && (
-            <span className="ml-2 font-mono opacity-70">
+            <span className="ml-2 font-mono opacity-85">
               Best: {eval_.pv[0]}
             </span>
           )}

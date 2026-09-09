@@ -138,7 +138,7 @@ export function ChessLandingPreview() {
               <span className="text-[var(--primary)] font-bold">
                 {activePreset ? 'Stockfish 19 Eval' : 'Stockfish 19 Ready'}
               </span>
-              <span className="opacity-80">
+              <span className="opacity-90">
                 {activePreset ? activePreset.evalText : 'Make a move below'}
               </span>
             </div>

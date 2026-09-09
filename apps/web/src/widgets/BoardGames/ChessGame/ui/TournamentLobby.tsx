@@ -210,7 +210,7 @@ function TournamentCard({
                   : tournament.status}
             </span>
           </div>
-          <div className="flex items-center gap-3 text-[12px] opacity-70">
+          <div className="flex items-center gap-3 text-[12px] opacity-85">
             <span>
               {tournament.format === 'arena'
                 ? (labels?.arena ?? 'Arena')
@@ -230,7 +230,7 @@ function TournamentCard({
 
         <div className="flex items-center gap-2">
           {tournament.prizeDescription && (
-            <span className="text-[12px] opacity-70">
+            <span className="text-[12px] opacity-85">
               {labels?.prize ?? 'Prize'}: {tournament.prizeDescription}
             </span>
           )}

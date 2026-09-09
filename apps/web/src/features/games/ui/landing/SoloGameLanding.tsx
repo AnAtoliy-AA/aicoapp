@@ -163,7 +163,7 @@ export function SoloGameLanding({
             {playButton}
             <Link
               href={homeHref}
-              className="text-xs font-semibold text-[var(--foreground)] opacity-80 underline-offset-4 hover:underline"
+              className="text-xs font-semibold text-[var(--foreground)] opacity-90 underline-offset-4 hover:underline"
             >
               Arcadeum
             </Link>

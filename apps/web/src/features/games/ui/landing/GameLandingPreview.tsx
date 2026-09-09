@@ -88,7 +88,7 @@ export function GameLandingPreview({
           onClick={cyclePrevTheme}
           aria-label="Previous theme"
           data-testid="prev-theme-button"
-          className="box-border flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[12px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
+          className="box-border flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[12px] text-[var(--foreground)] opacity-90 hover:opacity-100 hover:border-[var(--primary)] transition-all"
         >
           ‹
         </button>
@@ -116,7 +116,7 @@ export function GameLandingPreview({
           onClick={cycleTheme}
           aria-label="Next theme"
           data-testid="next-theme-button"
-          className="box-border flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[12px] text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--primary)] transition-all"
+          className="box-border flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--borderColor)] bg-[var(--surfaceBackground)] text-[12px] text-[var(--foreground)] opacity-90 hover:opacity-100 hover:border-[var(--primary)] transition-all"
         >
           ›
         </button>

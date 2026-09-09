@@ -240,7 +240,7 @@ export function GameThemesShowcase({
                     ) : null}
                   </div>
                   {theme.description ? (
-                    <p className="box-border m-0 text-xs text-[var(--foreground)] opacity-70 line-clamp-2 leading-relaxed">
+                    <p className="box-border m-0 text-xs text-[var(--foreground)] opacity-90 line-clamp-2 leading-relaxed">
                       {theme.description}
                     </p>
                   ) : null}
@@ -259,7 +259,7 @@ export function GameThemesShowcase({
                   >
                     {createRoomLabel} →
                   </Link>
-                  <span className="box-border text-[10px] uppercase tracking-wider font-semibold text-[var(--foreground)] opacity-60 group-hover:opacity-100 transition-opacity">
+                  <span className="box-border text-[10px] uppercase tracking-wider font-semibold text-[var(--foreground)] opacity-85 group-hover:opacity-100 transition-opacity">
                     {isCurrent ? 'Active' : 'Preview'}
                   </span>
                 </div>

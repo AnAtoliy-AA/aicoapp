@@ -157,14 +157,14 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
                 <span className="text-sm font-bold text-[var(--success,#22c55e)]">
                   Brilliant!! 1. Qxf7+!
                 </span>
-                <p className="m-0 text-xs text-[var(--foreground)] opacity-85 leading-relaxed">
+                <p className="m-0 text-xs text-[var(--foreground)] opacity-90 leading-relaxed">
                   Queen penetrates the vulnerable f7 square with check,
                   deflecting the black king or forcing checkmate with the
                   back-rank rook invasion!
                 </p>
               </div>
             ) : showHint ? (
-              <p className="m-0 text-xs text-[var(--foreground)] opacity-85 leading-relaxed">
+              <p className="m-0 text-xs text-[var(--foreground)] opacity-90 leading-relaxed">
                 Hint: Look at the weak f7 pawn protected only by the black king,
                 and your rook controlling the d-file!
               </p>

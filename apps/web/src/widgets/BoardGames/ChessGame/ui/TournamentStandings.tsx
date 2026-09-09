@@ -92,7 +92,7 @@ export function TournamentStandings({
 
       {!isLoading && standings.length > 0 && (
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-[11px] font-bold opacity-50 px-2">
+          <div className="flex items-center gap-2 text-[11px] font-bold opacity-85 px-2">
             <span className="w-6">#</span>
             <span className="flex-1">{sLabels?.player ?? 'Player'}</span>
             <span className="w-12 text-right">
