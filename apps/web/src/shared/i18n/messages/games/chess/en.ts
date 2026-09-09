@@ -72,7 +72,7 @@ export const enMessages = {
         stockfish: {
           question: 'What is Stockfish 19?',
           answer:
-            "Stockfish 19 is the latest release of the world's strongest open-source chess engine. It uses the SFNNv16 neural network architecture and powers all live analysis, game review, and AI bot difficulty on Arcadeum.",
+            "Stockfish 19 is the latest release of the world's strongest open-source chess engine. It uses the SFNNv16 neural network architecture and powers all live analysis, game review, and AI bot difficulty on Arcadeum Games.",
         },
         takeback: {
           question: 'Can I undo a move?',
@@ -86,7 +86,7 @@ export const enMessages = {
         },
       },
       advantages: {
-        kicker: 'Why Players Choose Arcadeum',
+        kicker: 'Why Players Choose Arcadeum Games',
         title: 'Everything you need to play, learn, and improve',
         items: [
           {

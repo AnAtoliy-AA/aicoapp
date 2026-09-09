@@ -72,7 +72,7 @@ export const frMessages = {
         stockfish: {
           question: "Qu'est-ce que Stockfish 19 ?",
           answer:
-            "Stockfish 19 est la dernière version du plus fort moteur d'échecs open source au monde. Il utilise l'architecture de réseau neural SFNNv16 et alimente toute l'analyse en temps réel, la revue de parties et la difficulté des bots IA sur Arcadeum.",
+            "Stockfish 19 est la dernière version du plus fort moteur d'échecs open source au monde. Il utilise l'architecture de réseau neural SFNNv16 et alimente toute l'analyse en temps réel, la revue de parties et la difficulté des bots IA sur Arcadeum Games.",
         },
         takeback: {
           question: 'Puis-je annuler un coup ?',
@@ -86,7 +86,7 @@ export const frMessages = {
         },
       },
       advantages: {
-        kicker: 'Pourquoi les joueurs choisissent Arcadeum',
+        kicker: 'Pourquoi les joueurs choisissent Arcadeum Games',
         title:
           'Tout ce dont vous avez besoin pour jouer, apprendre et progresser',
         items: [

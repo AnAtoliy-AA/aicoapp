@@ -8,7 +8,7 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = 'Checkers — free multiplayer board game on Arcadeum';
+export const alt = 'Checkers — free multiplayer board game on Arcadeum Games';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -79,8 +79,10 @@ function CheckersVisual() {
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(8, ${CELL}px)`,
+          display: 'flex',
+          flexWrap: 'wrap',
+          width: CELL * 8,
+          height: CELL * 8,
           border: '3px solid rgba(239, 68, 68, 0.4)',
           borderRadius: 14,
           overflow: 'hidden',

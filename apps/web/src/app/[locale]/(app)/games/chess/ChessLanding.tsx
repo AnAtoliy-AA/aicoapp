@@ -263,80 +263,67 @@ export default function ChessLanding({
         ],
       }}
       comparison={{
-        title: 'Arcadeum vs Chess.com vs Lichess',
-        kicker: 'Platform Comparison',
+        title: 'Arcadeum Chess Advantages & Capabilities',
+        kicker: 'Platform Capabilities',
         subtitle:
-          'Compare features directly. Experience grandmaster-grade engine power with zero subscriptions or advertisements.',
+          'Grandmaster-grade engine power, unlimited analysis, and competitive features included free for all players.',
         columns: [
           {
             key: 'arcadeum',
             name: 'Arcadeum',
             isHighlighted: true,
-            badge: '100% Free',
+            badge: '100% Free · Included',
             subtext: 'Next-Gen Web',
-          },
-          {
-            key: 'chesscom',
-            name: 'Chess.com',
-            subtext: 'Commercial',
-          },
-          {
-            key: 'lichess',
-            name: 'Lichess',
-            subtext: 'Legacy Web',
           },
         ],
         rows: [
           {
             feature: 'Stockfish 19 NNUE Engine',
-            hint: 'SFNNv16 neural architecture',
+            hint: 'SFNNv16 neural architecture running at 3500+ Elo depth',
             values: {
-              arcadeum: 'Stockfish 19',
-              chesscom: 'Stockfish 16 (Diamond)',
-              lichess: 'Stockfish 16',
+              arcadeum: 'Full Speed · SFNNv16',
             },
           },
           {
             feature: 'Unlimited Game Review & Accuracy',
-            hint: 'Move classification & eval graphs',
+            hint: 'Move classification & precision evaluation graphs',
             values: {
-              arcadeum: 'Free Unlimited',
-              chesscom: '1 / day (Paywalled)',
-              lichess: 'Free Unlimited',
+              arcadeum: 'Free & Unlimited',
             },
           },
           {
             feature: '100% Ad-Free Experience',
+            hint: 'Zero commercial interruptions or video banners during play',
             values: {
               arcadeum: true,
-              chesscom: false,
-              lichess: true,
             },
           },
           {
             feature: 'Instant Guest Play (No Signup)',
-            hint: 'Share link and play instantly',
+            hint: 'Share link or QR code — opponents join directly in browser',
             values: {
               arcadeum: true,
-              chesscom: false,
-              lichess: true,
             },
           },
           {
             feature: '20 AI Bot Personalities',
-            hint: 'Rated 250 to 3200 Elo',
+            hint: 'Rated 250 to 3200 Elo with distinct playstyles and repertoires',
             values: {
-              arcadeum: 'All Free',
-              chesscom: 'Diamond Required',
-              lichess: 'Engine Levels',
+              arcadeum: '20 Personalities Included',
             },
           },
           {
             feature: '7-Piece Syzygy Endgame Tablebases',
+            hint: 'Flawless theoretical endgame play with DTZ and DTM distance metrics',
             values: {
-              arcadeum: true,
-              chesscom: false,
-              lichess: true,
+              arcadeum: 'Instant Syzygy Lookup',
+            },
+          },
+          {
+            feature: 'Chess960 & 5 Action Variants',
+            hint: 'Fischer Random, King of the Hill, 3-Check, Crazyhouse, Atomic',
+            values: {
+              arcadeum: '6 Variants Included',
             },
           },
         ],

@@ -8,7 +8,7 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from '@/shared/i18n';
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = 'Sudoku — free online number logic puzzle on Arcadeum';
+export const alt = 'Sudoku — free online number logic puzzle on Arcadeum Games';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -119,9 +119,8 @@ function SudokuVisual() {
           background: '#0f172a',
           border: '3px solid #0284c7',
           borderRadius: 12,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(9, 36px)',
-          gridTemplateRows: 'repeat(9, 36px)',
+          display: 'flex',
+          flexWrap: 'wrap',
           boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
         }}
       >
@@ -134,6 +133,8 @@ function SudokuVisual() {
             <div
               key={idx}
               style={{
+                width: 36,
+                height: 36,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
