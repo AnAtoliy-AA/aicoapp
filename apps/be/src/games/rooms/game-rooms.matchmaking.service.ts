@@ -171,7 +171,9 @@ export class GameRoomsMatchmakingService {
       bucket.set(userId, entry);
     }
 
-    await this.emitStatusesFor(gameId, variant, ranked);
+    // Only emit status to the newly joined user — other queued users
+    // don't need expensive friends/cross-game recomputation on every join
+    await this.emitStatus(userId, gameId, variant, ranked);
   }
 
   async leaveQueue(userId: string): Promise<void> {
@@ -384,31 +386,6 @@ export class GameRoomsMatchmakingService {
       openRoomsCount: 0,
       friendsInQueue,
     } satisfies MatchmakingStatus);
-  }
-
-  private async emitStatusesFor(
-    gameId: string,
-    variant?: string,
-    ranked?: boolean,
-  ): Promise<void> {
-    if (this.redis) {
-      const userIds = await this.redisQueue.getUserIdsInQueue(
-        this.redis,
-        gameId,
-        variant,
-        ranked,
-      );
-      for (const userId of userIds) {
-        void this.emitStatus(userId, gameId, variant, ranked);
-      }
-    } else {
-      const key = this.queueKey(gameId, variant, ranked);
-      const bucket = this.memoryQueue.get(key);
-      if (!bucket) return;
-      for (const entry of bucket.values()) {
-        void this.emitStatus(entry.userId, gameId, variant, entry.ranked);
-      }
-    }
   }
 
   private getQueueSizeMemory(
