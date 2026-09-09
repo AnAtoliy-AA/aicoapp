@@ -32,10 +32,10 @@ const config = {
     },
     assert: {
       assertions: {
-        'categories:performance': ['warn', { minValue: 80 }],
-        'categories:accessibility': ['warn', { minValue: 85 }],
-        'categories:seo': ['warn', { minValue: 80 }],
-        'categories:best-practices': ['warn', { minValue: 85 }],
+        'categories:performance': ['error', { minValue: 80 }],
+        'categories:accessibility': ['error', { minValue: 85 }],
+        'categories:seo': ['error', { minValue: 80 }],
+        'categories:best-practices': ['error', { minValue: 85 }],
       },
     },
     upload: {

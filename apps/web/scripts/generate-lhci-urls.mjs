@@ -56,6 +56,9 @@ const SKIP = new Set([
   // Post-payment redirects
   'paymentSuccess',
   'paymentCancel',
+  // noIndex pages (SEO score always low, intentional)
+  'battlePass',
+  'auth',
 ]);
 
 // Read routes.ts source
