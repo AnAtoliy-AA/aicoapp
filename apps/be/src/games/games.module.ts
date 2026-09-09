@@ -137,6 +137,7 @@ import { EconomyModule } from '../economy/economy.module';
 import { GameVisibilityModule } from '../admin/game-visibility/game-visibility.module';
 import { GameRuleVisibilityModule } from '../admin/game-visibility/game-rule-visibility.module';
 import { BattlePassModule } from '../battle-pass/battle-pass.module';
+import { FriendsModule } from '../friends/friends.module';
 import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
 // Note: GamesModule ↔ LeaderboardsModule is a circular dep
 // (LeaderboardsService.markInMatch is called from GamesService when matches
@@ -200,6 +201,7 @@ import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
     AchievementsModule,
     NotificationsModule,
     BattlePassModule,
+    FriendsModule,
     ChessStockfishModule,
     ChessPuzzlesModule,
     ChessOpeningsModule,
