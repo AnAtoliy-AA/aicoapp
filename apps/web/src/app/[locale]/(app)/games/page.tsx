@@ -137,23 +137,23 @@ export default async function GamesCatalogRoute({ params }: PageProps) {
               <h1 className="box-border m-0 text-3xl sm:text-4xl md:text-5xl font-black text-[var(--foreground)] tracking-tight">
                 Play Free Online Games
               </h1>
-              <p className="box-border m-0 text-sm sm:text-base md:text-lg text-[var(--foreground)] opacity-80 leading-relaxed">
+              <p className="box-border m-0 text-sm sm:text-base md:text-lg text-[var(--foreground)] opacity-95 leading-relaxed">
                 Enjoy real-time board and card games directly in your browser
                 with no download or signup. Challenge friends in private rooms
                 or practice against intelligent AI bots.
               </p>
 
               <div className="box-border flex flex-wrap items-center justify-center gap-2 pt-2">
-                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-90 border border-[var(--borderColor)]">
+                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-95 border border-[var(--borderColor)]">
                   ⚡ 8 Instant Games
                 </span>
-                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-90 border border-[var(--borderColor)]">
+                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-95 border border-[var(--borderColor)]">
                   🤖 Smart AI Bots
                 </span>
-                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-90 border border-[var(--borderColor)]">
+                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-95 border border-[var(--borderColor)]">
                   🎨 10+ Themes
                 </span>
-                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-90 border border-[var(--borderColor)]">
+                <span className="box-border px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--glassBg)] text-[var(--foreground)] opacity-95 border border-[var(--borderColor)]">
                   📱 Mobile & Desktop
                 </span>
               </div>

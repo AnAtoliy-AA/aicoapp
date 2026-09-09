@@ -33,9 +33,9 @@ const config = {
     assert: {
       assertions: {
         'categories:performance': ['error', { minValue: 80, maxError: 0 }],
-        'categories:accessibility': ['error', { minValue: 85, maxError: 0 }],
-        'categories:seo': ['error', { minValue: 80, maxError: 0 }],
-        'categories:best-practices': ['error', { minValue: 85, maxError: 0 }],
+        'categories:accessibility': ['error', { minValue: 100, maxError: 0 }],
+        'categories:seo': ['error', { minValue: 100, maxError: 0 }],
+        'categories:best-practices': ['error', { minValue: 100, maxError: 0 }],
       },
     },
     upload: {

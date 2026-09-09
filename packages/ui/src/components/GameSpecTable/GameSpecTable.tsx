@@ -70,12 +70,12 @@ export function GameSpecTable({
             </dt>
             <dd className="m-0 text-sm sm:text-base font-semibold text-[var(--foreground)] leading-snug">
               {item.value}
+              {item.hint ? (
+                <span className="block mt-1 text-xs text-[var(--foreground)] opacity-80 leading-normal">
+                  {item.hint}
+                </span>
+              ) : null}
             </dd>
-            {item.hint ? (
-              <span className="text-xs text-[var(--foreground)] opacity-80 leading-normal">
-                {item.hint}
-              </span>
-            ) : null}
           </div>
         ))}
       </dl>

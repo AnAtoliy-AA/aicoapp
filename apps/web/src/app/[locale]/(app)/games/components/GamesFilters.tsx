@@ -383,7 +383,7 @@ export function GamesFilters({
           })}
 
           {!canFilterParticipation && (
-            <span className="text-[11px] italic text-[var(--textSecondary)] opacity-75 ml-1">
+            <span className="text-[11px] italic text-[var(--textSecondary)] opacity-90 ml-1">
               ({t('games.create.loginRequired').toLowerCase()})
             </span>
           )}
