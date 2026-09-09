@@ -4,13 +4,13 @@ permissions: read-all
 
 on:
   push:
-    branches: [ main, staging ]
+    branches: [ main ]
   pull_request:
     branches: [ main, develop, staging ]
     types: [opened, synchronize, reopened]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 env:
