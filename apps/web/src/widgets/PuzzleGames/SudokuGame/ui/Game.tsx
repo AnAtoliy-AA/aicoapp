@@ -298,7 +298,7 @@ function SudokuKeypad({
       className={cx(
         'flex w-full flex-col items-center gap-2',
         isFullscreen
-          ? 'max-w-[min(94vw,min(calc(100vh-14rem),40rem))]'
+          ? 'max-w-[min(94vw,min(calc(100dvh-14rem),40rem))]'
           : 'max-w-[min(100vw-1rem,min(48vh,24.5rem))] sm:max-w-[min(100vw-2rem,min(50vh,25.5rem))]',
       )}
     >

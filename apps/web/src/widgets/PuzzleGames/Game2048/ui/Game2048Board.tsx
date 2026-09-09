@@ -82,7 +82,7 @@ export function Game2048Board({ grid, onMove }: Game2048BoardProps) {
       className={cx(
         'mx-auto aspect-square w-full touch-none rounded-2xl sm:rounded-3xl border border-[var(--g2048-board-border)] bg-black/20 p-2 sm:p-3 shadow-2xl select-none transition-all duration-200',
         isFullscreen
-          ? 'max-w-[min(94vw,min(calc(100vh-12rem),40rem))]'
+          ? 'max-w-[min(94vw,min(calc(100dvh-12rem),40rem))]'
           : 'max-w-[min(100vw-1rem,min(50vh,25.5rem))] sm:max-w-[min(100vw-2rem,min(52vh,26.5rem))]',
       )}
       onTouchStart={handleTouchStart}

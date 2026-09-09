@@ -15,7 +15,7 @@ export default function AuthPageContent() {
   return (
     <div
       className="flex flex-row items-stretch w-full relative overflow-hidden"
-      style={{ minHeight: '100vh' }}
+      style={{ minHeight: '100dvh' }}
       data-testid="auth-page-root"
     >
       <AuthPageBackground />
