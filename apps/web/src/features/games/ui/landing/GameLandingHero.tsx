@@ -85,7 +85,7 @@ export function GameLandingHero({
               </p>
             ) : null}
             {intro ? (
-              <p className="box-border m-0 text-sm sm:text-base text-[var(--foreground)] opacity-85 leading-relaxed max-w-2xl">
+              <p className="box-border m-0 text-sm sm:text-base text-[var(--foreground)] opacity-90 leading-relaxed max-w-2xl">
                 {intro}
               </p>
             ) : null}
@@ -159,7 +159,7 @@ export function GameLandingHero({
               {chips.map((chip) => (
                 <span
                   key={chip}
-                  className="box-border inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--glassBg)] border border-[var(--borderColor)] text-[var(--foreground)] opacity-90 backdrop-blur-sm"
+                  className="box-border inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--glassBg)] border border-[var(--borderColor)] text-[var(--foreground)] opacity-95 backdrop-blur-sm"
                 >
                   {chip}
                 </span>

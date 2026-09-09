@@ -33,7 +33,7 @@ export function GameFaqSection({
                 ▾
               </span>
             </summary>
-            <div className="box-border mt-3 pt-3 border-t border-[var(--borderColor)] text-sm sm:text-base text-[var(--foreground)] opacity-85 leading-relaxed">
+            <div className="box-border mt-3 pt-3 border-t border-[var(--borderColor)] text-sm sm:text-base text-[var(--foreground)] opacity-90 leading-relaxed">
               {item.answer}
             </div>
           </details>

@@ -57,7 +57,7 @@ export function SoloGameLanding({
           <h1 className="m-0 max-w-3xl text-4xl font-black tracking-tight text-[var(--foreground)] sm:text-5xl md:text-6xl">
             {copy.name}
           </h1>
-          <p className="max-w-2xl text-base leading-relaxed text-[var(--foreground)] opacity-80 sm:text-lg">
+          <p className="max-w-2xl text-base leading-relaxed text-[var(--foreground)] opacity-90 sm:text-lg">
             {copy.heroSubtitle}
           </p>
 
@@ -88,7 +88,7 @@ export function SoloGameLanding({
                 <h2 className="m-0 text-lg font-bold text-[var(--foreground)]">
                   {feature.title}
                 </h2>
-                <p className="m-0 text-sm leading-relaxed text-[var(--foreground)] opacity-75">
+                <p className="m-0 text-sm leading-relaxed text-[var(--foreground)] opacity-90">
                   {feature.body}
                 </p>
               </GlassCard>
@@ -110,7 +110,7 @@ export function SoloGameLanding({
                   <h3 className="m-0 mb-1 text-base font-bold text-[var(--foreground)]">
                     {step.title}
                   </h3>
-                  <p className="m-0 text-sm leading-relaxed text-[var(--foreground)] opacity-75">
+                  <p className="m-0 text-sm leading-relaxed text-[var(--foreground)] opacity-90">
                     {step.body}
                   </p>
                 </GlassCard>
@@ -127,7 +127,7 @@ export function SoloGameLanding({
                 <h3 className="m-0 text-sm font-bold uppercase tracking-wide text-[var(--primary)]">
                   {rule.label}
                 </h3>
-                <p className="m-0 text-sm leading-relaxed text-[var(--foreground)] opacity-80">
+                <p className="m-0 text-sm leading-relaxed text-[var(--foreground)] opacity-90">
                   {rule.body}
                 </p>
               </div>
@@ -146,7 +146,7 @@ export function SoloGameLanding({
                 <summary className="cursor-pointer list-none text-sm font-semibold text-[var(--foreground)] marker:hidden">
                   {item.question}
                 </summary>
-                <p className="mb-0 mt-2 text-sm leading-relaxed text-[var(--foreground)] opacity-75">
+                <p className="mb-0 mt-2 text-sm leading-relaxed text-[var(--foreground)] opacity-90">
                   {item.answer}
                 </p>
               </details>
@@ -163,7 +163,7 @@ export function SoloGameLanding({
             {playButton}
             <Link
               href={homeHref}
-              className="text-xs font-semibold text-[var(--foreground)] opacity-60 underline-offset-4 hover:underline"
+              className="text-xs font-semibold text-[var(--foreground)] opacity-80 underline-offset-4 hover:underline"
             >
               Arcadeum
             </Link>

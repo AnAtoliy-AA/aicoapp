@@ -37,7 +37,7 @@ export function GameRelatedGames({
                   <Badge variant="neutral" size="sm">
                     {game.category}
                   </Badge>
-                  <span className="box-border text-xs text-[var(--foreground)] opacity-70">
+                  <span className="box-border text-xs text-[var(--foreground)] opacity-85">
                     {game.players}
                   </span>
                 </div>
@@ -46,7 +46,7 @@ export function GameRelatedGames({
                   {game.name}
                 </h3>
 
-                <p className="box-border m-0 text-xs sm:text-sm text-[var(--foreground)] opacity-75 line-clamp-2 leading-relaxed">
+                <p className="box-border m-0 text-xs sm:text-sm text-[var(--foreground)] opacity-90 line-clamp-2 leading-relaxed">
                   {game.description}
                 </p>
               </div>

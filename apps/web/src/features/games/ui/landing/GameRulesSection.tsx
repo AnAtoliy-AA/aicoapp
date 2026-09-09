@@ -31,7 +31,7 @@ export function GameRulesSection({
               <span className="box-border w-2 h-2 rounded-full bg-[var(--primary)] shrink-0" />
               {rule.head}
             </h3>
-            <p className="box-border m-0 text-sm text-[var(--foreground)] opacity-80 leading-relaxed">
+            <p className="box-border m-0 text-sm text-[var(--foreground)] opacity-90 leading-relaxed">
               {rule.body}
             </p>
           </article>
@@ -39,7 +39,7 @@ export function GameRulesSection({
       </div>
 
       {note ? (
-        <div className="box-border p-4 rounded-xl bg-[var(--primary)]/5 border border-[var(--primary)]/20 text-xs sm:text-sm text-[var(--foreground)] opacity-90">
+        <div className="box-border p-4 rounded-xl bg-[var(--primary)]/5 border border-[var(--primary)]/20 text-xs sm:text-sm text-[var(--foreground)] opacity-95">
           <span className="font-semibold text-[var(--primary)]">
             Rule Note:{' '}
           </span>

@@ -95,7 +95,7 @@ export function GameLandingPreview({
       </p>
 
       <span
-        className="box-border mt-1 select-none whitespace-nowrap rounded-full border border-[var(--primary)]/40 bg-[var(--primary)]/20 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--foreground)] opacity-85"
+        className="box-border mt-1 select-none whitespace-nowrap rounded-full border border-[var(--primary)]/40 bg-[var(--primary)]/20 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--foreground)] opacity-90"
         aria-hidden="true"
       >
         {resolvedCycleHint}

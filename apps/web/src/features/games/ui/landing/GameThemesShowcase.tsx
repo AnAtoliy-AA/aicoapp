@@ -144,7 +144,7 @@ export function GameThemesShowcase({
           {title}
         </h2>
         {subtitle ? (
-          <p className="box-border m-0 text-sm sm:text-base text-[var(--foreground)] opacity-80 max-w-2xl">
+          <p className="box-border m-0 text-sm sm:text-base text-[var(--foreground)] opacity-90 max-w-2xl">
             {subtitle}
           </p>
         ) : null}
