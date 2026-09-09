@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.1] - 2026-09-09
+
+### Fixed
+- fix E2E Firefox test and EAS Android build
+- remove pinned dumb-init version in Dockerfiles
+- prevent duplicate E2E runs on staging PRs to main (ARC-000)
+
+
 ## [1.29.0] - 2026-09-08
 
 ### Changed
