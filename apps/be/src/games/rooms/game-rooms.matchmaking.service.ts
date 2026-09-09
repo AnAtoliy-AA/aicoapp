@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type Redis from 'ioredis';
 import { GameRoomsService } from './game-rooms.service';
@@ -54,8 +54,8 @@ export class GameRoomsMatchmakingService {
     private readonly quickplayService: GameRoomsQuickplayService,
     private readonly realtimeService: GamesRealtimeService,
     private readonly config: ConfigService,
-    private readonly friendsService: FriendsService,
     @Inject('REDIS_CLIENT') private readonly redis: Redis | null,
+    @Optional() private readonly friendsService?: FriendsService,
   ) {}
 
   private get timeoutMs(): number {
@@ -362,16 +362,21 @@ export class GameRoomsMatchmakingService {
       gameId: string;
       rating?: number;
     }> = [];
-    try {
-      const friendIds = await this.friendsService.getFriendIds(userId);
-      if (friendIds.length > 0 && this.redis) {
-        friendsInQueue = await this.redisQueue.getQueuedFriends(
-          this.redis,
-          friendIds,
-        );
+    if (this.friendsService) {
+      try {
+        const friendIds = await this.friendsService.getFriendIds(userId);
+        if (friendIds.length > 0 && this.redis) {
+          friendsInQueue = await this.redisQueue.getQueuedFriends(
+            this.redis,
+            friendIds,
+            gameId,
+            variant,
+            ranked,
+          );
+        }
+      } catch {
+        // Friends service may not be available; skip silently
       }
-    } catch {
-      // Friends service may not be available; skip silently
     }
 
     this.realtimeService.emitToUser(userId, 'games.matchmaking.status', {
