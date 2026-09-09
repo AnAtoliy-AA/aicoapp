@@ -289,9 +289,7 @@ export class LiveStatsService {
       };
     });
 
-    const realUsers = this.realtimeService.getConnectedUsersCount();
-    const realSockets = this.realtimeService.getConnectedSocketsCount();
-    const onlineUsers = Math.max(realUsers, realSockets);
+    const onlineUsers = await this.realtimeService.getConnectedUsersCount();
 
     const platformSubscribers: Record<string, number> = {};
     for (const item of socialClaimAgg) {
@@ -341,5 +339,28 @@ export class LiveStatsService {
       'games.live_stats',
       stats,
     );
+  }
+
+  private lastBroadcastAt = 0;
+  private broadcastTimer: ReturnType<typeof setTimeout> | null = null;
+
+  scheduleBroadcast(): void {
+    const now = Date.now();
+    const elapsed = now - this.lastBroadcastAt;
+    const THROTTLE_MS = 10_000;
+
+    if (elapsed >= THROTTLE_MS) {
+      this.lastBroadcastAt = now;
+      void this.getLiveStats().then((s) => this.broadcastLiveStats(s));
+      return;
+    }
+
+    if (!this.broadcastTimer) {
+      this.broadcastTimer = setTimeout(() => {
+        this.broadcastTimer = null;
+        this.lastBroadcastAt = Date.now();
+        void this.getLiveStats().then((s) => this.broadcastLiveStats(s));
+      }, THROTTLE_MS - elapsed);
+    }
   }
 }

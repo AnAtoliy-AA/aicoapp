@@ -36,6 +36,7 @@ describe('LiveStatsService', () => {
   let mockRealtimeService: {
     lobbyChannel: jest.Mock;
     emitToRoom: jest.Mock;
+    getConnectedUsersCount: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -145,8 +146,7 @@ describe('LiveStatsService', () => {
     mockRealtimeService = {
       lobbyChannel: jest.fn().mockReturnValue('games-lobby'),
       emitToRoom: jest.fn(),
-      getConnectedUsersCount: jest.fn().mockReturnValue(12),
-      getConnectedSocketsCount: jest.fn().mockReturnValue(15),
+      getConnectedUsersCount: jest.fn().mockResolvedValue(12),
     };
 
     const module: TestingModule = await Test.createTestingModule({
