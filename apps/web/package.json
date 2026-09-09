@@ -22,6 +22,8 @@
     "test:e2e:local": "rm -rf .next && NEXT_PUBLIC_E2E=true E2E_PROD=true pnpm run build && E2E_PROD=true NEXT_PUBLIC_E2E=true playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
+    "audit": "lhci autorun",
+    "test:audit": "playwright test e2e/audit/",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
