@@ -48,7 +48,7 @@ const NETWORK_CONFIGS: NetworkConfig[] = [
     key: 'discord',
     titleKey: 'discord',
     icon: DiscordIcon,
-    color: '#5865F2',
+    color: '#818CF8',
     gradientBg:
       'linear-gradient(135deg, rgba(88, 101, 242, 0.25) 0%, rgba(88, 101, 242, 0.05) 100%)',
     fallbackHref: 'https://discord.gg/arcadeum',
@@ -58,7 +58,7 @@ const NETWORK_CONFIGS: NetworkConfig[] = [
     key: 'telegram',
     titleKey: 'telegram',
     icon: TelegramIcon,
-    color: '#26A5E4',
+    color: '#67D4F7',
     gradientBg:
       'linear-gradient(135deg, rgba(38, 165, 228, 0.25) 0%, rgba(38, 165, 228, 0.05) 100%)',
     fallbackHref: 'https://t.me/arcadeum',
@@ -88,7 +88,7 @@ const NETWORK_CONFIGS: NetworkConfig[] = [
     key: 'youtube',
     titleKey: 'youtube',
     icon: YouTubeIcon,
-    color: '#FF0000',
+    color: '#FF6B6B',
     gradientBg:
       'linear-gradient(135deg, rgba(255, 0, 0, 0.25) 0%, rgba(255, 0, 0, 0.05) 100%)',
     fallbackHref: 'https://youtube.com/@arcadeum',
@@ -98,7 +98,7 @@ const NETWORK_CONFIGS: NetworkConfig[] = [
     key: 'instagram',
     titleKey: 'instagram',
     icon: InstagramIcon,
-    color: '#E1306C',
+    color: '#F472B6',
     gradientBg:
       'linear-gradient(135deg, rgba(225, 48, 108, 0.25) 0%, rgba(225, 48, 108, 0.05) 100%)',
     fallbackHref: 'https://instagram.com/arcadeum',
@@ -128,7 +128,7 @@ const NETWORK_CONFIGS: NetworkConfig[] = [
     key: 'facebook',
     titleKey: 'facebook',
     icon: FacebookIcon,
-    color: '#1877F2',
+    color: '#60A5FA',
     gradientBg:
       'linear-gradient(135deg, rgba(24, 119, 242, 0.25) 0%, rgba(24, 119, 242, 0.05) 100%)',
     fallbackHref: 'https://facebook.com/arcadeum',
@@ -138,7 +138,7 @@ const NETWORK_CONFIGS: NetworkConfig[] = [
     key: 'linkedin',
     titleKey: 'linkedin',
     icon: LinkedInIcon,
-    color: '#0A66C2',
+    color: '#38BDF8',
     gradientBg:
       'linear-gradient(135deg, rgba(10, 102, 194, 0.25) 0%, rgba(10, 102, 194, 0.05) 100%)',
     fallbackHref: 'https://linkedin.com/company/arcadeum',

@@ -125,7 +125,6 @@ export function GameLandingPreview({
       <button
         type="button"
         onClick={cycleTheme}
-        aria-label={resolvedAria}
         data-testid="cycle-theme-button"
         className="box-border mt-1.5 cursor-pointer select-none whitespace-nowrap rounded-full border border-[var(--primary)]/40 bg-[var(--primary)]/20 hover:bg-[var(--primary)]/35 hover:scale-105 active:scale-95 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--foreground)] transition-all opacity-90"
       >
