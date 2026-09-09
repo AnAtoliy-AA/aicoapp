@@ -47,6 +47,9 @@ jobs:
             sleep 1
           done
 
+      - name: Generate Lighthouse URLs from routes
+        run: node apps/web/scripts/generate-lhci-urls.mjs
+
       - name: Run Lighthouse CI
         run: pnpm --filter web lhci
         env:
