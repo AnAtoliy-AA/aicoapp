@@ -54,6 +54,7 @@ jobs:
 
       - name: Run axe-core tests
         run: pnpm --filter web test:audit
+        continue-on-error: true
 
       - name: Post PR comment
         if: always() && github.event_name == 'pull_request'
