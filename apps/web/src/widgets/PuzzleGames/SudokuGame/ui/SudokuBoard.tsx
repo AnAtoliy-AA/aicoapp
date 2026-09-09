@@ -58,7 +58,10 @@ export function SudokuBoard({
           : 'max-w-[min(100vw-1rem,min(48vh,24.5rem))] sm:max-w-[min(100vw-2rem,min(50vh,25.5rem))]',
       )}
     >
-      {game.cells.map((value, index) => {
+      {Array.from({ length: 9 }, (_, rowIdx) => (
+        <div key={rowIdx} role="row" className="contents">
+          {game.cells.slice(rowIdx * 9, rowIdx * 9 + 9).map((value, colIdx) => {
+            const index = rowIdx * 9 + colIdx;
         const row = rowOf(index);
         const col = colOf(index);
         const isSelected = selected === index;
@@ -127,6 +130,8 @@ export function SudokuBoard({
           </button>
         );
       })}
+        </div>
+      ))}
     </div>
   );
 }
