@@ -436,12 +436,15 @@ export class GamesGateway {
       gameId: string;
       variant?: string;
       ranked?: boolean;
+      rating?: number;
     },
   ): void {
     const userId = extractString(payload, 'userId');
     const gameId = extractString(payload, 'gameId');
     const variant = payload.variant ? String(payload.variant) : undefined;
     const ranked = payload.ranked === true;
+    const rating =
+      typeof payload.rating === 'number' ? payload.rating : undefined;
 
     this.validateUserId(client, userId);
 
@@ -459,6 +462,7 @@ export class GamesGateway {
       ranked,
       undefined,
       ip,
+      rating,
     );
     client.emit(
       'games.matchmaking.joined',

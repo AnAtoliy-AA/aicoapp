@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.3] - 2026-09-09
+
+### Added
+- add rating-based matchmaking, friends detection, cross-game suggestions
+- rework finding opponents UX for clearer, simpler matchmaking
+
+### Fixed
+- fix FriendsService DI — import FriendsModule, fix constructor order
+
+### Improved
+- optimize matchmaking — remove redundant work, use Redis SCAN
+
+
 ## [1.29.2] - 2026-09-09
 
 ### Fixed

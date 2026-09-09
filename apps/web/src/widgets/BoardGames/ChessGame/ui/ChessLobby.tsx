@@ -18,7 +18,6 @@ import type { ChessTheme, TimeControl } from '../types';
 import { RulesModal } from './RulesModal';
 import { BotSelector, type BotPersonalityOption } from './BotSelector';
 import { PgnImportModal } from './PgnImportModal';
-import { MatchmakingButton } from './MatchmakingButton';
 import { QuickPlayPanel } from './QuickPlayPanel';
 import { BOT_PERSONALITIES } from '@arcadeum/games-core/games/chess/chess-bot-personalities';
 import { apiClient } from '@/shared/lib/api-client';
@@ -221,12 +220,6 @@ export function ChessLobby({
       >
         {t('games.chess_v1.actions.importPgn')}
       </button>
-
-      <MatchmakingButton
-        userId={userId}
-        rating={1200}
-        timeControlType={options.timeControl?.type ?? 'blitz'}
-      />
     </div>
   );
 
