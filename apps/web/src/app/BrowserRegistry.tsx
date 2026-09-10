@@ -63,10 +63,5 @@ export default function BrowserRegistry({ children }: BrowserRegistryProps) {
     useSessionStore.getState().setHydrated(true);
   }, []);
 
-  return (
-    <>
-      {needsSocket && <SocketConnection />}
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
