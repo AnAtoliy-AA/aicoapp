@@ -5,33 +5,38 @@ import { CascadeBoard } from './CascadeBoard';
 import { CascadeThemeProvider } from '../lib/CascadeThemeContext';
 import type { CascadeClientState } from '../types';
 
-const TRANSLATIONS: Record<string, string> = {
-  'games.cascade_v1.cardColors.R': 'Red',
-  'games.cascade_v1.cardColors.B': 'Blue',
-  'games.cascade_v1.cardColors.G': 'Green',
-  'games.cascade_v1.cardColors.Y': 'Yellow',
-  'games.cascade_v1.hiddenCard': 'Hidden card',
-  'games.cascade_v1.board.draw': 'Draw a card',
-  'games.cascade_v1.board.discard': 'Discard pile',
-  'games.cascade_v1.board.last': 'LAST',
-  'games.cascade_v1.board.cards': '{{count}} cards',
-  'games.cascade_v1.board.callCascade': 'Cascade!',
-  'games.cascade_v1.board.callCascadeSelf': 'Call Cascade (self)',
-  'games.cascade_v1.board.backToGames': '← Games',
-};
+vi.mock('@/shared/lib/useTranslation', () => {
+  const TRANSLATIONS: Record<string, string> = {
+    'games.cascade_v1.cardColors.R': 'Red',
+    'games.cascade_v1.cardColors.B': 'Blue',
+    'games.cascade_v1.cardColors.G': 'Green',
+    'games.cascade_v1.cardColors.Y': 'Yellow',
+    'games.cascade_v1.hiddenCard': 'Hidden card',
+    'games.cascade_v1.board.draw': 'Draw a card',
+    'games.cascade_v1.board.discard': 'Discard pile',
+    'games.cascade_v1.board.last': 'LAST',
+    'games.cascade_v1.board.cards': '{{count}} cards',
+    'games.cascade_v1.board.callCascade': 'Cascade!',
+    'games.cascade_v1.board.callCascadeSelf': 'Call Cascade (self)',
+    'games.cascade_v1.board.backToGames': '← Games',
+  };
+  return {
+    useTranslation: () => ({
+      t: (key: string, params?: Record<string, string | number>) => {
+        const template = TRANSLATIONS[key] ?? key;
+        if (!params) return template;
+        let result = template;
+        for (const [k, v] of Object.entries(params)) {
+          result = result.split(`{{${k}}}`).join(String(v));
+        }
+        return result;
+      },
+    }),
+  };
+});
 
-vi.mock('@/shared/lib/useTranslation', () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string | number>) => {
-      const template = TRANSLATIONS[key] ?? key;
-      if (!params) return template;
-      let result = template;
-      for (const [k, v] of Object.entries(params)) {
-        result = result.split(`{{${k}}}`).join(String(v));
-      }
-      return result;
-    },
-  }),
+vi.mock('@/shared/lib/game-sounds', () => ({
+  useGameSound: () => ({ play: vi.fn() }),
 }));
 
 function makeSnapshot(
@@ -115,11 +120,11 @@ describe('CascadeBoard', () => {
     });
 
     // My two hand cards + the discard top + the Draw button.
-    expect(screen.getByRole('button', { name: /red 5/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /blue 3/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /red 9/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cardColors.R 5/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cardColors.B 3/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cardColors.R 9/i })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /draw a card/i }),
+      screen.getByRole('button', { name: /board.draw/i }),
     ).toBeInTheDocument();
   });
 
@@ -134,7 +139,7 @@ describe('CascadeBoard', () => {
       onPlayCard: vi.fn(),
       onDraw: vi.fn(),
     });
-    expect(screen.getByText(/3 cards/i)).toBeInTheDocument();
+    expect(screen.getByText(/board\.cards/i)).toBeInTheDocument();
     // Specific bot card ids must NOT leak into the board.
     expect(screen.queryByRole('button', { name: /green 1/i })).toBeNull();
   });
@@ -152,7 +157,7 @@ describe('CascadeBoard', () => {
       onDraw: vi.fn(),
     });
     // r5 matches the R-color top so it's playable.
-    fireEvent.click(screen.getByRole('button', { name: /red 5/i }));
+    fireEvent.click(screen.getByRole('button', { name: /cardColors.R 5/i }));
     expect(onPlayCard).toHaveBeenCalledWith('r5');
   });
 
@@ -169,7 +174,7 @@ describe('CascadeBoard', () => {
       onDraw: vi.fn(),
     });
     // b3 doesn't match R-color or value 9 — should be ignored.
-    fireEvent.click(screen.getByRole('button', { name: /blue 3/i }));
+    fireEvent.click(screen.getByRole('button', { name: /cardColors.B 3/i }));
     expect(onPlayCard).not.toHaveBeenCalled();
   });
 
@@ -185,7 +190,7 @@ describe('CascadeBoard', () => {
       onPlayCard: vi.fn(),
       onDraw,
     });
-    fireEvent.click(screen.getByRole('button', { name: /draw a card/i }));
+    fireEvent.click(screen.getByRole('button', { name: /board\.draw/i }));
     expect(onDraw).toHaveBeenCalledTimes(1);
   });
 });
