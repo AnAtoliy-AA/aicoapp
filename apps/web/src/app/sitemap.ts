@@ -8,10 +8,6 @@ import {
   localeToHreflang,
 } from '@/shared/i18n';
 import { POST_SLUGS, getPost } from '@/features/blog/registry';
-import {
-  NOINDEX_SLUGS,
-  PRIVATE_GAME_SUBPATHS,
-} from '@/shared/config/noindex-pages';
 
 type RouteKey =
   | 'home'
