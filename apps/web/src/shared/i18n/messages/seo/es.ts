@@ -179,6 +179,14 @@ export const es: DeepPartial<SeoMessages> = {
     title: `Chat · ${APP}`,
     description: `Mensajería directa en ${APP}: habla con amigos, coordina partidas y comparte notas rápidas.`,
   },
+  authForgot: {
+    title: \`Forgot Password · \${APP}\`,
+    description: \`Reset your \${APP} password.\`,
+  },
+  authReset: {
+    title: \`Reset Password · \${APP}\`,
+    description: \`Set a new password for your \${APP} account.\`,
+  },
   auth: {
     title: `Iniciar sesión · ${APP}`,
     description: `Inicia sesión en ${APP} o crea una cuenta para unirte a partidas, seguir tu progreso y chatear con amigos.`,

@@ -12,7 +12,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return isLocale(locale) ? buildPageMetadata({ locale, page: 'chat' }) : {};
+  return isLocale(locale) ? buildPageMetadata({ locale, page: 'chat', noIndex: true }) : {};
 }
 
 const ChatPage = dynamic(() => import('./ChatPage'));

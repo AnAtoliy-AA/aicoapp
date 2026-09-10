@@ -10,7 +10,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return isLocale(locale) ? buildPageMetadata({ locale, page: 'payment' }) : {};
+  return isLocale(locale) ? buildPageMetadata({ locale, page: 'payment', noIndex: true }) : {};
 }
 
 export default async function PaymentRoute({

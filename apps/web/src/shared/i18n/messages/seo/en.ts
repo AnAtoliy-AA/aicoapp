@@ -181,6 +181,14 @@ export const en = {
     title: `Sign in · ${APP}`,
     description: `Sign in to ${APP} or create an account to join games, track progress, and chat with friends.`,
   },
+  authForgot: {
+    title: `Forgot Password · ${APP}`,
+    description: `Reset your ${APP} password. Enter your email to receive a secure reset link.`,
+  },
+  authReset: {
+    title: `Reset Password · ${APP}`,
+    description: `Set a new password for your ${APP} account.`,
+  },
   support: {
     title: `Support · ${APP}`,
     description: `Need help with ${APP}? Find FAQs, contact our team, or chip in to keep the lights on.`,
