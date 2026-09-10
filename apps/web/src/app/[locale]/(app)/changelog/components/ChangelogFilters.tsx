@@ -45,15 +45,17 @@ export function ChangelogFilters({
             🔍
           </div>
           <input
-            type="text"
+            type="search"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={t('pages.changelog.filters.searchPlaceholder')}
+            aria-label={t('pages.changelog.filters.searchPlaceholder')}
             className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-[var(--bgCard)] border border-[var(--glassBorder)] text-sm text-[var(--foreground)] placeholder:text-[var(--foregroundSecondary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
           />
           {searchQuery && (
             <button
               type="button"
+              aria-label="Clear search"
               onClick={() => onSearchChange('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[var(--foregroundSecondary)] hover:text-[var(--foreground)] w-5 h-5 rounded-full bg-[var(--glassBg)] flex items-center justify-center"
             >

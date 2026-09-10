@@ -177,6 +177,7 @@ function AdminShopGrantDialogInner({
                 value={userSearchQuery}
                 onChange={(e) => handleUserSearchChange(e.target.value)}
                 placeholder={labels.grantDialog.searchUserPlaceholder}
+                aria-label={labels.grantDialog.searchUserPlaceholder}
                 data-testid="admin-shop-grant-user"
                 autoComplete="new-password"
                 style={inputStyle}
@@ -263,6 +264,7 @@ function AdminShopGrantDialogInner({
                 value={itemSearchQuery}
                 onChange={(e) => setItemSearchQuery(e.target.value)}
                 placeholder={labels.grantDialog.searchItemPlaceholder}
+                aria-label={labels.grantDialog.searchItemPlaceholder}
                 data-testid="admin-shop-grant-item"
                 autoComplete="new-password"
                 style={inputStyle}
@@ -319,6 +321,7 @@ function AdminShopGrantDialogInner({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             maxLength={280}
+            aria-label={labels.grantDialog.reason}
             data-testid="admin-shop-grant-reason"
             autoComplete="new-password"
             style={inputStyle}

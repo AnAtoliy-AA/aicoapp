@@ -128,14 +128,21 @@ export default function BlogPageContent({
                   placeholder={
                     blog?.searchPlaceholder ?? 'Search articles and guides…'
                   }
+                  aria-label={
+                    blog?.searchPlaceholder ?? 'Search articles and guides'
+                  }
                   className="w-full rounded-2xl border border-[var(--glassBorder)] bg-[var(--glassBg)] px-5 py-3.5 pl-12 text-sm text-[var(--color)] placeholder-[var(--colorMuted)] outline-none backdrop-blur-md transition-all duration-200 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                 />
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-[var(--colorMuted)]">
+                <span
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-[var(--colorMuted)]"
+                  aria-hidden="true"
+                >
                   🔍
                 </span>
                 {searchQuery && (
                   <button
                     type="button"
+                    aria-label="Clear search"
                     onClick={() => setSearchQuery('')}
                     className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 px-2 py-0.5 text-xs text-[var(--colorMuted)] hover:text-white"
                   >
