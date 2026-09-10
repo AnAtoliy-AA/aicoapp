@@ -1,36 +1,41 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
-const PAGES = [
-  { name: 'Homepage', path: '/en' },
-  { name: 'Games', path: '/en/games' },
-  { name: 'Chess', path: '/en/games/chess' },
-  { name: 'Hearts', path: '/en/games/hearts' },
-  { name: 'Shop', path: '/en/shop' },
-  { name: 'Blog', path: '/en/blog' },
-  { name: 'Leaderboards', path: '/en/leaderboards' },
-  { name: 'Features', path: '/en/features' },
-  { name: 'Auth', path: '/en/auth' },
-  { name: 'Help', path: '/en/help' },
-];
+const allUrls: string[] = JSON.parse(
+  readFileSync(resolve(__dirname, '../../lighthouse-urls.json'), 'utf-8'),
+);
 
-for (const { name, path } of PAGES) {
-  test(`${name} should have no critical or serious axe-core violations`, async ({
+// Sharding: set SHARD_INDEX (1-based) and SHARD_TOTAL via env to split URLs.
+// When unset, all URLs run in a single test file.
+const shardIndex = parseInt(process.env.SHARD_INDEX ?? '1', 10);
+const shardTotal = parseInt(process.env.SHARD_TOTAL ?? '1', 10);
+
+const perShard = Math.ceil(allUrls.length / shardTotal);
+const start = (shardIndex - 1) * perShard;
+const urls = allUrls.slice(start, start + perShard);
+
+for (const url of urls) {
+  const path = new URL(url).pathname;
+
+  test(`${path} should have no critical or serious axe-core violations`, async ({
     page,
   }) => {
-    await page.goto(path, { waitUntil: 'networkidle' });
+    await page.goto(path, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30_000,
+    });
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
 
-    const critical = results.violations.filter(
-      (v) => v.impact === 'critical',
-    );
+    const critical = results.violations.filter((v) => v.impact === 'critical');
 
     if (critical.length > 0) {
       console.error(
-        `Critical a11y violations on ${name}:`,
+        `Critical a11y violations on ${path}:`,
         critical.map((v) => ({
           id: v.id,
           description: v.description,
@@ -43,7 +48,7 @@ for (const { name, path } of PAGES) {
 
     expect(
       critical,
-      `Found ${critical.length} critical a11y violations on ${name}`,
+      `Found ${critical.length} critical a11y violations on ${path}`,
     ).toHaveLength(0);
   });
 }

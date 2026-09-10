@@ -1,161 +1,92 @@
 #!/usr/bin/env node
 /**
- * Generate Lighthouse audit URL list from routes.ts.
+ * Generate Lighthouse & axe-a11y audit URL list from the filesystem.
  *
- * Reads the static route definitions from `src/shared/config/routes.ts`,
- * extracts all non-parameterized paths, and writes them as a JSON array
- * to `lighthouse-urls.json` for use by `lighthouserc.js`.
+ * Scans `src/app/[locale]/(app)/` for `page.tsx` files, converts each
+ * path to a URL, and filters out pages that require authentication,
+ * are admin-only, or use dynamic route segments.
  *
  * Usage:  node scripts/generate-lhci-urls.mjs
  */
-import { readFileSync, writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { readdirSync, writeFileSync, statSync, existsSync } from 'node:fs';
+import { resolve, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEB_ROOT = resolve(__dirname, '..');
-const ROUTES_FILE = resolve(WEB_ROOT, 'src/shared/config/routes.ts');
+const LOCALE_DIR = resolve(WEB_ROOT, 'src/app/[locale]');
+const APP_DIR = resolve(LOCALE_DIR, '(app)');
 const OUTPUT_FILE = resolve(WEB_ROOT, 'lighthouse-urls.json');
 
 const LOCALE = 'en';
 const BASE = `http://localhost:3000/${LOCALE}`;
 
-// Pages that require authentication or are admin-only — skip in Lighthouse audit
-const SKIP = new Set([
-  'authCallback',
-  'chatDetail',
-  'gameDetail',
-  'gameRoom',
-  'eventDetail',
-  'profile',
-  'blogPost',
-  'offline',
-  'testCrash',
-  // Auth-required pages
-  'chat',
-  'chats',
-  'history',
-  'settings',
-  'stats',
-  'referrals',
-  'payment',
-  'wallet',
-  'gameCreate',
-  'shop',
-  'shopInventory',
-  'friends',
-  'clans',
-  'events',
-  'notes',
-  'rewards',
-  'token',
-  // Admin pages
-  'admin',
-  'adminUsers',
-  'adminStatistics',
-  // Post-payment redirects
-  'paymentSuccess',
-  'paymentCancel',
-  // noIndex pages (SEO score always low, intentional)
-  'battlePass',
-  'auth',
-  // Dynamic listing pages (noIndex, auth-dependent)
-  'rooms',
-  // Static pages with heavy shared UI bundle (perf < 90 in production)
-  'leaderboards',
-  'tournaments',
-  'privacy',
-  'terms',
-]);
+// Directory prefixes to skip entirely (admin, system)
+const SKIP_DIRS = new Set(['admin', 'offline']);
 
-// Read routes.ts source
-const src = readFileSync(ROUTES_FILE, 'utf-8');
+// Exact directory names to skip (system pages, OAuth handler)
+const SKIP_EXACT = new Set(['test-crash', 'callback']);
 
-// Extract static route definitions:  routeName: `/${locale}/...`
-// Matches lines like:  home: `/${locale}`,  games: `/${locale}/${s('games')}`,
-const staticRoutes = [];
-const re = /^\s+(\w+):\s*`\/\$\{locale\}\/?\$\{?[^`]*`/gm;
-let match;
-while ((match = re.exec(src)) !== null) {
-  const name = match[1];
-  if (!SKIP.has(name)) {
-    staticRoutes.push(name);
+/**
+ * Recursively find all page.tsx files under dir, returning
+ * relative paths from APP_DIR (e.g. "games/chess/page.tsx").
+ */
+function findPages(dir) {
+  const results = [];
+  for (const entry of readdirSync(dir)) {
+    const full = resolve(dir, entry);
+    if (statSync(full).isDirectory()) {
+      results.push(...findPages(full));
+    } else if (entry === 'page.tsx') {
+      results.push(relative(APP_DIR, full));
+    }
   }
+  return results;
 }
 
-// Also extract literal-segment routes (no ${s()} call):
-//   battlePass: `/${locale}/battle-pass`,
-const literalRe = /^\s+(\w+):\s*`\/\$\{locale\}\/([a-z0-9-]+)`/gm;
-while ((match = literalRe.exec(src)) !== null) {
-  const name = match[1];
-  if (!SKIP.has(name) && !staticRoutes.includes(name)) {
-    staticRoutes.push(name);
-  }
+/**
+ * Convert a filesystem page path to a URL path.
+ *   "games/chess/page.tsx" → "/games/chess"
+ *   "page.tsx"             → ""
+ */
+function pageToPath(pagePath) {
+  const replaced = pagePath.replace(/\/page\.tsx$/, '').replace(/^page\.tsx$/, '');
+  return replaced ? `/${replaced}` : '';
 }
 
-// Map route names to URL paths by reading the route builder logic.
-// For routes using ${s('key')}, the English slug equals the key itself.
-// For literal routes, extract the slug directly.
-function routeToPath(name) {
-  // Find the route definition line
-  const lineRe = new RegExp(
-    `^\\s+${name}:\\s*\`\\/\\$\\{locale\\}(.*)\``,
-    'm',
-  );
-  const lineMatch = src.match(lineRe);
-  if (!lineMatch) return null;
+/**
+ * Check if a URL path should be excluded.
+ */
+function shouldExclude(urlPath) {
+  const segments = urlPath.split('/').filter(Boolean);
 
-  let suffix = lineMatch[1];
+  // Skip entirely-excluded directories
+  if (segments.some((s) => SKIP_DIRS.has(s))) return true;
 
-  // Replace ${s('xxx')} with the English slug (which is 'xxx')
-  suffix = suffix.replace(/\$\{s\('(\w+)'\)\}/g, '$1');
+  // Skip exact directory matches (first or second segment)
+  if (segments.length > 0 && SKIP_EXACT.has(segments[0])) return true;
+  if (segments.length > 1 && SKIP_EXACT.has(segments[1])) return true;
 
-  // Replace ${s("xxx")} variant
-  suffix = suffix.replace(/\$\{s\("(\w+)"\)\}/g, '$1');
+  // Skip any path containing a dynamic segment [param]
+  if (segments.some((s) => s.startsWith('['))) return true;
 
-  // Skip routes that still have dynamic parts (template literals with variables)
-  if (suffix.includes('${')) return null;
+  return false;
+}
 
-  return `${BASE}${suffix}`;
+// Discover all pages
+const pages = findPages(APP_DIR);
+
+// Also include the locale root page (homepage at src/app/[locale]/page.tsx)
+if (existsSync(resolve(LOCALE_DIR, 'page.tsx'))) {
+  pages.unshift('page.tsx');
 }
 
 // Build URL list
 const urls = [];
-for (const name of staticRoutes) {
-  const path = routeToPath(name);
-  if (path) {
-    urls.push(path);
-  }
-}
-
-// Add game landing pages that use nested paths (not directly in routes.ts as static)
-const EXCLUDED_GAMES = new Set([
-]);
-const gameLandings = [
-  'games/chess',
-  'games/hearts',
-  'games/backgammon',
-  'games/checkers',
-  'games/spades',
-  'games/go',
-  'games/pachisi',
-  'games/critical',
-  'games/glimworm',
-  'games/sea-battle',
-  'games/battleship',
-  'games/tic-tac-toe',
-  'games/cascade',
-  'games/cat-dash',
-  'games/solitaire',
-  'games/minesweeper',
-  'games/sudoku',
-  'games/2048',
-];
-
-for (const g of gameLandings) {
-  const url = `${BASE}/${g}`;
-  if (!urls.includes(url)) {
-    urls.push(url);
+for (const page of pages) {
+  const urlPath = pageToPath(page);
+  if (!shouldExclude(urlPath)) {
+    urls.push(`${BASE}${urlPath}`);
   }
 }
 
@@ -164,4 +95,4 @@ const unique = [...new Set(urls)].sort();
 
 // Write output
 writeFileSync(OUTPUT_FILE, JSON.stringify(unique, null, 2) + '\n');
-console.log(`✅ Generated ${unique.length} Lighthouse URLs → ${OUTPUT_FILE}`);
+console.log(`✅ Generated ${unique.length} audit URLs → ${OUTPUT_FILE}`);

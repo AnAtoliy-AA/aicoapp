@@ -241,14 +241,14 @@ jobs:
           retention-days: 30
 
   lhci-audit:
-    name: Lighthouse (Shard ${{ matrix.shard }}/4)
+    name: Lighthouse (Shard ${{ matrix.shard }}/12)
     needs: build
-    if: "${{ github.event_name == 'pull_request' }}"
+    if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -296,7 +296,7 @@ jobs:
           node -e "
             const urls = require('./apps/web/lighthouse-urls.json');
             const shard = ${{ matrix.shard }};
-            const total = 4;
+            const total = 12;
             const perShard = Math.ceil(urls.length / total);
             const start = (shard - 1) * perShard;
             const shardUrls = urls.slice(start, start + perShard);
@@ -337,3 +337,76 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EVENT_NAME: ${{ github.event_name }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+
+  axe-a11y:
+    name: axe-a11y (Shard ${{ matrix.shard }}/12)
+    needs: build
+    if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: build-outputs
+
+      - name: Extract Build Artifacts
+        run: tar -xvf build-artifacts.tar
+
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-chromium-
+
+      - name: Disable Broken Microsoft Repos
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-*.list
+          sudo rm -f /etc/apt/sources.list.d/microsoft-*.sources
+          sudo apt-get update || true
+
+      - name: Install Playwright System Dependencies
+        run: pnpm --filter web exec playwright install-deps chromium
+
+      - name: Install Playwright Browsers
+        run: pnpm --filter web exec playwright install chromium
+
+      - name: Run axe-a11y Tests
+        run: pnpm --filter web test:e2e --project=chromium e2e/audit/axe-a11y.spec.ts
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+          SHARD_TOTAL: '12'
+          E2E_PROD: 'true'
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: axe-a11y-report-shard-${{ matrix.shard }}
+          path: apps/web/playwright-report/
+          retention-days: 7
