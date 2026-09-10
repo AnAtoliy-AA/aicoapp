@@ -160,6 +160,16 @@ export function PostGameSuggestions({
           {t('games.common.postGame.shareResult')}
         </Button>
 
+        {roomId && (
+          <Link
+            href={`/replay/by-room/${roomId}`}
+            className="flex items-center justify-center rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] px-3.5 py-2.5 text-xs font-semibold text-[rgba(255,255,255,0.7)] no-underline transition-all duration-200 hover:bg-[rgba(255,255,255,0.06)]"
+            data-testid="watch-replay-button"
+          >
+            🎬 {t('games.replay.card.watch')}
+          </Link>
+        )}
+
         {onPlayAnother && (
           <Button
             variant="secondary"

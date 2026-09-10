@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import {
   Card,
@@ -24,6 +25,8 @@ import {
   getFriends,
   getPendingRequests,
 } from '@/shared/api/friends';
+import { replayApi } from '@/features/replay/api';
+import type { ReplaySummary } from '@/features/replay/lib/types';
 import { EquippedPlayerAvatar } from '@/shared/ui/PlayerAvatar/EquippedPlayerAvatar';
 import { UserIcon } from '@arcadeum/ui/components/Icons/index';
 import { GiftDialog } from '@/features/shop/ui/GiftDialog';
@@ -49,6 +52,7 @@ export default function ProfilePageContent() {
   const [friendSent, setFriendSent] = useState(false);
   const [friendLoading, setFriendLoading] = useState(false);
   const [giftDialogOpen, setGiftDialogOpen] = useState(false);
+  const [replays, setReplays] = useState<ReplaySummary[]>([]);
 
   const isOwnProfile = snapshot.userId === userId;
   const isAlreadyFriend = myFriends.some((f) => f.userId === userId);
@@ -82,6 +86,14 @@ export default function ProfilePageContent() {
             setMyFriends(myFriendsData);
             setMyPending(myPendingData);
           }
+        }
+
+        // Load recent replays for this user
+        try {
+          const replayData = await replayApi.listReplays({ limit: 6 });
+          if (!cancelled) setReplays(replayData.entries);
+        } catch {
+          // Replays are optional — don't block profile load
         }
       } catch {
         if (!cancelled) setError(true);
@@ -277,6 +289,56 @@ export default function ProfilePageContent() {
               ))
             )}
           </div>
+
+          {replays.length > 0 && (
+            <div className="flex flex-col items-stretch gap-3">
+              <div className="flex flex-row items-center justify-between">
+                <span className="text-[18px] font-bold">
+                  {t('games.replay.list.title') || 'Replays'}
+                </span>
+                <Link
+                  href="/replays"
+                  className="text-[13px] text-[var(--color)] hover:underline"
+                >
+                  View All →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {replays.slice(0, 4).map((replay) => (
+                  <Link
+                    key={replay.replayId}
+                    href={`/replay/${replay.replayId}`}
+                    className="flex items-center gap-3 rounded-xl border border-[rgba(255,255,255,0.06)] p-3 transition-colors hover:bg-[rgba(255,255,255,0.04)]"
+                  >
+                    <span className="text-[20px]">
+                      {replay.gameId.includes('chess')
+                        ? '♟️'
+                        : replay.gameId.includes('checkers')
+                          ? '🔴'
+                          : '🎮'}
+                    </span>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-[13px] font-medium">
+                        {replay.gameId.replace(/_v\d+$/, '').replace(/_/g, ' ')}
+                      </span>
+                      <span className="text-[11px] text-[var(--textSecondary)]">
+                        {replay.players.map((p) => p.displayName).join(' vs ')}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-[var(--textSecondary)]">
+                      {new Date(replay.createdAt).toLocaleDateString(
+                        undefined,
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                        },
+                      )}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
 
