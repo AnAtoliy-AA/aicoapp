@@ -75,7 +75,7 @@ export function FeaturesHero({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full pl-11 pr-10 py-3 rounded-2xl bg-[var(--bgCard)]/90 border border-[var(--glassBorder)] text-sm text-[var(--foreground)] placeholder:text-[var(--foregroundSecondary)] focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/30 transition-all shadow-inner"
+            className="w-full pl-11 pr-10 py-3 rounded-2xl bg-[var(--bgCard)]/90 border border-[var(--glassBorder)] text-sm text-white placeholder:text-[var(--foregroundSecondary)] focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/30 transition-all shadow-inner"
           />
           {searchQuery && (
             <button
