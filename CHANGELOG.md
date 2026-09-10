@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.16] - 2026-09-10
+
+### Added
+- batch improvements — bcrypt dedup, auto-start AI quickplay, watch replay CTA, dead SCSS cleanup
+
+### Refactored
+- replace replay fetch with server-side redirect in game result modal
+
+
 ## [1.29.15] - 2026-09-10
 
 ### Fixed
