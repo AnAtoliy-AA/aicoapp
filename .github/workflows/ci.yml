@@ -338,6 +338,10 @@ jobs:
           path: .lighthouseci/
           retention-days: 1
 
+      - name: Clean up Lighthouse reports
+        if: always()
+        run: rm -rf .lighthouseci/
+
   lhci-comment:
     name: Lighthouse Report
     needs: lhci-audit
