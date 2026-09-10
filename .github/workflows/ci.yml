@@ -240,9 +240,48 @@ jobs:
             apps/web/playwright-report/
           retention-days: 30
 
+  lhci-urls:
+    name: Generate Lighthouse URLs
+    needs: build
+    if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: build-outputs
+
+      - name: Extract Build Artifacts
+        run: tar -xvf build-artifacts.tar
+
+      - name: Generate Lighthouse URLs from routes
+        run: node apps/web/scripts/generate-lhci-urls.mjs
+
+      - name: Upload Lighthouse URLs
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-urls
+          path: apps/web/lighthouse-urls.json
+          retention-days: 1
+
   lhci-audit:
     name: Lighthouse (Shard ${{ matrix.shard }}/10)
-    needs: build
+    needs: [build, lhci-urls]
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
     services:
@@ -313,8 +352,11 @@ jobs:
             sleep 1
           done
 
-      - name: Generate Lighthouse URLs from routes
-        run: node apps/web/scripts/generate-lhci-urls.mjs
+      - name: Download Lighthouse URLs
+        uses: actions/download-artifact@v8
+        with:
+          name: lighthouse-urls
+          path: apps/web/
 
       - name: Shard URLs
         run: |
@@ -367,7 +409,7 @@ jobs:
 
   axe-a11y:
     name: axe-a11y (Shard ${{ matrix.shard }}/4)
-    needs: build
+    needs: [build, lhci-urls]
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
     strategy:
@@ -423,8 +465,11 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm --filter web exec playwright install chromium
 
-      - name: Generate Lighthouse URLs from routes
-        run: node apps/web/scripts/generate-lhci-urls.mjs
+      - name: Download Lighthouse URLs
+        uses: actions/download-artifact@v8
+        with:
+          name: lighthouse-urls
+          path: apps/web/
 
       - name: Run axe-a11y Tests
         run: pnpm --filter web test:e2e --project=chromium e2e/audit/axe-a11y.spec.ts
