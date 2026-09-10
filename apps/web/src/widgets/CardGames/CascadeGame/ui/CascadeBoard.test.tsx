@@ -120,11 +120,11 @@ describe('CascadeBoard', () => {
     });
 
     // My two hand cards + the discard top + the Draw button.
-    expect(screen.getByRole('button', { name: /cardColors.R 5/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /cardColors.B 3/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /cardColors.R 9/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /red 5/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /blue 3/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /red 9/i })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /board.draw/i }),
+      screen.getByRole('button', { name: /draw a card/i }),
     ).toBeInTheDocument();
   });
 
@@ -139,7 +139,7 @@ describe('CascadeBoard', () => {
       onPlayCard: vi.fn(),
       onDraw: vi.fn(),
     });
-    expect(screen.getByText(/board\.cards/i)).toBeInTheDocument();
+    expect(screen.getByText(/3 cards/i)).toBeInTheDocument();
     // Specific bot card ids must NOT leak into the board.
     expect(screen.queryByRole('button', { name: /green 1/i })).toBeNull();
   });
@@ -157,7 +157,7 @@ describe('CascadeBoard', () => {
       onDraw: vi.fn(),
     });
     // r5 matches the R-color top so it's playable.
-    fireEvent.click(screen.getByRole('button', { name: /cardColors.R 5/i }));
+    fireEvent.click(screen.getByRole('button', { name: /red 5/i }));
     expect(onPlayCard).toHaveBeenCalledWith('r5');
   });
 
@@ -174,7 +174,7 @@ describe('CascadeBoard', () => {
       onDraw: vi.fn(),
     });
     // b3 doesn't match R-color or value 9 — should be ignored.
-    fireEvent.click(screen.getByRole('button', { name: /cardColors.B 3/i }));
+    fireEvent.click(screen.getByRole('button', { name: /blue 3/i }));
     expect(onPlayCard).not.toHaveBeenCalled();
   });
 
@@ -190,7 +190,7 @@ describe('CascadeBoard', () => {
       onPlayCard: vi.fn(),
       onDraw,
     });
-    fireEvent.click(screen.getByRole('button', { name: /board\.draw/i }));
+    fireEvent.click(screen.getByRole('button', { name: /draw a card/i }));
     expect(onDraw).toHaveBeenCalledTimes(1);
   });
 });
