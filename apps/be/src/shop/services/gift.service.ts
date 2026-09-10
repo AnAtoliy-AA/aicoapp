@@ -35,6 +35,14 @@ interface InventoryRowSnapshot {
   createdAt?: Date;
 }
 
+/** Reject NoSQL injection by ensuring the value is a plain string. */
+function assertString(value: unknown, field: string): string {
+  if (typeof value !== 'string') {
+    throw new BadRequestException(`shop.invalid${field}`);
+  }
+  return value;
+}
+
 @Injectable()
 export class GiftService {
   private readonly logger = new Logger(GiftService.name);
@@ -56,23 +64,27 @@ export class GiftService {
     itemId: string,
     message: string,
   ): Promise<GiftResult> {
-    if (senderId === recipientId) {
+    const safeSenderId = assertString(senderId, 'SenderId');
+    const safeRecipientId = assertString(recipientId, 'RecipientId');
+    const safeItemId = assertString(itemId, 'ItemId');
+
+    if (safeSenderId === safeRecipientId) {
       throw new BadRequestException('shop.cannotGiftSelf');
     }
 
-    const friendIds = await this.friends.getFriendIds(senderId);
-    if (!friendIds.includes(recipientId)) {
+    const friendIds = await this.friends.getFriendIds(safeSenderId);
+    if (!friendIds.includes(safeRecipientId)) {
       throw new ForbiddenException('shop.notFriends');
     }
 
-    const def = getCatalogItem(itemId);
+    const def = getCatalogItem(safeItemId);
     if (!def) throw new NotFoundException('shop.unknownItem');
     if (def.starter === true) {
       throw new BadRequestException('shop.starterNotGift');
     }
 
-    const senderObjId = new Types.ObjectId(senderId);
-    const purchaseId = `gift-${senderId}-${recipientId}-${itemId}-${Date.now()}`;
+    const senderObjId = new Types.ObjectId(safeSenderId);
+    const purchaseId = `gift-${safeSenderId}-${safeRecipientId}-${safeItemId}-${Date.now()}`;
 
     let recipientRow!: InventoryRowSnapshot;
 
@@ -81,7 +93,7 @@ export class GiftService {
         .findOne(
           {
             userId: senderObjId,
-            itemId,
+            itemId: safeItemId,
             soldAt: null,
           },
           null,
@@ -91,18 +103,16 @@ export class GiftService {
 
       if (!row) throw new BadRequestException('shop.notOwned');
 
-      // Mark sender's row as gifted (soldAt set).
       await this.inventoryModel.updateOne(
         { _id: row._id },
         { $set: { soldAt: new Date() } },
         { session },
       );
 
-      // Create new inventory row for recipient.
       const created = await this.inventoryModel.create(
         [
           {
-            userId: new Types.ObjectId(recipientId),
+            userId: new Types.ObjectId(safeRecipientId),
             itemId: def.id,
             purchaseId,
             acquiredVia: 'gift',
@@ -114,14 +124,13 @@ export class GiftService {
       );
       recipientRow = created[0];
 
-      // Audit trail.
       await this.auditModel.create(
         [
           {
-            adminUserId: new Types.ObjectId(senderId),
+            adminUserId: new Types.ObjectId(safeSenderId),
             action: 'grant',
             subjectItemId: def.id,
-            subjectUserId: new Types.ObjectId(recipientId),
+            subjectUserId: new Types.ObjectId(safeRecipientId),
             reason: `Gift from friend: ${message}`,
           },
         ],
@@ -129,17 +138,16 @@ export class GiftService {
       );
     });
 
-    // Clear equip if the sender had this item equipped.
     if (def) {
       const equipKey = equipKeyFor(def.category);
       if (equipKey) {
         const senderUser = await this.userModel
-          .findById(senderId, { [equipKey]: 1 })
+          .findById(safeSenderId, { [equipKey]: 1 })
           .lean<{ [key: string]: string | null } | null>();
-        if (senderUser && senderUser[equipKey] === itemId) {
+        if (senderUser && senderUser[equipKey] === safeItemId) {
           await this.inventory.clearEquipIfPointsAt(
-            senderId,
-            itemId,
+            safeSenderId,
+            safeItemId,
             def.category,
           );
         }
