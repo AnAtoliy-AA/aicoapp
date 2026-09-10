@@ -73,14 +73,6 @@ export default function TokenClient({ mintAddress = '', initialMetadata = null }
       .replace('{{name}}', displayName)
       .replace('{{ticker}}', displayTicker);
 
-  if (!metadata) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.skeleton} />
-      </div>
-    );
-  }
-
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
