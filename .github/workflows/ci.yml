@@ -241,14 +241,22 @@ jobs:
           retention-days: 30
 
   lhci-audit:
-    name: Lighthouse (Shard ${{ matrix.shard }}/12)
+    name: Lighthouse (Shard ${{ matrix.shard }}/6)
     needs: build
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    env:
+      MONGODB_OCI_URI: mongodb://localhost:27017/arcadeum_test
+      AUTH_JWT_SECRET: lighthouse_test_secret
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -273,6 +281,21 @@ jobs:
       - name: Extract Build Artifacts
         run: tar -xvf build-artifacts.tar
 
+      - name: Start Backend server
+        run: |
+          pnpm --filter be start:prod &
+          for i in $(seq 1 60); do
+            if curl -s http://localhost:4000/health > /dev/null 2>&1; then
+              echo "Backend ready"
+              break
+            fi
+            if [ "$i" -eq 60 ]; then
+              echo "Backend failed to start"
+              exit 1
+            fi
+            sleep 1
+          done
+
       - name: Start Next.js server
         run: |
           pnpm --filter web start &
@@ -296,7 +319,7 @@ jobs:
           node -e "
             const urls = require('./apps/web/lighthouse-urls.json');
             const shard = ${{ matrix.shard }};
-            const total = 12;
+            const total = 6;
             const perShard = Math.ceil(urls.length / total);
             const start = (shard - 1) * perShard;
             const shardUrls = urls.slice(start, start + perShard);
@@ -339,14 +362,14 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
 
   axe-a11y:
-    name: axe-a11y (Shard ${{ matrix.shard }}/12)
+    name: axe-a11y (Shard ${{ matrix.shard }}/6)
     needs: build
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        shard: [1, 2, 3, 4, 5, 6]
     services:
       mongodb:
         image: mongo:latest
@@ -396,11 +419,14 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm --filter web exec playwright install chromium
 
+      - name: Generate Lighthouse URLs from routes
+        run: node apps/web/scripts/generate-lhci-urls.mjs
+
       - name: Run axe-a11y Tests
         run: pnpm --filter web test:e2e --project=chromium e2e/audit/axe-a11y.spec.ts
         env:
           SHARD_INDEX: ${{ matrix.shard }}
-          SHARD_TOTAL: '12'
+          SHARD_TOTAL: '6'
           E2E_PROD: 'true'
 
       - name: Upload Test Report
