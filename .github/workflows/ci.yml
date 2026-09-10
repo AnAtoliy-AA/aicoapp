@@ -253,6 +253,8 @@ jobs:
     env:
       MONGODB_OCI_URI: mongodb://localhost:27017/arcadeum_test
       AUTH_JWT_SECRET: lighthouse_test_secret
+      OAUTH_WEB_CLIENT_ID: lighthouse_dummy_client_id
+      OAUTH_WEB_CLIENT_SECRET: lighthouse_dummy_client_secret
     strategy:
       fail-fast: false
       matrix:
