@@ -56,22 +56,15 @@ function RouteChangeAnnouncer() {
   );
 }
 
-const MUSIC_PREFIXES = ['/games/', '/rooms'];
-
 export function LayoutShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const showMusic = pathname != null && MUSIC_PREFIXES.some((p) => pathname.startsWith(p));
-
   return (
     <>
       <ConnectionBanner />
       <RouteChangeAnnouncer />
       {children}
-      {showMusic && (
-        <MusicErrorBoundary>
-          <GameMusic />
-        </MusicErrorBoundary>
-      )}
+      <MusicErrorBoundary>
+        <GameMusic />
+      </MusicErrorBoundary>
     </>
   );
 }
