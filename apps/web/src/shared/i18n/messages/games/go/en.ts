@@ -116,6 +116,7 @@ export const enMessages = {
       boardSize: 'Board size',
       boardSizeHint: '9×9 ≈ 10 min · 13×13 ≈ 20 min · 19×19 ≈ 40+ min',
       startWithBots: 'Start with bots',
+      aiDifficulty: 'AI Difficulty',
     },
     status: {
       yourTurn: 'Your turn',
@@ -125,6 +126,24 @@ export const enMessages = {
     },
     game: {
       pass: 'Pass',
+      territory: 'Territory',
+      resign: 'Resign',
+    },
+    kifu: {
+      title: 'Move History',
+      moves: 'moves',
+      ariaLabel: 'Move history',
+      empty: 'No moves yet',
+      first: 'First move',
+      prev: 'Previous move',
+      next: 'Next move',
+      last: 'Last move',
+    },
+    resign: {
+      title: 'Resign Game',
+      message: 'Are you sure you want to resign? This will count as a loss.',
+      confirm: 'Resign',
+      cancel: 'Keep Playing',
     },
     board: {
       ariaLabel: 'Go board ({{size}}×{{size}})',

@@ -119,6 +119,7 @@ export const esMessages = {
       boardSize: 'Tamaño del tablero',
       boardSizeHint: '9×9 ≈ 10 min · 13×13 ≈ 20 min · 19×19 ≈ 40+ min',
       startWithBots: 'Empezar con bots',
+      aiDifficulty: 'Dificultad IA',
     },
     status: {
       yourTurn: 'Tu turno',
@@ -128,6 +129,25 @@ export const esMessages = {
     },
     game: {
       pass: 'Pasar',
+      territory: 'Territorio',
+      resign: 'Rendirse',
+    },
+    kifu: {
+      title: 'Historial de jugadas',
+      moves: 'jugadas',
+      ariaLabel: 'Historial de jugadas',
+      empty: 'Sin jugadas aún',
+      first: 'Primera jugada',
+      prev: 'Jugada anterior',
+      next: 'Siguiente jugada',
+      last: 'Última jugada',
+    },
+    resign: {
+      title: 'Rendirse',
+      message:
+        '¿Estás seguro de que quieres rendirte? Esto contará como una derrota.',
+      confirm: 'Rendirse',
+      cancel: 'Seguir jugando',
     },
     board: {
       ariaLabel: 'Tablero de Go ({{size}}×{{size}})',
