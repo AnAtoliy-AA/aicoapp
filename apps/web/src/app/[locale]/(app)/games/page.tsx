@@ -12,6 +12,8 @@ import { Container, PageLayout } from '@arcadeum/ui';
 import { GamesCatalogClient, type CatalogGameItem } from './GamesCatalogClient';
 import { OFFLINE_GAME_SLUGS } from '@/features/offline/lib/offline-capable';
 
+export const revalidate = 300;
+
 export async function generateMetadata({
   params,
 }: {

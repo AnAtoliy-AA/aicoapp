@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import BackgammonLanding from './BackgammonLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const BACKGAMMON_SLUG = 'backgammon_v1';
 const BACKGAMMON_MIN_PLAYERS = 2;
 const BACKGAMMON_MAX_PLAYERS = 2;

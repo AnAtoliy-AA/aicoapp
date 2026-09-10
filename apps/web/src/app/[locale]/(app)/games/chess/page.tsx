@@ -11,6 +11,8 @@ import { buildFaqPageJsonLd } from '@/shared/seo/faqPageJsonLd';
 import ChessLanding from './ChessLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const CHESS_SLUG = 'chess_v1';
 const CHESS_MIN_PLAYERS = 2;
 const CHESS_MAX_PLAYERS = 2;

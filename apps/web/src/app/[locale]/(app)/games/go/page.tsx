@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import GoLanding from './GoLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const GO_SLUG = 'go_v1';
 const GO_MIN_PLAYERS = 2;
 const GO_MAX_PLAYERS = 2;
