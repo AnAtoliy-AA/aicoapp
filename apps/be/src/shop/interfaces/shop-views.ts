@@ -47,6 +47,10 @@ export interface GrantResult {
   inventoryItem: InventoryItemView;
 }
 
+export interface GiftResult {
+  inventoryItem: InventoryItemView;
+}
+
 export interface RevokeResult {
   inventoryItem: InventoryItemView;
   equipped: EquippedView;
