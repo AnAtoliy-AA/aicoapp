@@ -21,11 +21,33 @@ const OUTPUT_FILE = resolve(WEB_ROOT, 'lighthouse-urls.json');
 const LOCALE = 'en';
 const BASE = `http://localhost:3000/${LOCALE}`;
 
-// Directory prefixes to skip entirely (admin, system)
-const SKIP_DIRS = new Set(['admin', 'offline']);
+// Directory prefixes to skip entirely (admin, system, authenticated)
+const SKIP_DIRS = new Set([
+  'admin',
+  'offline',
+  'auth',
+  'battle-pass',
+  'chat',
+  'chats',
+  'clans',
+  'friends',
+  'history',
+  'notes',
+  'payment',
+  'referrals',
+  'replays',
+  'rewards',
+  'rooms',
+  'settings',
+  'stats',
+  'wallet',
+]);
 
 // Exact directory names to skip (system pages, OAuth handler)
 const SKIP_EXACT = new Set(['test-crash', 'callback']);
+
+// Game sub-paths that require auth (e.g. /games/create)
+const PRIVATE_GAME_SUBPATHS = new Set(['create']);
 
 /**
  * Recursively find all page.tsx files under dir, returning
@@ -69,6 +91,12 @@ function shouldExclude(urlPath) {
 
   // Skip any path containing a dynamic segment [param]
   if (segments.some((s) => s.startsWith('['))) return true;
+
+  // Skip private game sub-paths (e.g. /games/create)
+  if (segments[0] === 'games' && segments.length > 1 && PRIVATE_GAME_SUBPATHS.has(segments[1])) return true;
+
+  // Skip /shop/inventory (only /shop itself is public)
+  if (segments[0] === 'shop' && segments.length > 1) return true;
 
   return false;
 }
