@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.8] - 2026-09-10
+
+### Added
+- set default lobby timer to rapid and remove timeless from landing
+
+### Fixed
+- add @/ path alias to vitest config and fix test mocks
+- fix failing test mocks and build for vercel
+- anchor scripts/ to root in vercelignore to preserve apps/web/scripts/
+- cast window through unknown for ThemeContext E2E helper
+- exclude test files from next build tsc to fix vercel
+- keep packages in vercelignore for workspace resolution
+- exclude be and tg-bot from vercelignore
+- exclude apps/mobile from vercelignore
+- exclude .husky from vercelignore and improve chess landing copy
+- improve landing title copy and update all locales
+- resolve asset URLs, update game pages and sound registry
+
+
 ## [1.29.7] - 2026-09-10
 
 ### Added
