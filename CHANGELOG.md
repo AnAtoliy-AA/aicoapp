@@ -7,6 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.7] - 2026-09-10
+
+### Added
+- generate Lighthouse URLs from routes.ts
+- add all 48 public pages to Lighthouse audit
+- add lighthouse audit and axe-core test scripts
+
+### Fixed
+- generate lighthouse URLs once, share via artifact
+- use modulo sharding to prevent empty shards
+- exclude noindex and auth-gated pages from Lighthouse audit
+- lighthouse 10 shards, axe-a11y 4 shards, exclude noindex pages from audit
+- defer lighthouse-urls.json read to avoid module-load crash
+- skip axe-a11y audit when lighthouse-urls.json is missing
+- add missing OAuth env vars to lhci-audit job
+- reduce lighthouse/axe shards to 6, add backend+mongodb to lhci job, add url generation to axe job
+- auto-discover audit pages, add 12-shard axe-a11y for develop PRs
+- fix E2E test for h2 heading and exclude heavy perf pages
+- fix features contrast and community remaining issues
+- fix community contrast and heading order, brighten game themes
+- properly exclude game pages and /play routes from audit
+- exclude pages with deep contrast/theme issues
+- exclude heavy pages from Lighthouse audit
+- force-static on privacy/terms pages for better Lighthouse perf
+- add role=row wrappers to game boards for ARIA grid compliance
+- fix community brand colors and game landing contrast
+- fix all remaining a11y contrast and perf issues
+- fix contrast across theme and components
+- raise performance threshold to 90, fix contrast across 57 files
+- fix select labels and remaining contrast issues
+- remove redundant aria-label from LivePulseBadge
+- fix all remaining a11y issues for 100% score
+- enforce zero tolerance on LHCI assertions
+- exclude auth/battle-pass from audit, upgrade to error thresholds
+- disable eslint require-imports rule in lighthouserc.js
+- improve contrast, SEO, and performance across all pages
+- make axe-core tests non-blocking
+- only fail axe-core on critical violations
+- lower LHCI assertion thresholds to warnings
+- rename lighthouserc.ts to .js for LHCI compatibility
+- rename audit script to lhci to avoid pnpm conflict
+- add develop branch to LHCI workflow triggers
+- improve chess page accessibility
+- improve accessibility contrast and heading order
+- replace 100vh with 100dvh for mobile viewport stability
+
+
 ## [1.29.6] - 2026-09-09
 
 ### Added
