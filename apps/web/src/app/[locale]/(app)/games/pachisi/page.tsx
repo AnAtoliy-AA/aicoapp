@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import PachisiLanding from './PachisiLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const PACHISI_SLUG = 'pachisi_v1';
 const PACHISI_MIN_PLAYERS = 2;
 const PACHISI_MAX_PLAYERS = 4;

@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import CascadeLanding from './CascadeLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const CASCADE_SLUG = 'cascade_v1';
 const CASCADE_MIN_PLAYERS = 2;
 const CASCADE_MAX_PLAYERS = 10;
