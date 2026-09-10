@@ -208,7 +208,7 @@ export default function CommunityPageContent({
               </PageTitle>
 
               {t?.subtitle && (
-                <Typography variant="subheading" uiSize="md" alpha="high">
+                <Typography variant="heading" uiSize="md" alpha="high" style={{color:"white"}}>
                   {t.subtitle}
                 </Typography>
               )}
@@ -216,7 +216,7 @@ export default function CommunityPageContent({
               <Typography
                 variant="body"
                 uiSize="lg"
-                alpha="high"
+                alpha="high" style={{color:"white !important"}}
                 className="mt-2"
               >
                 {t?.description}
@@ -236,7 +236,7 @@ export default function CommunityPageContent({
                 >
                   {displayPlayersCount}
                 </Typography>
-                <Typography variant="caption" alpha="high">
+                <Typography variant="caption" alpha="high" style={{color:"white !important"}}>
                   {stats.playersLabel ?? 'Active Players'}
                 </Typography>
               </div>
@@ -253,7 +253,7 @@ export default function CommunityPageContent({
                 >
                   {displayDiscordCount}
                 </Typography>
-                <Typography variant="caption" alpha="high">
+                <Typography variant="caption" alpha="high" style={{color:"white !important"}}>
                   {stats.discordLabel ?? 'Discord Gamers'}
                 </Typography>
               </div>
@@ -270,7 +270,7 @@ export default function CommunityPageContent({
                 >
                   {stats.githubStars ?? 'Open Source'}
                 </Typography>
-                <Typography variant="caption" alpha="high">
+                <Typography variant="caption" alpha="high" style={{color:"white !important"}}>
                   {stats.githubLabel ?? 'Community Driven'}
                 </Typography>
               </div>
@@ -309,7 +309,7 @@ export default function CommunityPageContent({
               <Typography variant="heading" uiSize="md">
                 Official Networks & Socials
               </Typography>
-              <Typography variant="caption" alpha="high">
+              <Typography variant="caption" alpha="high" style={{color:"white !important"}}>
                 {NETWORK_CONFIGS.length} Channels Connected
               </Typography>
             </div>
@@ -363,7 +363,7 @@ export default function CommunityPageContent({
                           <Typography
                             variant="heading"
                             uiSize="sm"
-                            className="font-bold"
+                            style={{color:'white'}} className="font-bold"
                           >
                             {title}
                           </Typography>
@@ -372,7 +372,7 @@ export default function CommunityPageContent({
                               variant="body"
                               uiSize="sm"
                               alpha="high"
-                              className="line-clamp-3 text-xs leading-relaxed"
+                              style={{color:'white'}} className="line-clamp-3 text-xs leading-relaxed"
                             >
                               {description}
                             </Typography>
@@ -382,11 +382,9 @@ export default function CommunityPageContent({
 
                       <div
                         className="flex items-center gap-2 mt-4 font-semibold text-xs"
-                        style={{ color: net.color }}
                       >
                         <Typography
                           variant="caption"
-                          style={{ color: net.color }}
                           className="font-bold"
                         >
                           {actionText} →
