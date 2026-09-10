@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BoardSizeSelector } from './BoardSizeSelector';
 
-const mockEmit = vi.fn();
+const mockEmit = vi.hoisted(() => vi.fn());
 vi.mock('@/shared/lib/socket', () => ({
   gameSocket: {
     emit: (event: string, payload?: unknown) => mockEmit(event, payload),
