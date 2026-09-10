@@ -309,7 +309,7 @@ export function CoordinateTrainer() {
         </div>
       </div>
 
-      <div className="flex gap-1 text-[10px] text-[var(--textSecondary)] opacity-60">
+      <div className="flex gap-1 text-[10px] text-[var(--textSecondary)] opacity-85">
         {files.map((f) => <span key={f} className="w-8 text-center">{f}</span>)}
       </div>
     </div>

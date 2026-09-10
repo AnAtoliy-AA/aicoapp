@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import TicTacToeLanding from './TicTacToeLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const TIC_TAC_TOE_SLUG = 'tic_tac_toe_v1';
 const TIC_TAC_TOE_MIN_PLAYERS = 2;
 const TIC_TAC_TOE_MAX_PLAYERS = 5;

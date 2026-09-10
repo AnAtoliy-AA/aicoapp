@@ -80,7 +80,7 @@ export function PlayerProfile({ userId, isOwnProfile: _isOwnProfile = false }: P
           <div className="flex items-center gap-2">
             <Typography variant="heading" uiSize="lg">
               {profile.title && (
-                <span className="text-[var(--primary)]">{profile.title} </span>
+                <span className="text-[var(--color)]">{profile.title} </span>
               )}
               {userId}
             </Typography>

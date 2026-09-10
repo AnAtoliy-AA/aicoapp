@@ -8,9 +8,8 @@ import { getActiveAnnouncement } from '@/widgets/AnnouncementBanner/server/getAc
 import { LayoutFooter } from '@/widgets/footer';
 import { LanguageProvider } from '@/app/i18n/LanguageProvider';
 import { PWAProvider } from '@/features/pwa/PWAContext';
-import { StatsReplay } from '@/shared/ui/StatsReplay';
-import { RootModals } from './RootModals';
 import { SoundProvider } from '@/shared/lib/sound';
+import { InteractiveShell } from '@/shared/ui/InteractiveShell';
 import {
   isLocale,
   SUPPORTED_LOCALES,
@@ -178,16 +177,16 @@ export default async function LocaleLayout({
       <LanguageProvider locale={locale} initialMessages={initialMessages}>
         <PWAProvider>
           <SoundProvider>
-            <LayoutShell>
-              <AnnouncementBanner initialAnnouncement={announcement} />
-              <Header />
-              <main id="main-content" className="layout-main">
-                {children}
-              </main>
-              <LayoutFooter />
-            </LayoutShell>
-            <RootModals />
-            <StatsReplay />
+            <InteractiveShell>
+              <LayoutShell>
+                <AnnouncementBanner initialAnnouncement={announcement} />
+                <Header />
+                <main id="main-content" className="layout-main">
+                  {children}
+                </main>
+                <LayoutFooter />
+              </LayoutShell>
+            </InteractiveShell>
           </SoundProvider>
         </PWAProvider>
       </LanguageProvider>

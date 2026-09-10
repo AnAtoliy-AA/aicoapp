@@ -116,6 +116,7 @@ export const frMessages = {
       boardSize: 'Taille du plateau',
       boardSizeHint: '9×9 ≈ 10 min · 13×13 ≈ 20 min · 19×19 ≈ 40+ min',
       startWithBots: 'Commencer avec des bots',
+      aiDifficulty: 'Difficulté IA',
     },
     status: {
       yourTurn: 'À vous de jouer',
@@ -125,6 +126,25 @@ export const frMessages = {
     },
     game: {
       pass: 'Passer',
+      territory: 'Territoire',
+      resign: 'Abandonner',
+    },
+    kifu: {
+      title: 'Historique des coups',
+      moves: 'coups',
+      ariaLabel: 'Historique des coups',
+      empty: 'Aucun coup pour le moment',
+      first: 'Premier coup',
+      prev: 'Coup précédent',
+      next: 'Coup suivant',
+      last: 'Dernier coup',
+    },
+    resign: {
+      title: 'Abandonner la partie',
+      message:
+        'Êtes-vous sûr de vouloir abandonner ? Cela comptera comme une défaite.',
+      confirm: 'Abandonner',
+      cancel: 'Continuer à jouer',
     },
     board: {
       ariaLabel: 'Plateau de Go ({{size}}×{{size}})',

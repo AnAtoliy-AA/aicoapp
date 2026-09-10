@@ -13,6 +13,8 @@ export const buildRoutes = (locale: Locale) => {
     // Main pages
     home: `/${locale}`,
     auth: `/${locale}/${s('auth')}`,
+    authForgot: `/${locale}/${s('auth')}/forgot`,
+    authReset: `/${locale}/${s('auth')}/reset`,
     authCallback: `/${locale}/${s('auth')}/callback`,
 
     // Games (top-level segment is translated; nested segments stay in

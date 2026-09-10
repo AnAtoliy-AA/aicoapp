@@ -225,7 +225,7 @@ function ChessGameConsoleImpl({
 
                 {bestCandidate && (
                   <div className="flex items-center gap-1 text-[11px] font-mono">
-                    <span className="text-[9px] text-[var(--textSecondary)] opacity-70">
+                    <span className="text-[9px] text-[var(--textSecondary)] opacity-85">
                       Best:
                     </span>
                     <span className="font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-400/30">

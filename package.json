@@ -1,6 +1,6 @@
 {
   "name": "aicoapp-monorepo",
-  "version": "1.29.6",
+  "version": "1.29.14",
   "private": true,
   "packageManager": "pnpm@9.15.9",
   "scripts": {
@@ -15,6 +15,7 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "turbo run format --parallel",
+    "clean": "rm -rf .turbo .wrangler .next node_modules/.cache apps/*/node_modules/.cache packages/*/node_modules/.cache apps/web/.next apps/be/dist apps/mobile/.expo packages/*/dist bots/*/dist apps/*/dist",
     "check-file-length": "node scripts/check-file-length.js",
     "check-translations": "node scripts/check_translation.js",
     "docs:check": "node scripts/check-doc-links.js",

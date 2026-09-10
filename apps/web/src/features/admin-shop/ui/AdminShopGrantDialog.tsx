@@ -115,7 +115,15 @@ function AdminShopGrantDialogInner({
         onClose();
         return;
       }
-      setError(labels.grantDialog.error);
+      if (result.error === 'validation') {
+        setError('Invalid input. Check user ID, item ID, and reason.');
+      } else if (result.error === 'not_found') {
+        setError('User or item not found.');
+      } else if (result.error === 'forbidden') {
+        setError('You do not have permission to grant items.');
+      } else {
+        setError(labels.grantDialog.error);
+      }
     });
   };
 
@@ -177,6 +185,7 @@ function AdminShopGrantDialogInner({
                 value={userSearchQuery}
                 onChange={(e) => handleUserSearchChange(e.target.value)}
                 placeholder={labels.grantDialog.searchUserPlaceholder}
+                aria-label={labels.grantDialog.searchUserPlaceholder}
                 data-testid="admin-shop-grant-user"
                 autoComplete="new-password"
                 style={inputStyle}
@@ -263,6 +272,7 @@ function AdminShopGrantDialogInner({
                 value={itemSearchQuery}
                 onChange={(e) => setItemSearchQuery(e.target.value)}
                 placeholder={labels.grantDialog.searchItemPlaceholder}
+                aria-label={labels.grantDialog.searchItemPlaceholder}
                 data-testid="admin-shop-grant-item"
                 autoComplete="new-password"
                 style={inputStyle}
@@ -319,6 +329,7 @@ function AdminShopGrantDialogInner({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             maxLength={280}
+            aria-label={labels.grantDialog.reason}
             data-testid="admin-shop-grant-reason"
             autoComplete="new-password"
             style={inputStyle}

@@ -91,6 +91,10 @@ export const by: DeepPartial<SeoMessages> = {
     title: `Сапёр · Бясплатная класічная галаваломка анлайн · ${APP}`,
     description: `Гуляйце ў «Сапёра» анлайн на ${APP} — полі ад пачаткоўца да эксперта, сцягі, таймер і захаванне прагрэсу. Бясплатна, імгненна, без запампоўкі.`,
   },
+  minesweeperPlay: {
+    title: `Гуляць у Сапёра · ${APP}`,
+    description: `Гуляйце ў Сапёра на ${APP} — адкрывайце бяспечныя клеткі, стаўце сцягі і ачышчайце поле. Ад пачаткоўца да эксперта, бясплатна.`,
+  },
   sudokuLanding: {
     title: `Судоку · Бясплатная лічбавая галаваломка анлайн · ${APP}`,
     description: `Гуляйце ў судоку анлайн на ${APP} — узроўні «легка», «сярэдне» і «цяжка» з адзіным рашэннем, нататкамі і захаваннем прагрэсу. Бясплатна, імгненна, без запампоўкі.`,
@@ -174,6 +178,14 @@ export const by: DeepPartial<SeoMessages> = {
   chat: {
     title: `Чат · ${APP}`,
     description: `Асабістыя паведамленні на ${APP}: размаўляйце з сябрамі, узгадняйце партыі і дзяліцеся кароткімі нататкамі.`,
+  },
+  authForgot: {
+    title: `Forgot Password · ${APP}`,
+    description: `Reset your ${APP} password.`,
+  },
+  authReset: {
+    title: `Reset Password · ${APP}`,
+    description: `Set a new password for your ${APP} account.`,
   },
   auth: {
     title: `Уваход · ${APP}`,

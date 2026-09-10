@@ -212,7 +212,7 @@ export function PuzzleRush({ mode: initialMode }: PuzzleRushProps) {
         <button
           type="button"
           onClick={() => setPhase('menu')}
-          className="w-full py-3 px-6 rounded-xl bg-[var(--primary)]/15 border border-[var(--primary)]/30 text-[var(--primary)] text-sm font-bold cursor-pointer hover:bg-[var(--primary)]/25 transition-colors"
+          className="w-full py-3 px-6 rounded-xl bg-[var(--primary)]/15 border border-[var(--primary)]/30 text-[var(--color)] text-sm font-bold cursor-pointer hover:bg-[var(--primary)]/25 transition-colors"
         >
           {t('games.chess_v1.puzzleRush.playAgain')}
         </button>

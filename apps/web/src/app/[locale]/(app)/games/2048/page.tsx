@@ -9,6 +9,8 @@ import { getPostsByTag } from '@/features/blog/registry';
 import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import Game2048Landing from './Game2048Landing';
 
+export const revalidate = 300;
+
 const GAME_2048_SLUG = 'game_2048_v1';
 
 type PageProps = {

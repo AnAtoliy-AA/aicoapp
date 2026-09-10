@@ -158,7 +158,7 @@ export default function ChatPage() {
               {isLoading && messages.length === 0 ? (
                 <div className="flex flex-col flex-1 items-center justify-center py-10">
                   <Spinner
-                    className={'text-[var(--primary)]'}
+                    className={'text-[var(--color)]'}
                     data-testid="chat-loading-spinner"
                     size="large"
                   />

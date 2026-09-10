@@ -62,7 +62,7 @@ export default function OmniscienceModal({
               {resolveDisplayName(hand.playerId, 'Player')}
             </SectionLabel>
             {hand.cards.length === 0 ? (
-              <Typography className={'text-center'} uiSize="sm" alpha="medium">
+              <Typography className={'text-center'} uiSize="sm" alpha="high">
                 {t('games.table.modals.omniscience.emptyHand') ||
                   'No cards in hand.'}
               </Typography>

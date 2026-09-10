@@ -81,7 +81,7 @@ export function ChessTournamentLobby({
 
       {!isLoading && tournaments.length === 0 && (
         <GlassCard className="p-4 text-center">
-          <Typography variant="body" alpha="medium">
+          <Typography variant="body" alpha="high">
             {t?.noTournaments ?? 'No tournaments available yet.'}
           </Typography>
         </GlassCard>
@@ -125,7 +125,7 @@ export function ChessTournamentLobby({
 
       {completedTournaments.length > 0 && (
         <div className="flex flex-col gap-2">
-          <Typography variant="caption" alpha="medium" className="font-bold">
+          <Typography variant="caption" alpha="high" className="font-bold">
             {t?.completed ?? 'COMPLETED'}
           </Typography>
           {completedTournaments.map((tournament) => (
@@ -210,7 +210,7 @@ function TournamentCard({
                   : tournament.status}
             </span>
           </div>
-          <div className="flex items-center gap-3 text-[12px] opacity-70">
+          <div className="flex items-center gap-3 text-[12px] opacity-85">
             <span>
               {tournament.format === 'arena'
                 ? (labels?.arena ?? 'Arena')
@@ -230,7 +230,7 @@ function TournamentCard({
 
         <div className="flex items-center gap-2">
           {tournament.prizeDescription && (
-            <span className="text-[12px] opacity-70">
+            <span className="text-[12px] opacity-85">
               {labels?.prize ?? 'Prize'}: {tournament.prizeDescription}
             </span>
           )}

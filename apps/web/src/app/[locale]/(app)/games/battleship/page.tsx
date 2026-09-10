@@ -10,6 +10,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import BattleshipLanding from './BattleshipLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const SEA_BATTLE_SLUG = 'sea_battle_v1';
 const SEA_BATTLE_MIN_PLAYERS = 2;
 const SEA_BATTLE_MAX_PLAYERS = 4;

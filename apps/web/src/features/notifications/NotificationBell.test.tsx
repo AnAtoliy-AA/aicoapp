@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { NotificationBell } from './NotificationBell';
 import { useNotificationsStore } from './notifications.store';
 
-const socketListeners = new Map<string, (payload: unknown) => void>();
+const socketListeners = vi.hoisted(() => new Map<string, (payload: unknown) => void>());
 
 vi.mock('@/entities/session/model/useSessionTokens', () => ({
   useSessionTokens: () => ({

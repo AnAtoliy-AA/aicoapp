@@ -80,7 +80,7 @@ export function DrawPile({
       <Typography
         uiSize="xs"
         weight="600"
-        alpha="medium"
+        alpha="high"
         className="uppercase tracking-[0.4px]"
         data-testid="arena-draw-pile-hint"
       >

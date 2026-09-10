@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import CheckersLanding from './CheckersLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const CHECKERS_SLUG = 'checkers_v1';
 const CHECKERS_MIN_PLAYERS = 2;
 const CHECKERS_MAX_PLAYERS = 2;

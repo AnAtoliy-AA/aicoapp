@@ -7,6 +7,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { WalletModule } from '../wallet/wallet.module';
 import { EconomyModule } from '../economy/economy.module';
 import { SolanaModule } from '../solana/solana.module';
+import { FriendsModule } from '../friends/friends.module';
 import {
   ShopItemOverride,
   ShopItemOverrideSchema,
@@ -23,6 +24,7 @@ import { CatalogService } from './services/catalog.service';
 import { InventoryService } from './services/inventory.service';
 import { ShopService } from './services/shop.service';
 import { ShopWalletService } from './services/shop-wallet.service';
+import { GiftService } from './services/gift.service';
 import { ShopInventoryBootstrap } from './lib/shop-inventory-bootstrap';
 import { ShopController } from './shop.controller';
 import { AdminShopController } from './admin-shop.controller';
@@ -33,6 +35,7 @@ import { AdminShopController } from './admin-shop.controller';
     forwardRef(() => AuthModule),
     forwardRef(() => WalletModule),
     forwardRef(() => SolanaModule),
+    forwardRef(() => FriendsModule),
     EconomyModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
@@ -47,6 +50,7 @@ import { AdminShopController } from './admin-shop.controller';
     InventoryService,
     ShopService,
     ShopWalletService,
+    GiftService,
     ShopInventoryBootstrap,
     RolesGuard,
   ],

@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import { CriticalLandingView } from './CriticalLandingView';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const CRITICAL_SLUG = 'critical_v1';
 const CRITICAL_MIN_PLAYERS = 2;
 const CRITICAL_MAX_PLAYERS = 5;

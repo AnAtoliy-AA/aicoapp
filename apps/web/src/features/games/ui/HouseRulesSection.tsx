@@ -92,6 +92,7 @@ export function HouseRulesSection({
           {t('games.create.rules.firstPlayer.title')}
         </span>
         <select
+          aria-label="First Player"
           value={
             optFirstPlayer ??
             (room.gameOptions?.firstPlayer as string) ??

@@ -28,7 +28,7 @@ export function ChessAdvantages({ advantages }: Props) {
   return (
     <section className="py-12">
       <div className="flex flex-col gap-2 mb-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
           {advantages.kicker}
         </span>
         <h2 className="m-0 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--foreground)]">
@@ -47,7 +47,7 @@ export function ChessAdvantages({ advantages }: Props) {
             <h3 className="m-0 text-lg font-bold text-[var(--foreground)]">
               {item.title}
             </h3>
-            <p className="m-0 text-sm text-[var(--foreground)] opacity-80 leading-relaxed">
+            <p className="m-0 text-sm text-[var(--foreground)] opacity-95 leading-relaxed">
               {item.body}
             </p>
           </GlassCard>

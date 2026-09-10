@@ -22,7 +22,7 @@ export function RoadmapLegalBanner() {
         <Typography
           variant="body"
           uiSize="sm"
-          alpha="medium"
+          alpha="high"
           className="leading-relaxed"
         >
           {t('pages.roadmap.legal.description')}

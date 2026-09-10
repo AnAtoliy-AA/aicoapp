@@ -16,7 +16,7 @@ export const frMessages = {
         howToPlayTitle: 'Comment jouer à {{gameName}}',
       },
       hero: {
-        title: 'Échecs — le jeu de stratégie intemporel',
+        title: 'Échecs — Le jeu de stratégie ultime',
         subtitle:
           'Propulsé par Stockfish 19. Bullet, blitz, rapide, quotidien et Chess960. Jouez contre des amis, 20 personnalités IA ou toute la communauté.',
         createRoom: 'Créer une salle',

@@ -164,7 +164,7 @@ export function MoveList({
                 isActivePair ? 'bg-white/10' : 'hover:bg-white/5'
               }`}
             >
-              <span className="w-7 text-[11px] text-[var(--textSecondary)] opacity-60 text-right pr-2 select-none">
+              <span className="w-7 text-[11px] text-[var(--textSecondary)] opacity-85 text-right pr-2 select-none">
                 {pair.num}.
               </span>
               <button
