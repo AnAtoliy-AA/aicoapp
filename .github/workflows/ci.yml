@@ -322,9 +322,7 @@ jobs:
             const urls = require('./apps/web/lighthouse-urls.json');
             const shard = ${{ matrix.shard }};
             const total = 10;
-            const perShard = Math.ceil(urls.length / total);
-            const start = (shard - 1) * perShard;
-            const shardUrls = urls.slice(start, start + perShard);
+            const shardUrls = urls.filter((_, i) => i % total === shard - 1);
             require('fs').writeFileSync('./apps/web/lighthouse-urls.json', JSON.stringify(shardUrls, null, 2));
             console.log('Shard ' + shard + ': ' + shardUrls.length + ' URLs');
           "

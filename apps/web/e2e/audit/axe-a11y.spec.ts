@@ -18,9 +18,7 @@ if (!existsSync(urlsPath)) {
   const shardIndex = parseInt(process.env.SHARD_INDEX ?? '1', 10);
   const shardTotal = parseInt(process.env.SHARD_TOTAL ?? '1', 10);
 
-  const perShard = Math.ceil(allUrls.length / shardTotal);
-  const start = (shardIndex - 1) * perShard;
-  const urls = allUrls.slice(start, start + perShard);
+  const urls = allUrls.filter((_, i) => i % shardTotal === shardIndex - 1);
 
   for (const url of urls) {
     const path = new URL(url).pathname;
