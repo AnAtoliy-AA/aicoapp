@@ -16,7 +16,7 @@ export const enMessages = {
         howToPlayTitle: 'How to play {{gameName}}',
       },
       hero: {
-        title: 'Chess — the strategy game',
+        title: 'Chess — The Ultimate Strategy Game',
         subtitle:
           'Powered by Stockfish 19. Bullet, blitz, rapid, daily, and Chess960. Play against friends, 20 AI personalities, or the entire community.',
         createRoom: 'Create a room',
