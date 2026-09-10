@@ -180,12 +180,12 @@ export const ru: DeepPartial<SeoMessages> = {
     description: `Личные сообщения на ${APP}: общайтесь с друзьями, координируйте партии и делитесь короткими заметками.`,
   },
   authForgot: {
-    title: \`Forgot Password · \${APP}\`,
-    description: \`Reset your \${APP} password.\`,
+    title: `Forgot Password · ${APP}`,
+    description: `Reset your ${APP} password.`,
   },
   authReset: {
-    title: \`Reset Password · \${APP}\`,
-    description: \`Set a new password for your \${APP} account.\`,
+    title: `Reset Password · ${APP}`,
+    description: `Set a new password for your ${APP} account.`,
   },
   auth: {
     title: `Вход · ${APP}`,
