@@ -59,10 +59,37 @@ function pageToPath(pagePath) {
 /**
  * Check if a URL path should be excluded.
  */
+/**
+ * Pages behind proxy PRIVATE_SLUG_KEYS — they receive x-robots-tag: noindex
+ * from the middleware. Lighthouse SEO audit penalizes noindex, so these
+ * can never score 100 on SEO. Exclude from audit.
+ */
+const NOINDEX_DIRS = new Set([
+  'auth',
+  'chat',
+  'chats',
+  'history',
+  'settings',
+  'stats',
+  'referrals',
+  'payment',
+  'wallet',
+  'shop',
+  'rooms',
+  'friends',
+  'clans',
+  'notes',
+  'rewards',
+  'replays',
+  'events',
+  'tournaments',
+  'battle-pass',
+]);
+
 function shouldExclude(urlPath) {
   const segments = urlPath.split('/').filter(Boolean);
 
-  // Skip entirely-excluded directories
+  // Skip admin and other entirely-excluded directories
   if (segments.some((s) => SKIP_DIRS.has(s))) return true;
 
   // Skip exact directory matches (first or second segment)
@@ -71,6 +98,11 @@ function shouldExclude(urlPath) {
 
   // Skip any path containing a dynamic segment [param]
   if (segments.some((s) => s.startsWith('['))) return true;
+
+  // Skip pages behind PRIVATE_SLUG_KEYS (noindex → Lighthouse SEO fails)
+  if (segments.some((s) => NOINDEX_DIRS.has(s))) return true;
+  // /games/create is private
+  if (segments[0] === 'games' && segments[1] === 'create') return true;
 
   return false;
 }
