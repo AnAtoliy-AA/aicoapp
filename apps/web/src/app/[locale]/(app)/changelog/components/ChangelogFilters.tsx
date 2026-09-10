@@ -104,7 +104,7 @@ export function ChangelogFilters({
 
       {isFiltered && (
         <div className="flex items-center justify-between pt-2 border-t border-[var(--glassBorder)]">
-          <Typography variant="caption" uiSize="xs" alpha="medium">
+          <Typography variant="caption" uiSize="xs" alpha="high">
             {t('pages.changelog.filters.showingResults', {
               shown: filteredCount,
               total: totalCount,
@@ -114,7 +114,7 @@ export function ChangelogFilters({
             variant="link"
             size="sm"
             onClick={onClearFilters}
-            className="text-xs text-[var(--primary)] p-0 h-auto"
+            className="text-xs text-[var(--color)] p-0 h-auto"
           >
             {t('pages.changelog.filters.clearFilters')}
           </Button>

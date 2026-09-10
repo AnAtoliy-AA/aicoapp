@@ -247,7 +247,7 @@ export function GameResultModal({
                       <button
                         type="button"
                         onClick={() => setShowAnalysis(false)}
-                        className="text-[10px] text-[var(--primary)] hover:underline cursor-pointer bg-transparent border-0 p-0"
+                        className="text-[10px] text-[var(--color)] hover:underline cursor-pointer bg-transparent border-0 p-0"
                       >
                         {analysis.backLabel}
                       </button>

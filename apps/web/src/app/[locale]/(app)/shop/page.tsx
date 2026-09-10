@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
+
+export const revalidate = 60;
 import { getServerAccessToken } from '@/entities/session/api/serverTokens';
 import { getTranslations } from '@/shared/i18n/server';
 import { getWalletBalance } from '@/features/wallet/server/wallet.server';

@@ -373,7 +373,7 @@ export function ShareGameMenu({ roomId, inviteCode }: ShareGameMenuProps) {
           </div>
           {hasNativeShare && (
             <div
-              className="flex flex-row items-center gap-3 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--backgroundHover)] transition-colors text-[var(--primary)] font-semibold"
+              className="flex flex-row items-center gap-3 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--backgroundHover)] transition-colors text-[var(--color)] font-semibold"
               onClick={handleNativeShare}
               role="menuitem"
               tabIndex={0}

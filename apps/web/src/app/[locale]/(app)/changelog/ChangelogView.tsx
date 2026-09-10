@@ -196,7 +196,7 @@ export default function ChangelogView({
               <Typography
                 variant="body"
                 uiSize="md"
-                alpha="medium"
+                alpha="high"
                 className="max-w-2xl leading-relaxed"
               >
                 {t('pages.changelog.subtitle')}

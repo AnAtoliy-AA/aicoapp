@@ -262,7 +262,7 @@ export default function HelpPageContent({ t: initialT }: HelpPageContentProps) {
                             {category?.description}
                           </Typography>
                         </div>
-                        <span className="text-xs font-bold text-[var(--primary)] group-hover:underline">
+                        <span className="text-xs font-bold text-[var(--color)] group-hover:underline">
                           {isSelected
                             ? 'Selected Category ▾'
                             : 'Explore Guides →'}
@@ -290,7 +290,7 @@ export default function HelpPageContent({ t: initialT }: HelpPageContentProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedCategory(null)}
-                    className="cursor-pointer border-0 bg-transparent text-xs font-bold text-[var(--primary)] hover:underline"
+                    className="cursor-pointer border-0 bg-transparent text-xs font-bold text-[var(--color)] hover:underline"
                   >
                     Show all FAQs
                   </button>

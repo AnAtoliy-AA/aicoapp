@@ -97,7 +97,7 @@ export function AdminTournamentsTable({
         className="p-8 items-center justify-center border border-[var(--borderColor)]"
         data-testid="tournaments-table-empty"
       >
-        <Typography variant="body" uiSize="md" alpha="medium">
+        <Typography variant="body" uiSize="md" alpha="high">
           {hasFilter ? labels.empty.noResults : labels.empty.noTournaments}
         </Typography>
       </GlassCard>

@@ -109,7 +109,7 @@ export default function BlogPageContent({
             <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[var(--gold)] opacity-10 blur-3xl" />
 
             <div className="relative z-10 flex flex-col items-start gap-4 md:max-w-3xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--glassBorder)] bg-[var(--glassBg)] px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--glassBorder)] bg-[var(--glassBg)] px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color)]">
                 📰 {blog?.subtitle ?? 'Guides, Updates & Stories'}
               </span>
               <PageTitle size="xl" gradient>
@@ -235,7 +235,7 @@ export default function BlogPageContent({
 
               {filteredPosts.length === 0 ? (
                 <GlassCard className="p-8 text-center">
-                  <Typography variant="body" uiSize="md" alpha="medium">
+                  <Typography variant="body" uiSize="md" alpha="high">
                     No articles found matching your query.
                   </Typography>
                 </GlassCard>
@@ -275,7 +275,7 @@ export default function BlogPageContent({
                           <Typography
                             variant="body"
                             uiSize="sm"
-                            alpha="medium"
+                            alpha="high"
                             className="line-clamp-3 leading-relaxed"
                           >
                             {post.excerpt}
@@ -307,7 +307,7 @@ export default function BlogPageContent({
                   <Typography variant="heading" uiSize="lg" weight="800">
                     {newsletter.title}
                   </Typography>
-                  <Typography variant="body" uiSize="sm" alpha="medium">
+                  <Typography variant="body" uiSize="sm" alpha="high">
                     {newsletter.subtitle}
                   </Typography>
                 </div>
@@ -344,7 +344,7 @@ export default function BlogPageContent({
                 <Typography variant="heading" uiSize="lg" weight="800">
                   {cta.title}
                 </Typography>
-                <Typography variant="body" uiSize="sm" alpha="medium">
+                <Typography variant="body" uiSize="sm" alpha="high">
                   {cta.description}
                 </Typography>
               </div>

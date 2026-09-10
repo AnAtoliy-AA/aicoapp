@@ -258,7 +258,7 @@ export default function LeaderboardsPageContent({
         >
           <HeroBackdrop data-testid="leaderboard-hero">
             <div className="flex flex-col items-stretch gap-3 max-w-[680px]">
-              <span className="text-[14px] tracking-[2px] opacity-[0.7] uppercase text-[var(--mythicAccent)]">
+              <span className="text-[14px] tracking-[2px] opacity-[0.9] uppercase text-[var(--mythicAccent)]">
                 {heroT.eyebrow ?? 'Live · Season 4'}
               </span>
               <h1 className="m-0 text-[48px] font-black leading-[1.15] tracking-[-1px] max-[800px]:text-[32px]">
