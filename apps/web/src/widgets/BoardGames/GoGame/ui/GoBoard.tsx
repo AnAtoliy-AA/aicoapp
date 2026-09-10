@@ -5,6 +5,9 @@ import { cx } from '@arcadeum/ui/utils/cx';
 import { useBoardKeyboardNavigation } from '@/shared/lib/a11y';
 import { STAR_POINTS, type Cell, type Point, type StoneColor } from '../types';
 import { previewMove, type MovePreview } from '../lib/movePreview';
+import { computeTerritory, type TerritoryPoint } from '../lib/territory';
+
+const COLUMN_LABELS = 'ABCDEFGHJKLMNOPQRSTUVWXYZ';
 
 interface GoBoardProps {
   board: Cell[][];
@@ -14,6 +17,7 @@ interface GoBoardProps {
   koPoint: Point | null;
   myColor: StoneColor | null;
   ariaLabel?: string;
+  showTerritory?: boolean;
   onCellClick: (row: number, col: number) => void;
 }
 
@@ -32,6 +36,8 @@ interface CellProps {
   onHover: (row: number, col: number) => void;
   onHoverEnd: () => void;
   preview: MovePreview | null;
+  territory: TerritoryPoint | undefined;
+  isCaptured?: boolean;
 }
 
 const CellRenderer = memo(function CellRenderer({
@@ -49,6 +55,8 @@ const CellRenderer = memo(function CellRenderer({
   onHover,
   onHoverEnd,
   preview,
+  territory,
+  isCaptured,
 }: CellProps) {
   const handleClick = useCallback(() => {
     if (!disabled && cell === null) onCellClick(row, col);
@@ -76,6 +84,13 @@ const CellRenderer = memo(function CellRenderer({
         : null
     : null;
 
+  const territoryColor =
+    territory && territory.owner !== 'neutral' && !cell
+      ? territory.owner === 'black'
+        ? 'rgba(0,0,0,0.18)'
+        : 'rgba(255,255,255,0.35)'
+      : undefined;
+
   return (
     <button
       type="button"
@@ -93,6 +108,14 @@ const CellRenderer = memo(function CellRenderer({
       )}
       {...focusProps}
     >
+      {territoryColor ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-[6%] rounded-sm z-[1]"
+          style={{ backgroundColor: territoryColor }}
+        />
+      ) : null}
+
       <span
         aria-hidden="true"
         className={cx(
@@ -140,7 +163,10 @@ const CellRenderer = memo(function CellRenderer({
         <span
           aria-hidden="true"
           className={cx(
-            'pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[84%] w-[84%] rounded-full z-10 transition-transform duration-100',
+            'pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[84%] w-[84%] rounded-full z-10',
+            isCaptured
+              ? 'animate-capture-remove'
+              : 'transition-transform duration-100',
             cell === 'black'
               ? 'bg-gradient-to-br from-[#3a3d40] via-[#1c1d1f] to-[#0a0a0b] shadow-[0_4px_8px_rgba(0,0,0,0.7),inset_0_2px_4px_rgba(255,255,255,0.3)] border border-black/40'
               : 'bg-gradient-to-br from-[#ffffff] via-[#f0f3f6] to-[#d6dce3] shadow-[0_4px_8px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-slate-300',
@@ -189,6 +215,7 @@ function GoBoardImpl({
   koPoint,
   myColor,
   ariaLabel = 'Go board',
+  showTerritory = false,
   onCellClick,
 }: GoBoardProps) {
   const [hoveredCell, setHoveredCell] = useState<Point | null>(null);
@@ -203,6 +230,14 @@ function GoBoardImpl({
     if (!hoveredCell || !myColor || disabled) return null;
     return previewMove(board, myColor, hoveredCell.row, hoveredCell.col);
   }, [board, hoveredCell, myColor, disabled]);
+
+  const territoryMap = useMemo(() => {
+    if (!showTerritory) return new Map<string, TerritoryPoint>();
+    const points = computeTerritory(board);
+    const map = new Map<string, TerritoryPoint>();
+    for (const p of points) map.set(`${p.row}:${p.col}`, p);
+    return map;
+  }, [board, showTerritory]);
 
   const handleHover = useCallback((row: number, col: number) => {
     setHoveredCell({ row, col });
@@ -231,50 +266,79 @@ function GoBoardImpl({
       data-testid="go-board-wrapper"
       className="flex justify-center items-center w-full select-none p-1"
     >
-      <div
-        role="grid"
-        aria-label={ariaLabel}
-        data-testid="go-board"
-        className="w-[min(88vw,520px)] h-[min(88vw,520px)] aspect-square flex flex-col rounded-2xl border-[6px] border-[#8a4b14] bg-gradient-to-br from-[#e4a853] via-[#d1913c] to-[#b87828] p-3 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.3)] ring-1 ring-amber-900/50 shrink-0"
-        {...gridProps}
-      >
-        {board.map((row, rowIdx) => (
-          <div
-            key={`row-${rowIdx}`}
-            role="row"
-            className="flex flex-1 w-full h-full min-h-0 min-w-0"
-          >
-            {row.map((cell, colIdx) => (
-              <CellRenderer
-                key={`${rowIdx}-${colIdx}`}
-                row={rowIdx}
-                col={colIdx}
-                size={size}
-                cell={cell}
-                isStar={stars.has(`${rowIdx}:${colIdx}`)}
-                isLastMove={
-                  !!lastMove &&
-                  lastMove.row === rowIdx &&
-                  lastMove.col === colIdx
-                }
-                isKo={
-                  !!koPoint && koPoint.row === rowIdx && koPoint.col === colIdx
-                }
-                disabled={disabled}
-                myColor={myColor}
-                focusProps={getCellProps(rowIdx, colIdx)}
-                onCellClick={onCellClick}
-                onHover={handleHover}
-                onHoverEnd={handleHoverEnd}
-                preview={
-                  hoveredCell?.row === rowIdx && hoveredCell?.col === colIdx
-                    ? preview
-                    : null
-                }
-              />
-            ))}
-          </div>
-        ))}
+      <div className="relative">
+        <div className="flex absolute -top-5 left-0 right-0 justify-around px-[3.5%]">
+          {Array.from({ length: size }, (_, i) => (
+            <span
+              key={`col-${i}`}
+              aria-hidden="true"
+              className="text-[10px] font-mono text-amber-900/60 w-0 text-center"
+            >
+              {COLUMN_LABELS[i]}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex absolute -left-4 top-0 bottom-0 flex-col justify-around py-[3.5%]">
+          {Array.from({ length: size }, (_, i) => (
+            <span
+              key={`row-${i}`}
+              aria-hidden="true"
+              className="text-[10px] font-mono text-amber-900/60 h-0 flex items-center"
+            >
+              {size - i}
+            </span>
+          ))}
+        </div>
+
+        <div
+          role="grid"
+          aria-label={ariaLabel}
+          data-testid="go-board"
+          className="w-[min(88vw,520px)] h-[min(88vw,520px)] aspect-square flex flex-col rounded-2xl border-[6px] border-[#8a4b14] bg-gradient-to-br from-[#e4a853] via-[#d1913c] to-[#b87828] p-3 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.3)] ring-1 ring-amber-900/50 shrink-0"
+          {...gridProps}
+        >
+          {board.map((row, rowIdx) => (
+            <div
+              key={`row-${rowIdx}`}
+              role="row"
+              className="flex flex-1 w-full h-full min-h-0 min-w-0"
+            >
+              {row.map((cell, colIdx) => (
+                <CellRenderer
+                  key={`${rowIdx}-${colIdx}`}
+                  row={rowIdx}
+                  col={colIdx}
+                  size={size}
+                  cell={cell}
+                  isStar={stars.has(`${rowIdx}:${colIdx}`)}
+                  isLastMove={
+                    !!lastMove &&
+                    lastMove.row === rowIdx &&
+                    lastMove.col === colIdx
+                  }
+                  isKo={
+                    !!koPoint &&
+                    koPoint.row === rowIdx &&
+                    koPoint.col === colIdx
+                  }
+                  disabled={disabled}
+                  myColor={myColor}
+                  focusProps={getCellProps(rowIdx, colIdx)}
+                  onCellClick={onCellClick}
+                  onHover={handleHover}
+                  onHoverEnd={handleHoverEnd}
+                  preview={
+                    hoveredCell?.row === rowIdx && hoveredCell?.col === colIdx
+                      ? preview
+                      : null
+                  }
+                  territory={territoryMap.get(`${rowIdx}:${colIdx}`)}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

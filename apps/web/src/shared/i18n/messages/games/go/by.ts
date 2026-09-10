@@ -115,6 +115,7 @@ export const byMessages = {
       boardSize: 'Памер дошкі',
       boardSizeHint: '9×9 ≈ 10 хв · 13×13 ≈ 20 хв · 19×19 ≈ 40+ хв',
       startWithBots: 'Пачаць з ботамі',
+      aiDifficulty: 'Складанасць ІІ',
     },
     status: {
       yourTurn: 'Ваш ход',
@@ -124,6 +125,25 @@ export const byMessages = {
     },
     game: {
       pass: 'Пас',
+      territory: 'Тэрыторыя',
+      resign: 'Здацца',
+    },
+    kifu: {
+      title: 'Гісторыя ходаў',
+      moves: 'ходаў',
+      ariaLabel: 'Гісторыя ходаў',
+      empty: 'Пакуль няма ходаў',
+      first: 'Першы ход',
+      prev: 'Папярэдні ход',
+      next: 'Наступны ход',
+      last: 'Апошні ход',
+    },
+    resign: {
+      title: 'Здацца',
+      message:
+        'Вы ўпэўнены, што хочаце здацца? Гэта будзе залічана як паражэнне.',
+      confirm: 'Здацца',
+      cancel: 'Працягнуць гульню',
     },
     board: {
       ariaLabel: 'Дошка для го ({{size}}×{{size}})',
