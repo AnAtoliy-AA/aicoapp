@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.10] - 2026-09-10
+
+### Added
+- update landing page with features, specs, comparison
+- salvo mode, speed mode, ship abilities, keyboard nav
+
+
 ## [1.29.9] - 2026-09-10
 
 ### Fixed
