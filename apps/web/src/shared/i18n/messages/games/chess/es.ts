@@ -16,7 +16,7 @@ export const esMessages = {
         howToPlayTitle: 'Cómo jugar a {{gameName}}',
       },
       hero: {
-        title: 'Ajedrez — el juego de estrategia atemporal',
+        title: 'Ajedrez — El juego de estrategia definitivo',
         subtitle:
           'Impulsado por Stockfish 19. Bullet, blitz, rápido, diario y Chess960. Juega contra amigos, 20 personalidades IA o toda la comunidad.',
         createRoom: 'Crear sala',

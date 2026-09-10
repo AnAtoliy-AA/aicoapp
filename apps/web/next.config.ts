@@ -353,7 +353,7 @@ const nextConfig: NextConfig = {
               key: 'Cache-Control',
               value: isDev
                 ? 'no-cache, no-store, must-revalidate'
-                : 'public, s-maxage=60, stale-while-revalidate=300',
+                : 'public, s-maxage=300, stale-while-revalidate=3600',
             },
           ],
         }));

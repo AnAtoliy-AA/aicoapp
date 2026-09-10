@@ -125,7 +125,11 @@ export function ChessLobby({
     return {
       theme: (raw.theme as string) || 'adventure',
       variant,
-      timeControl: (raw.timeControl ?? null) as TimeControl | null,
+      timeControl: (raw.timeControl ?? {
+        type: 'rapid',
+        initialSeconds: 600,
+        incrementSeconds: 0,
+      }) as TimeControl | null,
     };
   }, [room.gameOptions]);
 

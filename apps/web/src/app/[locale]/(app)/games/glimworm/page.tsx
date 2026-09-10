@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import { GlimwormLandingView } from './GlimwormLandingView';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const GLIMWORM_SLUG = 'glimworm_v1';
 const GLIMWORM_MIN_PLAYERS = 2;
 const GLIMWORM_MAX_PLAYERS = 10;

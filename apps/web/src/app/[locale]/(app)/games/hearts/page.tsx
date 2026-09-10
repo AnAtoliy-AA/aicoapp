@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import HeartsLanding from './HeartsLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const revalidate = 300;
+
 const HEARTS_SLUG = 'hearts_v1';
 const HEARTS_MIN_PLAYERS = 4;
 const HEARTS_MAX_PLAYERS = 4;
