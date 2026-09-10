@@ -59,11 +59,8 @@ function pageToPath(pagePath) {
 /**
  * Check if a URL path should be excluded.
  */
-/**
- * Pages behind proxy PRIVATE_SLUG_KEYS — they receive x-robots-tag: noindex
- * from the middleware. Lighthouse SEO audit penalizes noindex, so these
- * can never score 100 on SEO. Exclude from audit.
- */
+// Pages behind proxy noindex — Lighthouse SEO audit penalizes these.
+// Keep in sync with NOINDEX_SLUGS + NOINDEX_DIRS in shared/config/noindex-pages.ts
 const NOINDEX_DIRS = new Set([
   'auth',
   'chat',
