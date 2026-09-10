@@ -26,6 +26,7 @@ import {
 } from '@/shared/api/friends';
 import { EquippedPlayerAvatar } from '@/shared/ui/PlayerAvatar/EquippedPlayerAvatar';
 import { UserIcon } from '@arcadeum/ui/components/Icons/index';
+import { GiftDialog } from '@/features/shop/ui/GiftDialog';
 import type { Friend, FriendRequest } from '@/shared/api/friends';
 
 export default function ProfilePageContent() {
@@ -47,6 +48,7 @@ export default function ProfilePageContent() {
   const [error, setError] = useState(false);
   const [friendSent, setFriendSent] = useState(false);
   const [friendLoading, setFriendLoading] = useState(false);
+  const [giftDialogOpen, setGiftDialogOpen] = useState(false);
 
   const isOwnProfile = snapshot.userId === userId;
   const isAlreadyFriend = myFriends.some((f) => f.userId === userId);
@@ -179,9 +181,19 @@ export default function ProfilePageContent() {
               {!isOwnProfile && snapshot.accessToken && (
                 <>
                   {isAlreadyFriend ? (
-                    <Badge variant="success" size="sm">
-                      Friends
-                    </Badge>
+                    <>
+                      <Badge variant="success" size="sm">
+                        Friends
+                      </Badge>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => setGiftDialogOpen(true)}
+                        data-testid="profile-send-gift"
+                      >
+                        🎁 Gift
+                      </Button>
+                    </>
                   ) : hasPendingOutgoing || friendSent ? (
                     <Badge variant="warning" size="sm">
                       Request Sent
@@ -267,6 +279,15 @@ export default function ProfilePageContent() {
           </div>
         </div>
       </Container>
+
+      <GiftDialog
+        key={`gift-${giftDialogOpen}`}
+        open={giftDialogOpen}
+        onClose={() => setGiftDialogOpen(false)}
+        recipientId={userId}
+        recipientName={profile.displayName || profile.username}
+        recipientAvatarId={profile.equippedAvatarId}
+      />
     </PageLayout>
   );
 }

@@ -115,7 +115,15 @@ function AdminShopGrantDialogInner({
         onClose();
         return;
       }
-      setError(labels.grantDialog.error);
+      if (result.error === 'validation') {
+        setError('Invalid input. Check user ID, item ID, and reason.');
+      } else if (result.error === 'not_found') {
+        setError('User or item not found.');
+      } else if (result.error === 'forbidden') {
+        setError('You do not have permission to grant items.');
+      } else {
+        setError(labels.grantDialog.error);
+      }
     });
   };
 

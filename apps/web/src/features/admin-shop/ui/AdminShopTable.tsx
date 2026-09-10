@@ -220,6 +220,7 @@ export function AdminShopTable({
         labels={labels}
       />
       <AdminShopGrantDialog
+        key={`grant-${grantOpen}-${grantDefaultItemId ?? ''}`}
         open={grantOpen}
         onClose={() => setGrantOpen(false)}
         labels={labels}
