@@ -56,10 +56,15 @@ export const SeaBattleGame = memo(function SeaBattleGame({
   const [lastIsLobby, setLastIsLobby] = useState(false);
   const { showRulesOnRoomEntry } = useShowRulesOnRoomEntry();
 
+  // Skip rules modal for quickplay rooms that auto-start immediately
+  const isQuickplayAutoStart =
+    typeof (room?.gameOptions as { autoStartWithBots?: unknown } | undefined)
+      ?.autoStartWithBots === 'number' && isLobby;
+
   // Sync showRules with isLobby change (auto-show rules when entering lobby)
   if (isLobby && !lastIsLobby) {
     setLastIsLobby(true);
-    if (showRulesOnRoomEntry) {
+    if (showRulesOnRoomEntry && !isQuickplayAutoStart) {
       setShowRules(true);
     }
   } else if (!isLobby && lastIsLobby) {
