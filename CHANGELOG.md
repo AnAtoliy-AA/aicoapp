@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.14] - 2026-09-10
+
+### Added
+- add gift item to friend, fix admin grant, hide add-friend for existing friends
+
+### Fixed
+- sanitize user inputs in gift service to prevent NoSQL injection
+- add CacheModule to battle-pass integration test
+- add GiftService mock to shop controller spec
+
+
 ## [1.29.13] - 2026-09-10
 
 ### Added
