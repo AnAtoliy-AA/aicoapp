@@ -56,18 +56,22 @@ function RouteChangeAnnouncer() {
   );
 }
 
+const MUSIC_PREFIXES = ['/games/', '/rooms'];
+
 export function LayoutShell({ children }: { children: ReactNode }) {
-  // Header / main / footer are direct children of <body>, which is the
-  // flex-column sticky-footer container (see styles/reset.scss). No extra
-  // wrapper element is needed.
+  const pathname = usePathname();
+  const showMusic = pathname != null && MUSIC_PREFIXES.some((p) => pathname.startsWith(p));
+
   return (
     <>
       <ConnectionBanner />
       <RouteChangeAnnouncer />
       {children}
-      <MusicErrorBoundary>
-        <GameMusic />
-      </MusicErrorBoundary>
+      {showMusic && (
+        <MusicErrorBoundary>
+          <GameMusic />
+        </MusicErrorBoundary>
+      )}
     </>
   );
 }
