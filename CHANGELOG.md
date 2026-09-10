@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.11] - 2026-09-10
+
+### Added
+- improve Go game with board labels, kifu, territory display, and more
+
+
 ## [1.29.10] - 2026-09-10
 
 ### Added

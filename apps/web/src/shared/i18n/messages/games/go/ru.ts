@@ -115,6 +115,7 @@ export const ruMessages = {
       boardSize: 'Размер доски',
       boardSizeHint: '9×9 ≈ 10 мин · 13×13 ≈ 20 мин · 19×19 ≈ 40+ мин',
       startWithBots: 'Начать с ботами',
+      aiDifficulty: 'Сложность ИИ',
     },
     status: {
       yourTurn: 'Ваш ход',
@@ -124,6 +125,25 @@ export const ruMessages = {
     },
     game: {
       pass: 'Пас',
+      territory: 'Территория',
+      resign: 'Сдаться',
+    },
+    kifu: {
+      title: 'История ходов',
+      moves: 'ходов',
+      ariaLabel: 'История ходов',
+      empty: 'Пока нет ходов',
+      first: 'Первый ход',
+      prev: 'Предыдущий ход',
+      next: 'Следующий ход',
+      last: 'Последний ход',
+    },
+    resign: {
+      title: 'Сдаться',
+      message:
+        'Вы уверены, что хотите сдаться? Это будет засчитано как поражение.',
+      confirm: 'Сдаться',
+      cancel: 'Продолжить игру',
     },
     board: {
       ariaLabel: 'Доска для го ({{size}}×{{size}})',
