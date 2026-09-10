@@ -1,10 +1,18 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+const urlsPath = resolve(__dirname, '../../lighthouse-urls.json');
+
+// Skip silently if lighthouse-urls.json hasn't been generated yet
+// (e.g. during regular E2E runs that don't audit pages).
+if (!existsSync(urlsPath)) {
+  test.skip(() => true, 'lighthouse-urls.json not found — skipping axe-a11y audit');
+}
+
 const allUrls: string[] = JSON.parse(
-  readFileSync(resolve(__dirname, '../../lighthouse-urls.json'), 'utf-8'),
+  readFileSync(urlsPath, 'utf-8'),
 );
 
 // Sharding: set SHARD_INDEX (1-based) and SHARD_TOTAL via env to split URLs.
