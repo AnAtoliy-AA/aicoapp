@@ -241,7 +241,7 @@ jobs:
           retention-days: 30
 
   lhci-audit:
-    name: Lighthouse (Shard ${{ matrix.shard }}/6)
+    name: Lighthouse (Shard ${{ matrix.shard }}/10)
     needs: build
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
@@ -258,7 +258,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -321,7 +321,7 @@ jobs:
           node -e "
             const urls = require('./apps/web/lighthouse-urls.json');
             const shard = ${{ matrix.shard }};
-            const total = 6;
+            const total = 10;
             const perShard = Math.ceil(urls.length / total);
             const start = (shard - 1) * perShard;
             const shardUrls = urls.slice(start, start + perShard);
@@ -368,14 +368,14 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
 
   axe-a11y:
-    name: axe-a11y (Shard ${{ matrix.shard }}/6)
+    name: axe-a11y (Shard ${{ matrix.shard }}/4)
     needs: build
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6]
+        shard: [1, 2, 3, 4]
     services:
       mongodb:
         image: mongo:latest
@@ -432,7 +432,7 @@ jobs:
         run: pnpm --filter web test:e2e --project=chromium e2e/audit/axe-a11y.spec.ts
         env:
           SHARD_INDEX: ${{ matrix.shard }}
-          SHARD_TOTAL: '6'
+          SHARD_TOTAL: '4'
           E2E_PROD: 'true'
 
       - name: Upload Test Report
