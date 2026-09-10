@@ -82,6 +82,7 @@ export const SeaBattleGame = memo(function SeaBattleGame({
     autoPlace,
     useSonar,
     useRadar,
+    useShipAbility,
   } = useSeaBattleActions({
     roomId,
     userId: currentUserId,
@@ -89,13 +90,7 @@ export const SeaBattleGame = memo(function SeaBattleGame({
 
   const { play } = useGameSound('sea_battle_v1');
 
-  const handleAttack = useCallback(
-    (...args: Parameters<typeof attack>) => {
-      play('hit');
-      return attack(...args);
-    },
-    [attack, play],
-  );
+  const lastAttackRef = useRef<string | null>(null);
 
   const handleAutoPlace = useCallback(() => {
     autoPlace();
@@ -124,10 +119,38 @@ export const SeaBattleGame = memo(function SeaBattleGame({
     room: room ?? undefined,
   });
 
+  const lastAttack = snapshot?.lastAttack;
+
   const teammateIds = useMemo(() => {
     if (!viewerTeam || !currentUserId) return undefined;
     return viewerTeam.playerIds.filter((id) => id !== currentUserId);
   }, [viewerTeam, currentUserId]);
+
+  // Sound effects: play the correct sound based on attack result
+  useEffect(() => {
+    if (!lastAttack) return;
+    const key = `${lastAttack.attackerId}-${lastAttack.targetId}-${lastAttack.row}-${lastAttack.col}-${lastAttack.result}`;
+    if (lastAttackRef.current === key) return;
+    lastAttackRef.current = key;
+
+    if (lastAttack.result === 'hit') {
+      play('hit');
+    } else if (lastAttack.result === 'sunk') {
+      play('explode');
+    } else if (lastAttack.result === 'miss') {
+      play('miss');
+    }
+  }, [lastAttack, play]);
+
+  // Sound effects: play win/lose when game ends
+  useEffect(() => {
+    if (!isGameOver) return;
+    if (isWinner) {
+      play('win');
+    } else {
+      play('lose');
+    }
+  }, [isGameOver, isWinner, play]);
 
   const handleStartGame = useCallback(
     (options?: { withBots?: boolean; botCount?: number }) => {
@@ -433,9 +456,10 @@ export const SeaBattleGame = memo(function SeaBattleGame({
             currentUserId={currentUserId}
             currentTurnPlayerId={currentTurnPlayer?.playerId ?? null}
             isMyTurn={isMyTurn}
-            attack={handleAttack}
+            attack={attack}
             onSonar={useSonar}
             onRadar={useRadar}
+            onShipAbility={useShipAbility}
             resolveDisplayNameBound={resolveDisplayNameBound}
             teammateIds={teammateIds}
             teams={teams}

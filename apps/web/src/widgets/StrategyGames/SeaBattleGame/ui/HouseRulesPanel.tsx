@@ -35,6 +35,47 @@ export function HouseRulesPanel({
         {t('games.create.sectionHouseRules') || 'House Rules'}
       </span>
       <div className="flex flex-col items-stretch gap-2">
+        <span className="text-[16px] font-semibold">Game Mode</span>
+        <div className="flex flex-row items-stretch gap-2 flex-wrap">
+          {(
+            [
+              {
+                id: 'classic',
+                label: 'Classic',
+                desc: 'Turn-based — miss ends your turn',
+              },
+              {
+                id: 'salvo',
+                label: 'Salvo',
+                desc: 'Fire N shots per turn (N = ships remaining)',
+              },
+              {
+                id: 'speed',
+                label: 'Speed',
+                desc: '30s per turn — think fast!',
+              },
+            ] as const
+          ).map((mode) => {
+            const active = (gameOptions.mode ?? 'classic') === mode.id;
+            return (
+              <button
+                key={mode.id}
+                type="button"
+                onClick={() => onOptionChange({ mode: mode.id })}
+                className={`flex flex-col items-start rounded-lg px-3 py-2 text-left transition-all ${
+                  active
+                    ? 'bg-amber-500/20 border border-amber-500/60 text-amber-400'
+                    : 'bg-[var(--glassBg)] border border-[var(--glassBorder)] text-[var(--color)] hover:bg-[var(--glassBgHover)]'
+                }`}
+              >
+                <span className="text-[13px] font-semibold">{mode.label}</span>
+                <span className="text-[11px] opacity-70">{mode.desc}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="flex flex-col items-stretch gap-2">
         <span className="text-[16px] font-semibold">
           {t('games.create.seaBattleGridSize') || 'Grid Size'}
           {ruleComingSoon.get('gridSize') && (
@@ -219,6 +260,22 @@ export function HouseRulesPanel({
             })}
           </div>
         )}
+      </div>
+      <div className="flex flex-col items-stretch gap-2">
+        <span className="text-[16px] font-semibold">Ship Abilities</span>
+        <label className="flex items-center gap-2 text-[13px] cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!!gameOptions.shipAbilities}
+            onChange={() =>
+              onOptionChange({ shipAbilities: !gameOptions.shipAbilities })
+            }
+          />
+          <span>
+            Enable ship powers — each ship type gets a unique ability with
+            cooldown (Scout, Barrage, Torpedo, etc.)
+          </span>
+        </label>
       </div>
     </div>
   );
