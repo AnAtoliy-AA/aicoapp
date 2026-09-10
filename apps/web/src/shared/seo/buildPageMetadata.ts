@@ -52,6 +52,7 @@ const DEFAULT_PATH_BUILDERS: Partial<Record<SeoPageKey, PathBuilder>> = {
   goLanding: (r) => r.goLanding,
   solitaireLanding: (r) => r.solitaireLanding,
   minesweeperLanding: (r) => r.minesweeperLanding,
+  minesweeperPlay: (r) => r.minesweeperPlay,
   sudokuLanding: (r) => r.sudokuLanding,
   game2048Landing: (r) => r.game2048Landing,
   settings: (r) => r.settings,

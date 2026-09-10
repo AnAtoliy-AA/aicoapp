@@ -91,6 +91,10 @@ export const fr: DeepPartial<SeoMessages> = {
     title: `Démineur · Jeu de Réflexion Classique Gratuit en Ligne · ${APP}`,
     description: `Jouez au Démineur en ligne sur ${APP} — grilles de débutant à expert avec drapeaux, chrono et progression sauvegardée. Gratuit, instantané, sans téléchargement.`,
   },
+  minesweeperPlay: {
+    title: `Jouer au Démineur · ${APP}`,
+    description: `Jouez au Démineur sur ${APP} — révélez les cases sûres, placez des drapeaux et nettoyez la grille. Débutant à expert, gratuit.`,
+  },
   sudokuLanding: {
     title: `Sudoku · Jeu de Puzzle de Chiffres Gratuit en Ligne · ${APP}`,
     description: `Jouez au Sudoku en ligne sur ${APP} — niveaux facile, moyen et difficile à solution unique, crayon et progression sauvegardée. Gratuit, instantané, sans téléchargement.`,

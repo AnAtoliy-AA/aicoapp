@@ -89,6 +89,10 @@ export const en = {
     title: `Minesweeper · Free Online Classic Puzzle Game · ${APP}`,
     description: `Play Minesweeper online on ${APP} — beginner to expert grids with flags, chording, timer, and saved progress. Free, instant, no download.`,
   },
+  minesweeperPlay: {
+    title: `Play Minesweeper · ${APP}`,
+    description: `Play Minesweeper on ${APP} — reveal safe tiles, flag mines, and clear the board. Beginner to expert difficulty, free instant play.`,
+  },
   sudokuLanding: {
     title: `Sudoku · Free Online Number Puzzle Game · ${APP}`,
     description: `Play Sudoku online on ${APP} — easy, medium and hard puzzles with unique solutions, pencil marks, and saved progress. Free, instant, no download.`,
