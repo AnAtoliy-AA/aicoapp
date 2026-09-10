@@ -1,30 +1,26 @@
 import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { TranslationKey } from './useTranslation';
+
+const mockUseLanguage = vi.hoisted(() =>
+  vi.fn().mockReturnValue({ locale: 'en' as string, messages: {} as Record<string, unknown> }),
+);
+
+vi.mock('@/shared/i18n/useLanguage', () => ({
+  useLanguage: (...args: unknown[]) => mockUseLanguage(...args),
+}));
 
 describe('useTranslation', () => {
   beforeEach(() => {
     vi.resetModules();
-    vi.unstubAllEnvs(); // Ensure clean env start
+    vi.unstubAllEnvs();
+    mockUseLanguage.mockReturnValue({ locale: 'en', messages: {} });
   });
 
-  afterEach(() => {
-    vi.doUnmock('@/shared/i18n/context');
-  });
-
-  // Helper to setup mock and import
   async function setup(locale = 'en', messages: Record<string, unknown> = {}) {
-    // Mock the dependency BEFORE importing the module under test
-    const useLanguageMock = vi.fn().mockReturnValue({ locale, messages });
-
-    vi.doMock('@/shared/i18n/useLanguage', () => ({
-      useLanguage: useLanguageMock,
-    }));
-
-    // Import the module under test. validation of doMock is that it must be called before import
+    mockUseLanguage.mockReturnValue({ locale, messages });
     const { useTranslation } = await import('./useTranslation');
-
-    return { useTranslation, useLanguageMock };
+    return { useTranslation };
   }
 
   it('returns translated string for a valid key', async () => {
@@ -98,7 +94,6 @@ describe('useTranslation', () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const { result } = renderHook(() => useTranslation());
-      // Must provide at least one param to trigger interpolation logic
       result.current.t('test' as unknown as TranslationKey, {
         triggers: 'interpolation',
       });
