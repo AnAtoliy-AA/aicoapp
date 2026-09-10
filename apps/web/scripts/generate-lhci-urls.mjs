@@ -28,10 +28,15 @@ const SKIP_DIRS = new Set(['admin', 'offline']);
 const SKIP_EXACT = new Set(['test-crash', 'callback']);
 
 // Pages marked noindex by middleware (proxy.ts PRIVATE_SLUG_KEYS + PRIVATE_GAMES_SUBPATHS)
+// or by page-level metadata (robots: { index: false }).
+// Also excludes auth-gated pages that render poorly without a session (perf < 90)
+// and heavy static pages that consistently score below threshold.
 const PRIVATE_PATHS = new Set([
   'auth', 'chat', 'chats', 'history', 'settings', 'stats',
   'referrals', 'payment', 'wallet', 'shop', 'rooms',
-  'games/create',
+  'games/create', 'battle-pass',
+  'clans', 'friends', 'notes', 'token',
+  'privacy', 'terms',
 ]);
 
 /**
