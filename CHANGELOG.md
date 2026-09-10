@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.13] - 2026-09-10
+
+### Added
+- improve UX with center dice overlay and shared AnimatedDice
+
+### Fixed
+- update e2e test to use new AnimatedDice test IDs
+
+
 ## [1.29.12] - 2026-09-10
 
 ### Fixed
