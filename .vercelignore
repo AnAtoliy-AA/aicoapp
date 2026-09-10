@@ -28,6 +28,8 @@ monitoring/
 .husky/
 .opencode/
 apps/mobile/
+apps/be/
+apps/tg-bot/
 commitlint.config.js
 docker-compose*.yml
 nginx.conf
