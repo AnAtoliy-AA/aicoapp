@@ -17,8 +17,12 @@ apps/web/public/shop/
 apps/web/public/music/
 apps/web/public/sounds/
 
-# Monorepo packages not needed in web deployment
-packages/
+# Apps not deployed on Vercel
+apps/be/
+apps/mobile/
+apps/tg-bot/
+
+# Non-web root files
 bots/
 docs/
 scripts/
@@ -27,9 +31,6 @@ monitoring/
 .claude/
 .husky/
 .opencode/
-apps/mobile/
-apps/be/
-apps/tg-bot/
 commitlint.config.js
 docker-compose*.yml
 nginx.conf
