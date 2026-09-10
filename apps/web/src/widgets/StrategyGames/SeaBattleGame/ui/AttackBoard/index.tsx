@@ -31,6 +31,7 @@ export interface AttackBoardProps {
   onCellHoverEnd?: () => void;
   weaponMode?: boolean;
   showEliminatedPlayers?: boolean;
+  keyboardCursor?: { row: number; col: number } | null;
 }
 
 export function getVisibleOpponents<
@@ -65,6 +66,7 @@ export const AttackBoard = memo(function AttackBoard({
   onCellHoverEnd,
   weaponMode,
   showEliminatedPlayers = false,
+  keyboardCursor,
 }: AttackBoardProps) {
   const { t } = useTranslation();
   const theme = useSeaBattleTheme();
@@ -271,6 +273,9 @@ export const AttackBoard = memo(function AttackBoard({
               onCellHover={onCellHover}
               onCellHoverEnd={onCellHoverEnd}
               weaponMode={weaponMode}
+              keyboardCursor={
+                opponents.indexOf(opponent) === 0 ? keyboardCursor : null
+              }
               t={t}
             />
           );
