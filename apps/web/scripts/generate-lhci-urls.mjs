@@ -59,6 +59,13 @@ const SKIP = new Set([
   // noIndex pages (SEO score always low, intentional)
   'battlePass',
   'auth',
+  // Dynamic listing pages (noIndex, auth-dependent)
+  'rooms',
+  // Static pages with heavy shared UI bundle (perf < 90 in production)
+  'leaderboards',
+  'tournaments',
+  'privacy',
+  'terms',
 ]);
 
 // Read routes.ts source
