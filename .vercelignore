@@ -25,6 +25,7 @@ scripts/
 monitoring/
 .github/
 .claude/
+.husky/
 .opencode/
 commitlint.config.js
 docker-compose*.yml
