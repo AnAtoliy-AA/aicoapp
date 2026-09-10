@@ -27,6 +27,7 @@ monitoring/
 .claude/
 .husky/
 .opencode/
+apps/mobile/
 commitlint.config.js
 docker-compose*.yml
 nginx.conf
