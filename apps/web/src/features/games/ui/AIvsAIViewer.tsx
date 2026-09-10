@@ -138,10 +138,11 @@ export function AIvsAIViewer({
           </div>
           <div className="flex gap-3">
             <div className="flex-1 flex flex-col gap-1">
-              <label className="text-[10px] text-[var(--textSecondary)]">
+              <label htmlFor="ai-white-bot" className="text-[10px] text-[var(--textSecondary)]">
                 White ♔
               </label>
               <select
+                id="ai-white-bot"
                 value={whiteBot}
                 onChange={(e) => setWhiteBot(e.target.value)}
                 className="px-2 py-1.5 rounded-lg bg-[var(--background)] border border-[var(--glassBorder)] text-[var(--color)] text-xs"
@@ -155,10 +156,11 @@ export function AIvsAIViewer({
               </select>
             </div>
             <div className="flex-1 flex flex-col gap-1">
-              <label className="text-[10px] text-[var(--textSecondary)]">
+              <label htmlFor="ai-black-bot" className="text-[10px] text-[var(--textSecondary)]">
                 Black ♚
               </label>
               <select
+                id="ai-black-bot"
                 value={blackBot}
                 onChange={(e) => setBlackBot(e.target.value)}
                 className="px-2 py-1.5 rounded-lg bg-[var(--background)] border border-[var(--glassBorder)] text-[var(--color)] text-xs"

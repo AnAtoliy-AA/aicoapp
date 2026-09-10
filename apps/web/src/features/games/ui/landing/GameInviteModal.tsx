@@ -107,10 +107,10 @@ export function GameInviteModal({
             <SvgQrCode />
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
                 Instant Guest Access
               </span>
-              <p className="m-0 text-sm text-[var(--foreground)] opacity-85 max-w-sm">
+              <p className="m-0 text-sm text-[var(--foreground)] opacity-90 max-w-sm">
                 Scan this QR code from mobile, or copy the link below to play
                 directly in browser with no registration.
               </p>

@@ -278,7 +278,7 @@ export function SolitaireBoard({
 
       {selectedCards.length > 0 && (
         <p
-          className="mt-2.5 text-center text-xs text-[var(--primary)] font-semibold"
+          className="mt-2.5 text-center text-xs text-[var(--color)] font-semibold"
           role="status"
         >
           {t('games.solitaire_v1.board.selectedHint')}

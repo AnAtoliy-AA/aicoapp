@@ -91,7 +91,7 @@ export default function TournamentsPageContent({
               {t?.title}
             </PageTitle>
             {t?.subtitle && (
-              <Typography variant="caption" alpha="medium">
+              <Typography variant="caption" alpha="high">
                 {t.subtitle}
               </Typography>
             )}
@@ -105,7 +105,7 @@ export default function TournamentsPageContent({
 
           {showEmpty && (
             <div className="flex flex-col items-center p-5">
-              <Typography variant="body" alpha="medium">
+              <Typography variant="body" alpha="high">
                 {listT?.empty ?? t?.comingSoon ?? 'No tournaments yet.'}
               </Typography>
             </div>

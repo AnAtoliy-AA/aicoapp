@@ -112,7 +112,7 @@ export default function TermsContent({
               {t?.lastUpdated && (
                 <Typography
                   variant="caption"
-                  alpha="medium"
+                  alpha="high"
                   className="text-xs uppercase tracking-wider text-[var(--textSecondary)]"
                 >
                   {t.lastUpdated}

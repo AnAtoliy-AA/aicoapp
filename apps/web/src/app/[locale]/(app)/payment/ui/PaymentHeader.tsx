@@ -11,13 +11,13 @@ export function PaymentHeader() {
           {t('payments.title') || 'Support the Project'}
         </PageTitle>
       </div>
-      <Typography uiSize="lg" alpha="medium" textCenter>
+      <Typography uiSize="lg" alpha="high" textCenter>
         {t('payments.subtitle') || 'Secure and fast payments powered by PayPal'}
       </Typography>
       <Typography
         className={'-mt-4 leading-[28px] max-w-[480px]'}
         uiSize="sm"
-        alpha="medium"
+        alpha="high"
         textCenter
       >
         {t('payments.description') ||

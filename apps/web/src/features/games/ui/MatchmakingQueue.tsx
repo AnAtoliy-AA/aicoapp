@@ -242,7 +242,7 @@ export function MatchmakingQueueModal() {
               {gameLabel && <span className="capitalize">{gameLabel}</span>}
             </span>
             {gameId && ratings[gameId] && (
-              <span className="rounded-md bg-[var(--primary)]/10 px-2 py-0.5 text-[11px] font-bold text-[var(--primary)]">
+              <span className="rounded-md bg-[var(--primary)]/10 px-2 py-0.5 text-[11px] font-bold text-[var(--color)]">
                 {ratings[gameId].elo}
               </span>
             )}
@@ -348,7 +348,7 @@ export function MatchmakingQueueModal() {
                       className="flex items-center gap-1.5 rounded-lg bg-[var(--backgroundHover)] border border-[var(--borderColor)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--borderColor)]"
                     >
                       <span className="capitalize">{label}</span>
-                      <span className="rounded-full bg-[var(--primary)]/15 text-[var(--primary)] px-1.5 py-0.5 text-[10px] font-bold">
+                      <span className="rounded-full bg-[var(--primary)]/15 text-[var(--color)] px-1.5 py-0.5 text-[10px] font-bold">
                         {count}
                       </span>
                     </button>

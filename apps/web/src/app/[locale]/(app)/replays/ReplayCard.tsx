@@ -89,7 +89,7 @@ export function ReplayCard({ replay, t }: ReplayCardProps) {
         )}
       </div>
 
-      <span className="text-[12px] font-semibold text-[var(--primary)] opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+      <span className="text-[12px] font-semibold text-[var(--color)] opacity-0 transition-opacity duration-200 group-hover:opacity-100">
         {t('games.replay.card.watch')} →
       </span>
     </Link>

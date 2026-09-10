@@ -10,13 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.29.6] - 2026-09-09
 
 ### Added
+
 - make theme preview interactive and fix chess visuals (ARC-946) (ARC-946)
 - highlight arcadeum features and remove competitor mentions
 
 ### Fixed
+
 - replace grid with flex in OG images and update branding (ARC-946) (ARC-946)
 - resolve game OpenGraph image font crash and route rewrites (ARC-946) (ARC-946)
-
 
 ## [1.29.5] - 2026-09-09
 

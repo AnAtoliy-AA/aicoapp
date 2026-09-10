@@ -37,14 +37,14 @@ export function GameSpecTable({
       {kicker || title ? (
         <header className="mb-6 flex flex-col gap-1">
           {kicker ? (
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
               {kicker}
             </span>
           ) : null}
           {title ? (
-            <h3 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
+            <h2 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
               {title}
-            </h3>
+            </h2>
           ) : null}
         </header>
       ) : null}
@@ -55,7 +55,7 @@ export function GameSpecTable({
             key={item.label}
             className="flex flex-col gap-1.5 rounded-xl border border-[var(--borderColor)] bg-[var(--surfaceBackground)]/40 p-4 transition-colors hover:border-[var(--primary)]/50"
           >
-            <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--foreground)] opacity-70">
+            <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--foreground)] opacity-85">
               {item.icon ? (
                 <span className="text-base text-[var(--primary)]" aria-hidden="true">
                   {item.icon}
@@ -63,19 +63,19 @@ export function GameSpecTable({
               ) : null}
               <span>{item.label}</span>
               {item.badge ? (
-                <span className="ml-auto rounded-full bg-[var(--primary)]/15 px-2 py-0.5 text-[10px] font-bold text-[var(--primary)]">
+                <span className="ml-auto rounded-full bg-[var(--primary)]/15 px-2 py-0.5 text-[10px] font-bold text-[var(--color)]">
                   {item.badge}
                 </span>
               ) : null}
             </dt>
             <dd className="m-0 text-sm sm:text-base font-semibold text-[var(--foreground)] leading-snug">
               {item.value}
+              {item.hint ? (
+                <span className="block mt-1 text-xs text-[var(--foreground)] opacity-80 leading-normal">
+                  {item.hint}
+                </span>
+              ) : null}
             </dd>
-            {item.hint ? (
-              <span className="text-xs text-[var(--foreground)] opacity-60 leading-normal">
-                {item.hint}
-              </span>
-            ) : null}
           </div>
         ))}
       </dl>

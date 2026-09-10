@@ -87,7 +87,7 @@ export function PgnImportModal({ isOpen, onClose, onImport }: PgnImportModalProp
           <button
             type="button"
             onClick={handleImport}
-            className="flex-1 py-2 px-4 rounded-lg bg-[var(--primary)]/15 border border-[var(--primary)]/30 text-[var(--primary)] text-xs font-semibold cursor-pointer hover:bg-[var(--primary)]/25 transition-colors"
+            className="flex-1 py-2 px-4 rounded-lg bg-[var(--primary)]/15 border border-[var(--primary)]/30 text-[var(--color)] text-xs font-semibold cursor-pointer hover:bg-[var(--primary)]/25 transition-colors"
           >
             Import
           </button>

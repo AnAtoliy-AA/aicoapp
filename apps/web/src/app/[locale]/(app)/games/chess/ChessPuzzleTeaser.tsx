@@ -29,6 +29,27 @@ const PUZZLE_SOLVED_BOARD: BoardState = [
   [null, null, null, 'R', null, null, null, 'K'],
 ];
 
+const PIECE_NAMES: Record<string, string> = {
+  K: 'White King',
+  Q: 'White Queen',
+  R: 'White Rook',
+  B: 'White Bishop',
+  N: 'White Knight',
+  P: 'White Pawn',
+  k: 'Black King',
+  q: 'Black Queen',
+  r: 'Black Rook',
+  b: 'Black Bishop',
+  n: 'Black Knight',
+  p: 'Black Pawn',
+};
+
+const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+function squareName(rowIdx: number, colIdx: number): string {
+  return `${FILES[colIdx]}${8 - rowIdx}`;
+}
+
 const PIECE_GLYPHS: Record<string, string> = {
   K: '♔',
   Q: '♕',
@@ -69,13 +90,13 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
       className="relative overflow-hidden rounded-[24px] border border-[var(--glassBorder)] bg-[var(--glassBg)] p-6 sm:p-8 backdrop-blur-md"
     >
       <header className="mb-6 flex flex-col gap-1.5">
-        <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
           Tactics of the Day
         </span>
-        <h3 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
+        <h2 className="m-0 text-xl sm:text-2xl font-bold text-[var(--foreground)]">
           Solve the Daily Chess Puzzle
-        </h3>
-        <p className="m-0 text-sm text-[var(--foreground)] opacity-75 max-w-2xl">
+        </h2>
+        <p className="m-0 text-sm text-[var(--foreground)] opacity-95 max-w-2xl">
           Test your tactical sharpness. White to move — find the devastating
           decisive sequence.
         </p>
@@ -96,6 +117,11 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
                   <button
                     type="button"
                     key={`${rowIdx}-${colIdx}`}
+                    aria-label={
+                      cell
+                        ? `${squareName(rowIdx, colIdx)} ${PIECE_NAMES[cell] ?? cell}`
+                        : `${squareName(rowIdx, colIdx)} empty`
+                    }
                     onClick={
                       isSolutionTarget && !isSolved ? handleSolve : undefined
                     }
@@ -117,10 +143,10 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
 
         <div className="md:col-span-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[var(--primary)]/15 px-3 py-1 text-xs font-bold text-[var(--primary)]">
+            <span className="rounded-full bg-[var(--primary)]/15 px-3 py-1 text-xs font-bold text-[var(--color)]">
               White to Move
             </span>
-            <span className="rounded-full bg-[var(--surfaceBackground)] px-3 py-1 text-xs font-medium text-[var(--foreground)] opacity-75">
+            <span className="rounded-full bg-[var(--surfaceBackground)] px-3 py-1 text-xs font-medium text-[var(--foreground)] opacity-95">
               Rating: 1750
             </span>
           </div>
@@ -131,19 +157,19 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
                 <span className="text-sm font-bold text-[var(--success,#22c55e)]">
                   Brilliant!! 1. Qxf7+!
                 </span>
-                <p className="m-0 text-xs text-[var(--foreground)] opacity-85 leading-relaxed">
+                <p className="m-0 text-xs text-[var(--foreground)] opacity-95 leading-relaxed">
                   Queen penetrates the vulnerable f7 square with check,
                   deflecting the black king or forcing checkmate with the
                   back-rank rook invasion!
                 </p>
               </div>
             ) : showHint ? (
-              <p className="m-0 text-xs text-[var(--foreground)] opacity-85 leading-relaxed">
+              <p className="m-0 text-xs text-[var(--foreground)] opacity-95 leading-relaxed">
                 Hint: Look at the weak f7 pawn protected only by the black king,
                 and your rook controlling the d-file!
               </p>
             ) : (
-              <p className="m-0 text-xs text-[var(--foreground)] opacity-75 leading-relaxed">
+              <p className="m-0 text-xs text-[var(--foreground)] opacity-95 leading-relaxed">
                 Click on the winning square (f7) or use the buttons below to
                 test your solution.
               </p>

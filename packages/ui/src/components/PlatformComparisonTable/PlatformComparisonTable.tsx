@@ -59,7 +59,7 @@ export function PlatformComparisonTable({
       {kicker || title || subtitle ? (
         <header className="mb-6 flex flex-col gap-1.5">
           {kicker ? (
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
               {kicker}
             </span>
           ) : null}
@@ -106,7 +106,7 @@ export function PlatformComparisonTable({
                       className={cx(
                         'text-sm font-bold',
                         col.isHighlighted
-                          ? 'text-[var(--primary)]'
+                          ? 'text-[var(--color)]'
                           : 'text-[var(--foreground)]',
                       )}
                     >
