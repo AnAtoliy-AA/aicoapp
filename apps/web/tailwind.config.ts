@@ -141,6 +141,11 @@ export default {
           },
           '100%': { transform: 'translate(-50%, -50%) scale(0)', opacity: '0' },
         },
+        'animated-dice-shake': {
+          '0%, 100%': { transform: 'rotate(0deg) scale(1)' },
+          '25%': { transform: 'rotate(-8deg) scale(1.06)' },
+          '75%': { transform: 'rotate(8deg) scale(1.06)' },
+        },
       },
       animation: {
         'hero-float-3d': 'hero-float-3d 6s ease-in-out infinite',
