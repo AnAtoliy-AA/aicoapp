@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.12] - 2026-09-10
+
+### Fixed
+- remove unused imports in sitemap.ts
+- token page always renders h1 even without server data
+- clean up BrowserRegistry leftover code
+- exclude static content from Lighthouse audit, fix token E2E
+- exclude noindex pages from Lighthouse audit
+- fix escaped backticks in locale SEO files
+- fix SEO scores for all PRIVATE_SLUG_KEY pages
+- restore 90% perf threshold, add force-static to token page
+- exclude shop from Lighthouse audit and add performance tolerance
+- exclude authenticated pages from Lighthouse CI audit list
+- fix Lighthouse SEO and performance scores
+- add missing aria-labels, focus rings, and form labels for a11y
+
+### Improved
+- server-render token page, keep notifications+music global
+- make socket.io, GameMusic, StatsReplay conditional per page type
+
+### Refactored
+- single source of truth for noindex pages
+
+
 ## [1.29.11] - 2026-09-10
 
 ### Added
