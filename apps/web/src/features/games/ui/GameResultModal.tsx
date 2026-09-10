@@ -20,7 +20,6 @@ import {
   SHARED_THEMES,
   type GameTheme,
 } from '@/features/games/lib/shared-themes';
-import { replayApi } from '@/features/replay/api';
 
 export type GameResultKind = 'victory' | 'defeat' | 'draw';
 
@@ -121,19 +120,6 @@ export function GameResultModal({
   const { play } = useSound();
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [lastOpen, setLastOpen] = useState(isOpen);
-  const [replayId, setReplayId] = useState<string | null>(null);
-
-  // Fetch replay ID for the room when modal opens
-  useEffect(() => {
-    if (!isOpen || !roomId) return;
-    let cancelled = false;
-    replayApi.getReplayByRoom(roomId).then((replay) => {
-      if (!cancelled && replay) setReplayId(replay.replayId);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [isOpen, roomId]);
 
   if (lastOpen !== isOpen) {
     setLastOpen(isOpen);
@@ -312,9 +298,9 @@ export function GameResultModal({
               {t('games.common.actions.backToHome')}
             </LinkButton>
 
-            {replayId && (
+            {roomId && (
               <LinkButton
-                href={`/replay/${replayId}`}
+                href={`/replay/by-room/${roomId}`}
                 variant="ghost"
                 size="sm"
                 className="flex-shrink-0"
