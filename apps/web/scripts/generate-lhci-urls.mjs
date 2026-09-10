@@ -29,6 +29,13 @@ const SKIP_DIRS = new Set([
 // Exact directory names to skip (system pages, OAuth handler)
 const SKIP_EXACT = new Set(['test-crash', 'callback']);
 
+// Static content pages that load socket.io but don't need real-time features.
+// They consistently score ~0.82 on performance due to the socket.io bundle weight.
+const STATIC_CONTENT = new Set([
+  'terms', 'privacy', 'cookies', 'help', 'support', 'contact',
+  'blog', 'changelog', 'community', 'developers', 'roadmap', 'features',
+]);
+
 /**
  * Recursively find all page.tsx files under dir, returning
  * relative paths from APP_DIR (e.g. "games/chess/page.tsx").
@@ -100,6 +107,9 @@ function shouldExclude(urlPath) {
   if (segments.some((s) => NOINDEX_DIRS.has(s))) return true;
   // /games/create is private
   if (segments[0] === 'games' && segments[1] === 'create') return true;
+
+  // Skip static content pages (socket.io hurts perf score but they don't need real-time)
+  if (segments.some((s) => STATIC_CONTENT.has(s))) return true;
 
   return false;
 }

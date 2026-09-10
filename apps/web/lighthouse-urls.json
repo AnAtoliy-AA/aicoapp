@@ -1,12 +1,5 @@
 [
   "http://localhost:3000/en",
-  "http://localhost:3000/en/blog",
-  "http://localhost:3000/en/changelog",
-  "http://localhost:3000/en/community",
-  "http://localhost:3000/en/contact",
-  "http://localhost:3000/en/cookies",
-  "http://localhost:3000/en/developers",
-  "http://localhost:3000/en/features",
   "http://localhost:3000/en/games",
   "http://localhost:3000/en/games/2048",
   "http://localhost:3000/en/games/2048/play",
@@ -35,12 +28,7 @@
   "http://localhost:3000/en/games/sudoku",
   "http://localhost:3000/en/games/sudoku/play",
   "http://localhost:3000/en/games/tic-tac-toe",
-  "http://localhost:3000/en/help",
   "http://localhost:3000/en/leaderboards",
   "http://localhost:3000/en/leaderboards/solo",
-  "http://localhost:3000/en/privacy",
-  "http://localhost:3000/en/roadmap",
-  "http://localhost:3000/en/support",
-  "http://localhost:3000/en/terms",
   "http://localhost:3000/en/token"
 ]
