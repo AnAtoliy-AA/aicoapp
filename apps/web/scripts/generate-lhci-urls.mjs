@@ -95,8 +95,8 @@ function shouldExclude(urlPath) {
   // Skip private game sub-paths (e.g. /games/create)
   if (segments[0] === 'games' && segments.length > 1 && PRIVATE_GAME_SUBPATHS.has(segments[1])) return true;
 
-  // Skip /shop/inventory (only /shop itself is public)
-  if (segments[0] === 'shop' && segments.length > 1) return true;
+  // Skip /shop/inventory and /shop (requires auth for full rendering)
+  if (segments[0] === 'shop') return true;
 
   return false;
 }
