@@ -40,7 +40,6 @@ import { corsOriginMatcher } from '../common/utils/cors.util';
 import { verifySocketJwt } from '../common/utils/socket-jwt.util';
 import type { GameMessageHandler } from './game-message-handler.interface';
 import { GAME_GATEWAYS } from './game-message-handler.interface';
-
 @WebSocketGateway({
   namespace: 'games',
   cors: { origin: corsOriginMatcher },
@@ -103,12 +102,10 @@ export class GamesGateway {
         }
       });
     });
-
     this.logger.debug(
       `Games gateway initialized with ${registry.size} game event handlers.`,
     );
   }
-
   async handleConnection(client: Socket): Promise<void> {
     this.logger.verbose(`Client connected ${client.id}`);
     const authUserId = await verifySocketJwt(
@@ -188,7 +185,6 @@ export class GamesGateway {
     }
     this.liveStatsService?.scheduleBroadcast();
     if (!activeUserId || !this.server) return;
-
     for (const room of client.rooms) {
       if (room.startsWith('game-room:')) {
         const data = { userId: activeUserId, idle: true };
@@ -327,7 +323,6 @@ export class GamesGateway {
 
     this.realtime.emitSessionSnapshotToClient(client, roomId, diffSession);
   }
-
   @SubscribeMessage('games.player.idle')
   handlePlayerIdle(
     @ConnectedSocket() client: Socket,
@@ -380,6 +375,31 @@ export class GamesGateway {
     );
   }
 
+  @SubscribeMessage('games.room.add_bot')
+  async onAddBot(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { roomId?: string; userId?: string },
+  ): Promise<void> {
+    const roomId = extractString(payload, 'roomId');
+    const userId = extractString(payload, 'userId');
+    if (!roomId || !userId) throw new WsException('roomId and userId required');
+    this.validateUserId(client, userId);
+    await this.gamesService.addBotToRoom(roomId, userId);
+  }
+  @SubscribeMessage('games.room.remove_bot')
+  async onRemoveBot(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: { roomId?: string; userId?: string; botId?: string },
+  ): Promise<void> {
+    const roomId = extractString(payload, 'roomId');
+    const userId = extractString(payload, 'userId');
+    const botId = extractString(payload, 'botId');
+    if (!roomId || !userId || !botId)
+      throw new WsException('roomId, userId, and botId required');
+    this.validateUserId(client, userId);
+    await this.gamesService.removeBotFromRoom(roomId, userId, botId);
+  }
   @SubscribeMessage('games.session.undo_request')
   onUndoRequest(
     @ConnectedSocket() client: Socket,
@@ -409,7 +429,6 @@ export class GamesGateway {
   ): void {
     handleEmote(this.logger, this.server, client, this.realtime, payload);
   }
-
   @SubscribeMessage('games.session.hint')
   async onRequestHint(
     @ConnectedSocket() client: Socket,
@@ -426,7 +445,6 @@ export class GamesGateway {
       this.chessBotService!,
     );
   }
-
   @SubscribeMessage('games.matchmaking.join')
   handleMatchmakingJoin(
     @ConnectedSocket() client: Socket,
@@ -445,15 +463,12 @@ export class GamesGateway {
     const ranked = payload.ranked === true;
     const rating =
       typeof payload.rating === 'number' ? payload.rating : undefined;
-
     this.validateUserId(client, userId);
-
     const ipHeader = client.handshake.headers['x-forwarded-for'];
     const ip =
       typeof ipHeader === 'string'
         ? ipHeader.split(',')[0].trim()
         : client.handshake.address;
-
     void this.matchmakingService.joinQueue(
       userId,
       client.id,
@@ -469,7 +484,6 @@ export class GamesGateway {
       maybeEncrypt({ gameId, variant, ranked }),
     );
   }
-
   @SubscribeMessage('games.matchmaking.leave')
   handleMatchmakingLeave(
     @ConnectedSocket() client: Socket,
