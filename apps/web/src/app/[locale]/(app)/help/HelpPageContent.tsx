@@ -168,14 +168,19 @@ export default function HelpPageContent({ t: initialT }: HelpPageContentProps) {
                     help?.searchPlaceholder ??
                     'Search help guides, topics, and FAQs…'
                   }
+                  aria-label={help?.searchPlaceholder ?? 'Search help guides'}
                   className="w-full rounded-2xl border border-[var(--glassBorder)] bg-[var(--background)] px-5 py-3.5 pl-12 text-sm text-[var(--color)] placeholder-[var(--textSecondary)] outline-none backdrop-blur-md transition-all duration-200 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                 />
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-[var(--textSecondary)]">
+                <span
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-[var(--textSecondary)]"
+                  aria-hidden="true"
+                >
                   🔍
                 </span>
                 {searchQuery && (
                   <button
                     type="button"
+                    aria-label="Clear search"
                     onClick={() => setSearchQuery('')}
                     className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-[var(--backgroundHover)] px-2 py-0.5 text-xs text-[var(--textSecondary)] hover:text-[var(--color)]"
                   >

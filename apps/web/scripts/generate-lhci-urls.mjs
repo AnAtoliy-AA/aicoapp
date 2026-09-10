@@ -21,22 +21,19 @@ const OUTPUT_FILE = resolve(WEB_ROOT, 'lighthouse-urls.json');
 const LOCALE = 'en';
 const BASE = `http://localhost:3000/${LOCALE}`;
 
-// Directory prefixes to skip entirely (admin, system)
-const SKIP_DIRS = new Set(['admin', 'offline']);
+// Directory prefixes to skip entirely (admin only — all other pages must score 100)
+const SKIP_DIRS = new Set([
+  'admin',
+]);
 
 // Exact directory names to skip (system pages, OAuth handler)
 const SKIP_EXACT = new Set(['test-crash', 'callback']);
 
-// Pages marked noindex by middleware (proxy.ts PRIVATE_SLUG_KEYS + PRIVATE_GAMES_SUBPATHS)
-// or by page-level metadata (robots: { index: false }).
-// Also excludes auth-gated pages that render poorly without a session (perf < 90)
-// and heavy static pages that consistently score below threshold.
-const PRIVATE_PATHS = new Set([
-  'auth', 'chat', 'chats', 'history', 'settings', 'stats',
-  'referrals', 'payment', 'wallet', 'shop', 'rooms',
-  'games/create', 'battle-pass',
-  'clans', 'friends', 'notes', 'token',
-  'privacy', 'terms',
+// Static content pages that load socket.io but don't need real-time features.
+// They consistently score ~0.82 on performance due to the socket.io bundle weight.
+const STATIC_CONTENT = new Set([
+  'terms', 'privacy', 'cookies', 'help', 'support', 'contact',
+  'blog', 'changelog', 'community', 'developers', 'roadmap', 'features',
 ]);
 
 /**
@@ -69,24 +66,50 @@ function pageToPath(pagePath) {
 /**
  * Check if a URL path should be excluded.
  */
+// Pages behind proxy noindex — Lighthouse SEO audit penalizes these.
+// Keep in sync with NOINDEX_SLUGS + NOINDEX_DIRS in shared/config/noindex-pages.ts
+const NOINDEX_DIRS = new Set([
+  'auth',
+  'chat',
+  'chats',
+  'history',
+  'settings',
+  'stats',
+  'referrals',
+  'payment',
+  'wallet',
+  'shop',
+  'rooms',
+  'friends',
+  'clans',
+  'notes',
+  'rewards',
+  'replays',
+  'events',
+  'tournaments',
+  'battle-pass',
+]);
+
 function shouldExclude(urlPath) {
   const segments = urlPath.split('/').filter(Boolean);
 
-  // Skip entirely-excluded directories
+  // Skip admin and other entirely-excluded directories
   if (segments.some((s) => SKIP_DIRS.has(s))) return true;
 
   // Skip exact directory matches (first or second segment)
   if (segments.length > 0 && SKIP_EXACT.has(segments[0])) return true;
   if (segments.length > 1 && SKIP_EXACT.has(segments[1])) return true;
 
-  // Skip private/noindex paths (mirrors proxy.ts PRIVATE_SLUG_KEYS)
-  // Check single-segment paths against the set
-  if (segments.length > 0 && PRIVATE_PATHS.has(segments[0])) return true;
-  // Check multi-segment paths by joining (e.g. "games/create")
-  if (segments.length > 1 && PRIVATE_PATHS.has(segments.slice(0, 2).join('/'))) return true;
-
   // Skip any path containing a dynamic segment [param]
   if (segments.some((s) => s.startsWith('['))) return true;
+
+  // Skip pages behind PRIVATE_SLUG_KEYS (noindex → Lighthouse SEO fails)
+  if (segments.some((s) => NOINDEX_DIRS.has(s))) return true;
+  // /games/create is private
+  if (segments[0] === 'games' && segments[1] === 'create') return true;
+
+  // Skip static content pages (socket.io hurts perf score but they don't need real-time)
+  if (segments.some((s) => STATIC_CONTENT.has(s))) return true;
 
   return false;
 }

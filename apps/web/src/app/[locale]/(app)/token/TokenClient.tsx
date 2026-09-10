@@ -1,15 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import dynamic from 'next/dynamic';
 import styles from './TokenClient.module.scss';
-import {
-  fetchTokenMetadata,
-  type TokenMetadata,
-} from '@/shared/api/tokenMetadata';
+import type { TokenMetadata } from '@/shared/api/tokenMetadata';
 
 const MarketCapSparkline = dynamic(() => import('./MarketCapSparkline'), {
   ssr: false,
@@ -44,30 +41,20 @@ function formatDate(ts: number): string {
 
 interface Props {
   mintAddress?: string;
+  initialMetadata?: TokenMetadata | null;
 }
 
-export default function TokenClient({ mintAddress = '' }: Props) {
+export default function TokenClient({ mintAddress = '', initialMetadata = null }: Props) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-  const [metadata, setMetadata] = useState<TokenMetadata | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [metadata, setMetadata] = useState<TokenMetadata | null>(initialMetadata);
   const [refreshing, setRefreshing] = useState(false);
-
-  const fetchMetadata = () => {
-    return fetchTokenMetadata()
-      .then((data) => {
-        if (data) setMetadata(data);
-      })
-      .catch(() => {});
-  };
-
-  useEffect(() => {
-    void fetchMetadata().finally(() => setLoading(false));
-  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchMetadata();
+    const { fetchTokenMetadata } = await import('@/shared/api/tokenMetadata');
+    const data = await fetchTokenMetadata();
+    if (data) setMetadata(data);
     setRefreshing(false);
   };
 
@@ -85,14 +72,6 @@ export default function TokenClient({ mintAddress = '' }: Props) {
     t('wallet.tokenInfo.description')
       .replace('{{name}}', displayName)
       .replace('{{ticker}}', displayTicker);
-
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.skeleton} />
-      </div>
-    );
-  }
 
   return (
     <div className={styles.page}>

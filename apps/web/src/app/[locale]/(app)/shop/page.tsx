@@ -32,7 +32,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return isLocale(locale) ? buildPageMetadata({ locale, page: 'shop' }) : {};
+  return isLocale(locale) ? buildPageMetadata({ locale, page: 'shop', noIndex: true }) : {};
 }
 
 const EMPTY_BALANCE: WalletBalanceView = { coins: 0, gems: 0, arcadeum: 0 };

@@ -13,7 +13,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return isLocale(locale)
-    ? buildPageMetadata({ locale, page: 'settings' })
+    ? buildPageMetadata({ locale, page: 'settings', noIndex: true })
     : {};
 }
 
