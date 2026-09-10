@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.9] - 2026-09-10
+
+### Fixed
+- fix remaining test mocks after vitest config update
+
+
 ## [1.29.8] - 2026-09-10
 
 ### Added
