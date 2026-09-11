@@ -7,10 +7,8 @@ import {
   useContext,
   useRef,
   useState,
-  useSyncExternalStore,
 } from 'react';
 import Image from 'next/image';
-import { LoadingState } from '@arcadeum/ui';
 import { cx } from '@arcadeum/ui/utils/cx';
 import {
   useTranslation,
@@ -54,10 +52,6 @@ export type {
   SoloUndoButtonProps,
 };
 
-const noopCleanup = () => {};
-const subscribeNoop = () => noopCleanup;
-const getMountedSnapshot = () => true;
-const getServerSnapshot = () => false;
 const SoloFullscreenContext = createContext<boolean>(false);
 
 export function useSoloFullscreen(): boolean {
@@ -131,11 +125,10 @@ export function SoloGameContainer({
   controls,
   undo,
   modal,
-  loadingMessage,
+  loadingMessage: _loadingMessage,
   timer,
 }: SoloGameContainerProps) {
   const { t } = useTranslation();
-  const mounted = useSyncExternalStore(subscribeNoop, getMountedSnapshot, getServerSnapshot);
 
   const gameIdPrefix = gameId.replace(/_v\d+$/, '').replace(/_/g, '-');
 
@@ -160,10 +153,6 @@ export function SoloGameContainer({
     resolvedPause.resumeGame();
     onNewGame();
   }, [onNewGame, resolvedPause]);
-
-  if (!mounted) {
-    return <LoadingState message={t(loadingMessage)} />;
-  }
 
   const themeName =
     t(theme.nameKey as TranslationKey) ||
