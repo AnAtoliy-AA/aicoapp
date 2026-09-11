@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.25] - 2026-09-11
+
+### Added
+- add i18n content sync auditor and achieve full locale coverage (ARC-950) (ARC-950)
+
+
 ## [1.29.24] - 2026-09-11
 
 ### Added
