@@ -55,8 +55,11 @@ import { GamesLeaderboardSyncService } from './games.leaderboard-sync.service';
 import { GamePostMatchService } from './game-post-match.service';
 import { PlayerStatsService } from './player-stats.service';
 import { SoloScore, SoloScoreSchema } from './schemas/solo-score.schema';
+import { SoloRating, SoloRatingSchema } from './schemas/solo-rating.schema';
 import { SoloScoresService } from './solo-scores.service';
 import { SoloScoresController } from './solo-scores.controller';
+import { SoloRatingService } from './solo-rating.service';
+import { SoloRatingController } from './solo-rating.controller';
 import { DailyChallengesModule } from '../daily-challenges/daily-challenges.module';
 import { AchievementsModule } from '../achievements/achievements.module';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -164,6 +167,7 @@ import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
         { name: PlayerStats.name, schema: PlayerStatsSchema },
         { name: PlayerStatRecord.name, schema: PlayerStatRecordSchema },
         { name: SoloScore.name, schema: SoloScoreSchema },
+        { name: SoloRating.name, schema: SoloRatingSchema },
       ],
       OCI_CONNECTION,
     ),
@@ -222,6 +226,7 @@ import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
     GameReplayController,
     LiveStatsController,
     SoloScoresController,
+    SoloRatingController,
     ChessStockfishController,
   ],
   providers: [
@@ -300,6 +305,7 @@ import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
     GameReplayService,
     PlayerStatsService,
     SoloScoresService,
+    SoloRatingService,
     // Gateways
     GamesGateway,
     CriticalGateway,

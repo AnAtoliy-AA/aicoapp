@@ -11,6 +11,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add daily chess puzzle page and streak retention loop (ARC-954)
 
+## [1.29.29] - 2026-09-11
+
+### Fixed
+
+- fix CI - revert broken hooks, fix navigation, mock R2 CDN
+- replace page.goto with navigateTo for game pages and fix SoloGameContainer rendering
+- remove useSyncExternalStore mounted gate from SoloGameContainer
+- fix lint error in SoloGameContainer
+- fix React hydration errors in SoloGameContainer
+- fix failing solo game unit tests
+
+### Refactored
+
+- unify solo game stores, add shared undo, and implement solo rating
+
+## [1.29.28] - 2026-09-11
+
+### Added
+
+- add interactive tutorials, playable guide widgets, and academy (ARC-953) (ARC-953)
+
+### Fixed
+
+- remove invalid ARIA grid roles from InteractiveGuideBoard (ARC-953) (ARC-953)
+
 ## [1.29.27] - 2026-09-11
 
 ### Added
