@@ -74,6 +74,8 @@ export const buildRoutes = (locale: Locale) => {
     stats: `/${locale}/${s('stats')}`,
     referrals: `/${locale}/${s('referrals')}`,
     profile: (userId: string) => `/${locale}/${s('profile')}/${userId}`,
+    playerProfile: (id: string) =>
+      `/${locale}/${s('players')}/${encodeURIComponent(id)}`,
 
     // Admin
     admin: `/${locale}/${s('admin')}`,

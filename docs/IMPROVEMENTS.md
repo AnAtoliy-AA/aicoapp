@@ -114,7 +114,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 - [ ] Discord server — link from navbar
 - [ ] Platform-wide activity feed — "Recently active games" visible to logged-out users
 - [ ] Friend system — invite via username or shareable profile link
-- [ ] Public player profiles with game history, win/loss stats, favorite games (Google-indexable pages)
+- [x] Public player profiles with game history, win/loss stats, favorite games (Google-indexable pages)
 - [ ] Ship public leaderboard page (leagues backend already exists)
 
 #### Retention
@@ -447,7 +447,7 @@ Agent posts: Discord webhook with opportunity table
 | 🔴 P0    | Product Hunt + Hacker News launch                  | Backlinks         | Low       | Manual   | Pending |
 | 🟡 P1    | Write 5 strategy guide articles (2,000+ words)     | Topical authority | High      | Agent 3  | ✅ Done |
 | 🟡 P1    | Ship public leaderboards                           | Engagement + SEO  | Medium    | Manual   | Pending |
-| 🟡 P1    | Ship public player profiles                        | Indexable pages   | Medium    | Manual   | Pending |
+| 🟡 P1    | Ship public player profiles                        | Indexable pages   | Medium    | Manual   | ✅ Done |
 | 🟡 P1    | Daily chess puzzle page                            | Recurring visits  | Medium    | Manual   | ✅ Done |
 | 🟡 P1    | Complete OG images for all 18 games                | Social sharing    | Low       | Agent 6  | ✅ Done |
 | 🟡 P1    | i18n auto-translation on new keys                  | Locale coverage   | Low       | Agent 5  | ✅ Done |
