@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.23] - 2026-09-11
+
+### Added
+- expand all game FAQs to 10 entries and add content gap auditor (ARC-948) (ARC-948)
+
+
 ## [1.29.22] - 2026-09-11
 
 ### Added
