@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.27] - 2026-09-11
+
+### Added
+- add 5-locale strategy guide coverage and strategy auditor (ARC-952) (ARC-952)
+
+
 ## [1.29.26] - 2026-09-11
 
 ### Added
