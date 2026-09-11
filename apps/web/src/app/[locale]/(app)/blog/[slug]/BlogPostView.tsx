@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Container, PageLayout } from '@arcadeum/ui';
 import type { BlogPost } from '@/features/blog/types';
 import { cx } from '@arcadeum/ui/utils/cx';
+import { InteractiveGuideBoard } from '@/features/blog/ui/InteractiveGuideBoard';
 
 interface Props {
   post: BlogPost;
@@ -298,6 +299,20 @@ export function BlogPostView({
                     </div>
                   );
                 }
+                case 'interactive-puzzle':
+                  return (
+                    <InteractiveGuideBoard
+                      key={block.id}
+                      id={block.id}
+                      title={block.title}
+                      prompt={block.prompt}
+                      gameId={block.gameId}
+                      board={block.board}
+                      solutionIndex={block.solutionIndex}
+                      explanation={block.explanation}
+                      playHref={block.playHref}
+                    />
+                  );
                 default:
                   return null;
               }
