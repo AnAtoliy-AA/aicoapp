@@ -6,10 +6,13 @@ import type { MoveQuality } from '@/features/analysis/lib/analyzeGame';
 import { generateMoveList, generatePGN } from '../lib/pgn';
 
 const QUALITY_BADGE: Record<MoveQuality, { symbol: string; color: string }> = {
-  brilliant: { symbol: '✦', color: 'text-cyan-400' },
-  great: { symbol: '!', color: 'text-purple-400' },
-  good: { symbol: '', color: '' },
-  inaccuracy: { symbol: '?!', color: 'text-amber-400' },
+  brilliant: { symbol: '!!', color: 'text-cyan-400' },
+  great: { symbol: '!', color: 'text-green-600' },
+  best: { symbol: '✓', color: 'text-emerald-400' },
+  excellent: { symbol: '✓', color: 'text-emerald-400' },
+  good: { symbol: '✓', color: 'text-emerald-400' },
+  book: { symbol: '', color: 'text-gray-400' },
+  inaccuracy: { symbol: '?!', color: 'text-yellow-400' },
   mistake: { symbol: '?', color: 'text-orange-400' },
   blunder: { symbol: '??', color: 'text-red-400' },
 };
