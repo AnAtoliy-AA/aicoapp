@@ -35,16 +35,24 @@ import {
   SoloActionButton,
   type SoloActionButtonProps,
 } from './SoloActionButton';
+import { SoloUndoButton, type SoloUndoButtonProps } from './SoloUndoButton';
 
 export {
   formatDuration,
   useSoloTimer,
   StatCard,
   useSoloPause,
+  useSoloPause as useSoloGamePause,
   SoloControlPanel,
   SoloActionButton,
+  SoloUndoButton,
 };
-export type { SoloPauseState, SoloControlPanelProps, SoloActionButtonProps };
+export type {
+  SoloPauseState,
+  SoloControlPanelProps,
+  SoloActionButtonProps,
+  SoloUndoButtonProps,
+};
 
 const SoloFullscreenContext = createContext<boolean>(false);
 
@@ -83,6 +91,7 @@ export interface SoloGameContainerProps {
   actions?: ReactNode;
   children: ReactNode;
   controls?: ReactNode;
+  undo?: SoloUndoButtonProps;
   modal: {
     result: 'victory' | 'defeat' | null;
     gameName: string;
@@ -119,6 +128,7 @@ export function SoloGameContainer({
   actions,
   children,
   controls,
+  undo,
   modal,
   loadingMessage,
 }: SoloGameContainerProps) {
@@ -307,6 +317,7 @@ export function SoloGameContainer({
         isFullscreen={isFullscreen}
         showLeaderboard={showLeaderboard}
         onToggleLeaderboard={() => setShowLeaderboard((prev) => !prev)}
+        undo={undo}
       />
     </div>
   );
