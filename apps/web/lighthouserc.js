@@ -29,6 +29,7 @@ const config = {
     },
     assert: {
       assertions: {
+        // Do NOT decrease — target is 95. Flaky marginal failures (e.g. 89) should be investigated, not threshold-lowered.
         'categories:performance': ['error', { minValue: 90, maxError: 0 }],
         'categories:accessibility': ['error', { minValue: 100, maxError: 0 }],
         'categories:seo': ['error', { minValue: 100, maxError: 0 }],

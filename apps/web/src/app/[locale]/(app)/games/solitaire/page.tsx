@@ -9,6 +9,8 @@ import { getPostsByTag } from '@/features/blog/registry';
 import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import SolitaireLanding from './SolitaireLanding';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const SOLITAIRE_SLUG = 'solitaire_v1';

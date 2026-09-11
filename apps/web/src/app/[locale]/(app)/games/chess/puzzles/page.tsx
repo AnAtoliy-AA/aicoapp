@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { PuzzleGame } from '@/widgets/BoardGames/ChessPuzzles/ui/Game';
 
+
 export default function ChessPuzzlesPage() {
   return (
     <main className="flex flex-col items-center min-h-screen py-6">

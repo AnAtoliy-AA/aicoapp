@@ -9,6 +9,8 @@ import { buildVideoGameJsonLd } from '@/shared/seo/videoGameJsonLd';
 import SpadesLanding from './SpadesLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const SPADES_SLUG = 'spades_v1';
