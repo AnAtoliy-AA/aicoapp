@@ -312,8 +312,9 @@ export class SoloScoresService {
         }
       }
 
-      // Award XP for solo games (0.1 coefficient by default)
+      // Award XP for solo games (0.1 coefficient by default, 0 if undo was used)
       for (const r of newRecords) {
+        if (r.usedUndo) continue;
         try {
           const amount = await this.xpSettings.getXpReward(
             r.gameId,

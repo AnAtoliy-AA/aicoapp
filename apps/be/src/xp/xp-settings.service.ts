@@ -9,7 +9,6 @@ import {
   levelFromXp as computeLevelFromXp,
   xpProgress as computeXpProgress,
 } from './lib/xp-level';
-import { OCI_CONNECTION } from '../common/providers/mongo-connections.provider';
 
 const GLOBAL_SCOPE = 'global';
 
@@ -18,7 +17,7 @@ export class XpSettingsService {
   private readonly logger = new Logger(XpSettingsService.name);
 
   constructor(
-    @InjectModel(XpSettings.name, OCI_CONNECTION)
+    @InjectModel(XpSettings.name)
     private readonly settingsModel: Model<XpSettingsDocument>,
   ) {}
 
