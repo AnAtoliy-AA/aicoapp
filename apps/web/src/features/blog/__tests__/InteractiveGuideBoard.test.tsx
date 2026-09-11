@@ -19,7 +19,7 @@ describe('InteractiveGuideBoard', () => {
 
     expect(screen.getByText('Spot the Fork')).toBeInTheDocument();
     expect(screen.getByText('Play as X to win.')).toBeInTheDocument();
-    expect(screen.getAllByRole('gridcell')).toHaveLength(9);
+    expect(screen.getAllByTestId(/^puzzle-cell-/)).toHaveLength(9);
   });
 
   it('handles wrong move with feedback and reset', () => {

@@ -74,7 +74,6 @@ export function InteractiveGuideBoard({
 
       <div className="flex flex-col items-center justify-center py-2">
         <div
-          role="grid"
           aria-label={title}
           className="grid grid-cols-3 gap-2 rounded-xl bg-black/30 p-3 shadow-inner"
         >
@@ -86,7 +85,6 @@ export function InteractiveGuideBoard({
               <button
                 key={idx}
                 type="button"
-                role="gridcell"
                 aria-label={`Square ${idx + 1}: ${cell || 'empty'}`}
                 disabled={!isClickable}
                 onClick={() => handleCellClick(idx)}
