@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.24] - 2026-09-11
+
+### Added
+- add sitemap and seo integrity auditor (ARC-949) (ARC-949)
+
+
 ## [1.29.23] - 2026-09-11
 
 ### Added

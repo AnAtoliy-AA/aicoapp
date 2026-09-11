@@ -1,6 +1,6 @@
 {
   "name": "aicoapp-monorepo",
-  "version": "1.29.23",
+  "version": "1.29.24",
   "private": true,
   "packageManager": "pnpm@9.15.9",
   "scripts": {
@@ -19,6 +19,7 @@
     "check-file-length": "node scripts/check-file-length.js",
     "check-translations": "node scripts/check_translation.js",
     "check-content-gaps": "node scripts/check-content-gaps.js",
+    "check-sitemap": "node scripts/check-sitemap.js",
     "check-hreflang": "pnpm --filter web run seo:hreflang:audit",
     "docs:check": "node scripts/check-doc-links.js",
     "shorts:daily": "node scripts/shorts-factory/daily-runner.js",
