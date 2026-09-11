@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.17] - 2026-09-11
+
+### Fixed
+- add streak_freeze_purchase to wallet reasons
+
+
 ## [1.29.16] - 2026-09-10
 
 ### Added
