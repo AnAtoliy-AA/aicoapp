@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "1.29.21",
+  "version": "1.29.22",
   "private": true,
   "browserslist": [
     "chrome >= 93",
@@ -28,7 +28,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "i18n:audit": "vitest run src/shared/i18n/messages/completeness.test.ts",
-    "i18n:audit:update": "vitest run src/shared/i18n/messages/completeness.test.ts -u"
+    "i18n:audit:update": "vitest run src/shared/i18n/messages/completeness.test.ts -u",
+    "seo:hreflang:audit": "vitest run src/shared/seo/__tests__/hreflang.test.ts"
   },
   "dependencies": {
     "@arcadeum/games-core": "workspace:*",

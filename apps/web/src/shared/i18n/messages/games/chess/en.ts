@@ -84,6 +84,26 @@ export const enMessages = {
           answer:
             'Puzzle Rush is a timed puzzle mode. In Survival, you get 3 lives and try to solve as many puzzles as possible. In Timed mode, you have 3 minutes to solve as many as you can.',
         },
+        tablebases: {
+          question: 'What are Syzygy endgame tablebases?',
+          answer:
+            'Syzygy endgame tablebases provide mathematically perfect play for any position with 7 or fewer pieces on the board, showing instant theoretical win, draw, or loss.',
+        },
+        mobile: {
+          question: 'Can I play chess on mobile without installing an app?',
+          answer:
+            'Yes. Arcadeum Games runs entirely in any modern mobile browser with full touch controls, responsive board resizing, and smooth piece dragging.',
+        },
+        pgn: {
+          question: 'Can I import and export PGN or FEN positions?',
+          answer:
+            'Yes. The analysis board supports one-click PGN copy/paste, FEN position setup, and custom board editing for post-game study.',
+        },
+        free: {
+          question: 'Is chess analysis and game review really 100% free?',
+          answer:
+            'Yes. Full-depth Stockfish 19 analysis, evaluation graphs, accuracy scores, and mistake classification are completely free with zero limits or paywalls.',
+        },
       },
       advantages: {
         kicker: 'Why Players Choose Arcadeum Games',

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.22] - 2026-09-11
+
+### Added
+- add hreflang validator and expand game FAQs to 10 entries (ARC-947) (ARC-947)
+- add game landing JSON-LD schemas and sitemap expansion
+
+
 ## [1.29.21] - 2026-09-11
 
 ### Fixed

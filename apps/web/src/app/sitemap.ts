@@ -47,6 +47,12 @@ type RouteKey =
   | 'minesweeperLanding'
   | 'sudokuLanding'
   | 'game2048Landing'
+  | 'backgammonLanding'
+  | 'battleshipLanding'
+  | 'heartsLanding'
+  | 'spadesLanding'
+  | 'goLanding'
+  | 'pachisiLanding'
   | 'shop';
 
 // Last-meaningful-content-change per page. Update by hand when the
@@ -89,8 +95,14 @@ const PAGE_LAST_MODIFIED: Record<RouteKey, string> = {
   catDashLanding: '2026-09-06',
   solitaireLanding: '2026-09-06',
   minesweeperLanding: '2026-09-06',
-  sudokuLanding: '2026-09-06',
-  game2048Landing: '2026-09-06',
+  sudokuLanding: '2026-09-11',
+  game2048Landing: '2026-09-11',
+  backgammonLanding: '2026-09-11',
+  battleshipLanding: '2026-09-11',
+  heartsLanding: '2026-09-11',
+  spadesLanding: '2026-09-11',
+  goLanding: '2026-09-11',
+  pachisiLanding: '2026-09-11',
   shop: '2026-09-06',
 };
 
@@ -130,6 +142,12 @@ const GAME_LANDING_KEYS: RouteKey[] = [
   'minesweeperLanding',
   'sudokuLanding',
   'game2048Landing',
+  'backgammonLanding',
+  'battleshipLanding',
+  'heartsLanding',
+  'spadesLanding',
+  'goLanding',
+  'pachisiLanding',
 ];
 
 const ROUTE_KEYS: RouteKey[] = (Object.keys(PAGE_LAST_MODIFIED) as RouteKey[])
@@ -154,10 +172,19 @@ const PAGE_CHANGE_FREQ: Partial<
   glimwormLanding: 'weekly',
   ticTacToeLanding: 'weekly',
   cascadeLanding: 'weekly',
+  checkersLanding: 'weekly',
+  catDashLanding: 'weekly',
+  chessLanding: 'weekly',
   solitaireLanding: 'weekly',
   minesweeperLanding: 'weekly',
   sudokuLanding: 'weekly',
   game2048Landing: 'weekly',
+  backgammonLanding: 'weekly',
+  battleshipLanding: 'weekly',
+  heartsLanding: 'weekly',
+  spadesLanding: 'weekly',
+  goLanding: 'weekly',
+  pachisiLanding: 'weekly',
   terms: 'yearly',
   privacy: 'yearly',
   cookies: 'yearly',
@@ -200,6 +227,12 @@ const PAGE_PRIORITY: Record<RouteKey, number> = {
   minesweeperLanding: 0.9,
   sudokuLanding: 0.9,
   game2048Landing: 0.9,
+  backgammonLanding: 0.9,
+  battleshipLanding: 0.9,
+  heartsLanding: 0.9,
+  spadesLanding: 0.9,
+  goLanding: 0.9,
+  pachisiLanding: 0.9,
   leaderboards: 0.7,
   tournaments: 0.7,
   rewards: 0.7,

@@ -110,6 +110,36 @@ export const enMessages = {
           answer:
             '9×9 games finish in about 10 minutes and are perfect for learning. 13×13 is a middle ground, while 19×19 is the classic full-size experience used in professional play.',
         },
+        liberties: {
+          question: 'What are liberties and how do captures happen in Go?',
+          answer:
+            'A liberty is an unoccupied intersection adjacent to a stone or connected group. When all liberties are occupied by opponent stones, the group is captured and removed.',
+        },
+        twoEyes: {
+          question: 'What is the two eyes rule for living groups?',
+          answer:
+            'A group with two separate, independent internal empty spaces (eyes) can never be captured, because the opponent cannot play into either eye without committing immediate suicide.',
+        },
+        suicide: {
+          question: 'Is suicide allowed in Go?',
+          answer:
+            'No. A player cannot place a stone on an intersection that has zero liberties, unless that move immediately captures one or more adjacent opponent stones.',
+        },
+        friends: {
+          question: 'How can I play Go online with friends?',
+          answer:
+            'Click Create Room, select your preferred board size, and send the room link. Friends can join on mobile or desktop without signing up.',
+        },
+        bots: {
+          question: 'Can I practice Go against AI bots?',
+          answer:
+            'Yes. Arcadeum provides built-in AI bots with multiple difficulty levels to practice tactical captures and territorial intuition.',
+        },
+        free: {
+          question: 'Is Go free to play on Arcadeum?',
+          answer:
+            'Yes. Go on Arcadeum is 100% free with area scoring, instant rooms, move history (kifu), and no paywalls.',
+        },
       },
     },
     lobby: {
