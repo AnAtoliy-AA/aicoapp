@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [1.29.33] - 2026-09-11
 
-- add Discord community links to desktop navbar and mobile menu (ARC-957)
+### Added
+- add Discord community link to desktop and mobile navigation (ARC-957) (ARC-957)
+
 
 ## [1.29.32] - 2026-09-11
 
