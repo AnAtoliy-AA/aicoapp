@@ -20,6 +20,14 @@ export const en = {
   currentStreak: 'Current Streak',
   bestWinStreak: 'Best Win Streak',
   favoriteGame: 'Favorite Game',
+  level: 'Level',
+  xp: 'XP',
+  totalXP: 'Total XP',
+  xpToNextLevel: 'to next level',
+  prestige: 'Prestige',
+  prestigeReset: 'Prestige Reset',
+  prestigeHint:
+    'Reach level 99 to prestige and reset your level for a prestige badge.',
   // Game breakdown
   gameBreakdownTitle: 'Game Breakdown',
   game: 'Game',
@@ -56,6 +64,14 @@ export const es = {
   currentStreak: 'Racha Actual',
   bestWinStreak: 'Mejor Racha de Victorias',
   favoriteGame: 'Juego Favorito',
+  level: 'Nivel',
+  xp: 'XP',
+  totalXP: 'XP Total',
+  xpToNextLevel: 'para siguiente nivel',
+  prestige: 'Prestigio',
+  prestigeReset: 'Reinicio de Prestigio',
+  prestigeHint:
+    'Alcanza el nivel 99 para prestigiar y reiniciar tu nivel por una insignia de prestigio.',
   // Game breakdown
   gameBreakdownTitle: 'Desglose por Juego',
   game: 'Juego',
@@ -92,6 +108,14 @@ export const fr = {
   currentStreak: 'Série en Cours',
   bestWinStreak: 'Meilleure Série de Victoires',
   favoriteGame: 'Jeu Préféré',
+  level: 'Niveau',
+  xp: 'XP',
+  totalXP: 'XP Total',
+  xpToNextLevel: 'pour le niveau suivant',
+  prestige: 'Prestige',
+  prestigeReset: 'Réinitialisation de Prestige',
+  prestigeHint:
+    'Atteignez le niveau 99 pour prestigier et réinitialiser votre niveau pour un badge de prestige.',
   // Game breakdown
   gameBreakdownTitle: 'Détail par Jeu',
   game: 'Jeu',
@@ -128,6 +152,14 @@ export const ru = {
   currentStreak: 'Текущая серия',
   bestWinStreak: 'Лучшая серия побед',
   favoriteGame: 'Любимая игра',
+  level: 'Уровень',
+  xp: 'Опыт',
+  totalXP: 'Весь опыт',
+  xpToNextLevel: 'до следующего уровня',
+  prestige: 'Престиж',
+  prestigeReset: 'Сброс престижа',
+  prestigeHint:
+    'Достигните 99 уровня, чтобы получить престиж и сбросить уровень за значок престижа.',
   // Game breakdown
   gameBreakdownTitle: 'Детализация по играм',
   game: 'Игра',
@@ -164,6 +196,14 @@ export const by = {
   currentStreak: 'Бягучая серыя',
   bestWinStreak: 'Лепшая серыя перамог',
   favoriteGame: 'Улюбёная гульня',
+  level: 'Узровень',
+  xp: 'Досвед',
+  totalXP: 'Увесь досвед',
+  xpToNextLevel: 'да наступнага ўзроўню',
+  prestige: 'Прэстыж',
+  prestigeReset: 'Скід прэстыжу',
+  prestigeHint:
+    'Дасягніце 99 узроўню, каб атрымаць прэстыж і скінуць узровень за значок прэстыжу.',
   // Game breakdown
   gameBreakdownTitle: 'Дэталізацыя па гульнях',
   game: 'Гульня',

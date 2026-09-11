@@ -1,5 +1,7 @@
 'use client';
 
+import { xpProgress, toRoman } from '@/shared/lib/xp-level';
+
 export interface PlayerStatsOverviewProps {
   wins: number;
   losses: number;
@@ -10,6 +12,9 @@ export interface PlayerStatsOverviewProps {
   elo?: number;
   rank: number;
   tier: string;
+  xp?: number;
+  level?: number;
+  prestige?: number;
 }
 
 function getWidthClass(percent: number): string {
@@ -40,6 +45,9 @@ export function PlayerStatsOverview({
   elo,
   rank,
   tier,
+  xp = 0,
+  level = 1,
+  prestige = 0,
 }: PlayerStatsOverviewProps) {
   const totalGames = wins + losses + draws;
   const winPercent = Math.round(winrate * 100);
@@ -47,6 +55,7 @@ export function PlayerStatsOverview({
     totalGames > 0 ? Math.round((losses / totalGames) * 100) : 0;
   const drawPercent =
     totalGames > 0 ? Math.round((draws / totalGames) * 100) : 0;
+  const { progress, xpInLevel, xpNeeded } = xpProgress(xp);
 
   return (
     <div
@@ -80,7 +89,46 @@ export function PlayerStatsOverview({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div
+          data-testid="stat-level"
+          className="flex flex-col gap-1 rounded-xl border border-violet-500/30 bg-violet-500/5 p-3"
+        >
+          <span className="text-xs uppercase tracking-wider text-violet-400">
+            Level
+          </span>
+          <span className="text-2xl font-extrabold text-violet-300">
+            {prestige > 0 && (
+              <span className="text-amber-400 mr-1">P{toRoman(prestige)}</span>
+            )}
+            {level}
+          </span>
+          <div className="w-full rounded-full bg-white/10 h-1.5 mt-1">
+            <div
+              className="h-full rounded-full bg-violet-500 transition-all duration-500"
+              style={{ width: `${Math.round(progress * 100)}%` }}
+            />
+          </div>
+          <span className="text-[10px] text-violet-400/70">
+            {xpInLevel}/{xpNeeded} XP
+          </span>
+        </div>
+
+        <div
+          data-testid="stat-xp"
+          className="flex flex-col gap-1 rounded-xl border border-[var(--borderColor)] bg-white/5 p-3"
+        >
+          <span className="text-xs uppercase tracking-wider text-[var(--colorMuted)]">
+            Total XP
+          </span>
+          <span className="text-2xl font-extrabold text-[var(--color)]">
+            {xp.toLocaleString()}
+          </span>
+          <span className="text-xs text-[var(--colorMuted)]">
+            Earned across all games
+          </span>
+        </div>
+
         <div
           data-testid="stat-total-games"
           className="flex flex-col gap-1 rounded-xl border border-[var(--borderColor)] bg-white/5 p-3"

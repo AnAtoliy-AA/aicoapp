@@ -5,6 +5,7 @@ import { SoloScore } from './schemas/solo-score.schema';
 import { User } from '../auth/schemas/user.schema';
 import { OCI_CONNECTION } from '../common/providers/mongo-connections.provider';
 import { SoloRatingService } from './solo-rating.service';
+import { XpSettingsService } from '../xp/xp-settings.service';
 
 interface SyncSoloScoreRecord {
   gameId: string;
@@ -28,6 +29,7 @@ export class SoloScoresService {
     @InjectModel(User.name, OCI_CONNECTION)
     private readonly userModel: Model<User>,
     private readonly soloRatingService: SoloRatingService,
+    private readonly xpSettings: XpSettingsService,
   ) {}
 
   async getLeaderboard(
@@ -307,6 +309,25 @@ export class SoloScoresService {
               `Failed to update solo rating for ${userId}: ${(err as Error).message}`,
             );
           }
+        }
+      }
+
+      // Award XP for solo games (0.1 coefficient by default)
+      for (const r of newRecords) {
+        try {
+          const amount = await this.xpSettings.getXpReward(
+            r.gameId,
+            r.result === 'won' ? 'won' : 'lost',
+            true,
+            false,
+          );
+          if (amount > 0) {
+            await this.xpSettings.awardXp(userId, this.userModel, amount);
+          }
+        } catch (err) {
+          this.logger.warn(
+            `Failed to award solo XP for ${userId}: ${(err as Error).message}`,
+          );
         }
       }
 

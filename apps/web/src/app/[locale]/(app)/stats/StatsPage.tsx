@@ -30,6 +30,7 @@ import {
   GameBreakdown,
   Leaderboard,
 } from './components';
+import { LevelProgression } from './components/LevelProgression';
 import { getAllSupportedGameIds } from '@/features/games/lib/gameIdMapping';
 import type { PlayerStats, LeaderboardResponse } from '@/features/history/api';
 
@@ -256,7 +257,10 @@ export default function StatsPage({
                 currentStreakType={serverStreaks.currentStreakType}
                 bestWinStreak={serverStreaks.bestWinStreak}
                 favoriteGame={serverFavoriteGame}
+                level={snapshot.level}
+                xp={snapshot.xp}
               />
+              <LevelProgression currentLevel={snapshot.level} />
               <GameBreakdown stats={stats} loading={loading} />
             </>
           ) : hasLocalStats ? (
@@ -279,6 +283,8 @@ export default function StatsPage({
                   favoriteGame: localFavoriteGame,
                 }}
                 loading={false}
+                level={snapshot.level}
+                xp={snapshot.xp}
               />
               <GameBreakdown
                 stats={{

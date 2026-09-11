@@ -7,6 +7,8 @@ export interface PublicUserProfile {
   displayName: string | null;
   role: string;
   xp: number;
+  level: number;
+  prestige: number;
   equippedAvatarId: string | null;
   equippedBadgeId: string | null;
   equippedNameColorId: string | null;

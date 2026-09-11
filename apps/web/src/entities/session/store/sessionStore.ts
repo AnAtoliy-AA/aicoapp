@@ -24,6 +24,8 @@ const defaultSnapshot: SessionTokensSnapshot = {
   displayName: null,
   role: null,
   xp: 0,
+  level: 1,
+  prestige: 0,
   equippedAvatarId: null,
   equippedBadgeId: null,
   equippedNameColorId: null,
@@ -76,6 +78,8 @@ function buildSnapshot(
     displayName: input.displayName ?? current.displayName ?? null,
     role: input.role ?? current.role ?? null,
     xp: input.xp ?? current.xp ?? 0,
+    level: input.level ?? current.level ?? 1,
+    prestige: input.prestige ?? current.prestige ?? 0,
     equippedAvatarId:
       input.equippedAvatarId === undefined
         ? (current.equippedAvatarId ?? null)
@@ -129,6 +133,8 @@ function enrichWithResponse(
       null,
     role: response.user?.role ?? snapshot.role ?? null,
     xp: response.user?.xp ?? snapshot.xp ?? 0,
+    level: response.user?.level ?? snapshot.level ?? 1,
+    prestige: response.user?.prestige ?? snapshot.prestige ?? 0,
     equippedAvatarId:
       response.user?.equippedAvatarId ?? snapshot.equippedAvatarId ?? null,
     equippedBadgeId:
