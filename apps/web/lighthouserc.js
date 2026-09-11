@@ -34,6 +34,9 @@ const config = {
         'categories:accessibility': ['error', { minValue: 100, maxError: 0 }],
         'categories:seo': ['error', { minValue: 100, maxError: 0 }],
         'categories:best-practices': ['error', { minValue: 100, maxError: 0 }],
+        'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
+        'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
+        'total-blocking-time': ['warn', { maxNumericValue: 200 }],
       },
     },
     upload: {
