@@ -34,6 +34,7 @@ import { GameEnginesModule } from './engines/engines.module';
 import { AiVsAiService } from './ai-vs-ai/ai-vs-ai.service';
 import { GameRoomsService } from './rooms/game-rooms.service';
 import { GameRoomsMapper } from './rooms/game-rooms.mapper';
+import { GameRoomsBotService } from './rooms/game-rooms.bot.service';
 import { GameRoomsRematchService } from './rooms/game-rooms.rematch.service';
 import { GameRoomsChatService } from './rooms/game-rooms.chat.service';
 import { GameRoomsQuickplayService } from './rooms/game-rooms.quickplay.service';
@@ -228,6 +229,7 @@ import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
     // Core services
     GameRoomsService,
     GameRoomsMapper,
+    GameRoomsBotService,
     GameRoomsRematchService,
     GameRoomsChatService,
     GameRoomsQuickplayService,
