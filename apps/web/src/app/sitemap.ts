@@ -8,6 +8,7 @@ import {
   localeToHreflang,
 } from '@/shared/i18n';
 import { POST_SLUGS, getPost } from '@/features/blog/registry';
+import { FEATURED_PLAYER_IDS } from '@/shared/api/leaderboard';
 
 type RouteKey =
   | 'home'
@@ -334,6 +335,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: 'monthly',
         priority: 0.6,
         alternates: { languages: postLanguages },
+      });
+    }
+
+    for (const playerId of FEATURED_PLAYER_IDS) {
+      const playerLanguages: Record<string, string> = {
+        'x-default': `${appConfig.siteUrl}${buildRoutes(DEFAULT_LOCALE).playerProfile(playerId)}`,
+      };
+      for (const l of SUPPORTED_LOCALES) {
+        playerLanguages[localeToHreflang(l)] =
+          `${appConfig.siteUrl}${buildRoutes(l).playerProfile(playerId)}`;
+      }
+
+      entries.push({
+        url: `${appConfig.siteUrl}${r.playerProfile(playerId)}`,
+        lastModified: new Date('2026-09-11'),
+        changeFrequency: 'daily',
+        priority: 0.7,
+        alternates: { languages: playerLanguages },
       });
     }
   }

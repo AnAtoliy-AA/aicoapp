@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add full public player profiles with game history, win/loss stats, favorite games, and indexable sitemaps (ARC-956)
+
 ## [1.29.31] - 2026-09-11
 
 ### Added
+
 - add streak freeze card and prominent streak UI (ARC-955) (ARC-955)
 
 ### Documentation
-- record streak system UI improvements (ARC-955) (ARC-955)
 
+- record streak system UI improvements (ARC-955) (ARC-955)
 
 ## [1.29.30] - 2026-09-11
 
