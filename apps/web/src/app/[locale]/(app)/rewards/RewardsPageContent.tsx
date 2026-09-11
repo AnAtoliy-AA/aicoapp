@@ -19,6 +19,7 @@ import { SocialRewardsSection } from '@/features/social-rewards/ui/SocialRewards
 import type { SocialRewardsStatus } from '@/features/social-rewards/server/social-rewards.types';
 import type { DailyRewardStatus } from '@/features/daily-rewards/server/daily-rewards.types';
 import { ClaimButton } from '@/features/daily-rewards/ui/ClaimButton';
+import { StreakFreezeCard } from '@/features/daily-rewards/ui/StreakFreezeCard';
 import { dailyRewardsEn } from '@/shared/i18n/messages/pages/daily-rewards/en';
 
 type DeepPartial<T> = {
@@ -210,6 +211,11 @@ export default function RewardsPageContent({
                   </Link>
                 </div>
               )}
+
+              <StreakFreezeCard
+                initialFreezeTokens={dailyRewardStatus?.freezeTokens ?? 0}
+                currentStreak={dailyRewardStatus?.currentStreak ?? 0}
+              />
             </div>
           </Section>
 
@@ -405,11 +411,7 @@ export default function RewardsPageContent({
                         </button>
                         {isOpen && (
                           <div className="border-t border-[var(--borderColor)] p-5 pt-3">
-                            <Typography
-                              variant="body"
-                              uiSize="sm"
-                              alpha="high"
-                            >
+                            <Typography variant="body" uiSize="sm" alpha="high">
                               {item?.answer}
                             </Typography>
                           </div>
