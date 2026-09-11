@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.20] - 2026-09-11
+
+### Added
+- remove daily limits on game reviews and puzzles for all tiers
+- upgrade move classification and auto-deploy Stockfish to worker
+
+### Fixed
+- flip evals for black in qualityForLoss and update tests
+- handle stockfish API errors and add timeout fallback
+- sync frontend stockfish-api types with backend quality labels
+
+
 ## [1.29.19] - 2026-09-11
 
 ### Fixed
