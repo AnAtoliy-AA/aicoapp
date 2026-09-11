@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.28] - 2026-09-11
+
+### Added
+- add interactive tutorials, playable guide widgets, and academy (ARC-953) (ARC-953)
+
+### Fixed
+- remove invalid ARIA grid roles from InteractiveGuideBoard (ARC-953) (ARC-953)
+
+
 ## [1.29.27] - 2026-09-11
 
 ### Added
