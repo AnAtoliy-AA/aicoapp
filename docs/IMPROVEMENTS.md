@@ -96,8 +96,8 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 #### Content
 
 - [x] Expand game FAQs to 10 questions per game across all 5 locales (chess, critical, glimworm, sea battle, backgammon, checkers, go)
-- [ ] Write 5 pillar strategy guides (chess, backgammon, go, checkers, sea battle) — 2,000+ words each
-- [ ] Activate the blog with at minimum 2 articles per month
+- [x] Write 5 pillar strategy guides (chess, backgammon, go, checkers, sea battle) — 2,000+ words each across 5 locales
+- [x] Activate the blog with at minimum 2 articles per month
 
 #### Backlinks
 
@@ -150,9 +150,9 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 
 #### Localization Leverage
 
-- [ ] Russian content strategy — `ru` locale exists, publish chess/strategy articles targeting Google.ru and Yandex
-- [ ] Spanish content strategy — `es` locale exists, publish guides targeting large underserved market
-- [ ] French content — publish guides in French
+- [x] Russian content strategy — `ru` locale exists, publish chess/strategy articles targeting Google.ru and Yandex (100% 5-locale strategy guide coverage)
+- [x] Spanish content strategy — `es` locale exists, publish guides targeting large underserved market (100% 5-locale strategy guide coverage)
+- [x] French content — publish guides in French (100% 5-locale strategy guide coverage)
 
 #### Press & Partnerships
 
@@ -439,24 +439,24 @@ Agent posts: Discord webhook with opportunity table
 
 ## 7. Summary Priority Stack
 
-| Priority | Action                                             | Impact            | Effort    | Agent?   | Status      |
-| -------- | -------------------------------------------------- | ----------------- | --------- | -------- | ----------- |
-| 🔴 P0    | Google Search Console setup, sitemap audit         | SEO foundation    | Low       | Agent 4  | ✅ Done     |
-| 🔴 P0    | Add `FAQPage` + `HowTo` + `AggregateRating` schema | Rich snippets     | Low       | Agent 1  | ✅ Done     |
-| 🔴 P0    | Expand all game FAQs to 10+ entries                | Keyword coverage  | Medium    | Agent 2  | ✅ Done     |
-| 🔴 P0    | Product Hunt + Hacker News launch                  | Backlinks         | Low       | Manual   | Pending     |
-| 🟡 P1    | Write 5 strategy guide articles (2,000+ words)     | Topical authority | High      | Agent 3  | In progress |
-| 🟡 P1    | Ship public leaderboards                           | Engagement + SEO  | Medium    | Manual   | Pending     |
-| 🟡 P1    | Ship public player profiles                        | Indexable pages   | Medium    | Manual   | Pending     |
-| 🟡 P1    | Daily chess puzzle page                            | Recurring visits  | Medium    | Manual   | Pending     |
-| 🟡 P1    | Complete OG images for all 18 games                | Social sharing    | Low       | Agent 6  | ✅ Done     |
-| 🟡 P1    | i18n auto-translation on new keys                  | Locale coverage   | Low       | Agent 5  | ✅ Done     |
-| 🟡 P1    | Core Web Vitals CI gate                            | Performance       | Low       | Agent 7  | ✅ Done     |
-| 🟡 P1    | Hreflang validator in CI                           | SEO integrity     | Low       | Agent 8  | ✅ Done     |
-| 🟡 P1    | Weekly content gap reports                         | Content direction | Low       | Agent 9  | ✅ Done     |
-| 🟢 P2    | Discord server                                     | Community         | Low       | Manual   | Pending     |
-| 🟢 P2    | Shareable game result cards                        | Viral growth      | Medium    | Manual   | Pending     |
-| 🟢 P2    | Original game tournaments (Critical, Sea Battle)   | Differentiation   | High      | Manual   | Pending     |
-| 🟢 P2    | Mobile App Store launch                            | New channel       | Very High | Manual   | Pending     |
-| 🟢 P2    | Russian/Spanish content strategy                   | Untapped markets  | High      | Agent 3  | In progress |
-| 🟢 P2    | Backlink opportunity finder                        | Organic authority | Medium    | Agent 10 | Pending     |
+| Priority | Action                                             | Impact            | Effort    | Agent?   | Status  |
+| -------- | -------------------------------------------------- | ----------------- | --------- | -------- | ------- |
+| 🔴 P0    | Google Search Console setup, sitemap audit         | SEO foundation    | Low       | Agent 4  | ✅ Done |
+| 🔴 P0    | Add `FAQPage` + `HowTo` + `AggregateRating` schema | Rich snippets     | Low       | Agent 1  | ✅ Done |
+| 🔴 P0    | Expand all game FAQs to 10+ entries                | Keyword coverage  | Medium    | Agent 2  | ✅ Done |
+| 🔴 P0    | Product Hunt + Hacker News launch                  | Backlinks         | Low       | Manual   | Pending |
+| 🟡 P1    | Write 5 strategy guide articles (2,000+ words)     | Topical authority | High      | Agent 3  | ✅ Done |
+| 🟡 P1    | Ship public leaderboards                           | Engagement + SEO  | Medium    | Manual   | Pending |
+| 🟡 P1    | Ship public player profiles                        | Indexable pages   | Medium    | Manual   | Pending |
+| 🟡 P1    | Daily chess puzzle page                            | Recurring visits  | Medium    | Manual   | Pending |
+| 🟡 P1    | Complete OG images for all 18 games                | Social sharing    | Low       | Agent 6  | ✅ Done |
+| 🟡 P1    | i18n auto-translation on new keys                  | Locale coverage   | Low       | Agent 5  | ✅ Done |
+| 🟡 P1    | Core Web Vitals CI gate                            | Performance       | Low       | Agent 7  | ✅ Done |
+| 🟡 P1    | Hreflang validator in CI                           | SEO integrity     | Low       | Agent 8  | ✅ Done |
+| 🟡 P1    | Weekly content gap reports                         | Content direction | Low       | Agent 9  | ✅ Done |
+| 🟢 P2    | Discord server                                     | Community         | Low       | Manual   | Pending |
+| 🟢 P2    | Shareable game result cards                        | Viral growth      | Medium    | Manual   | Pending |
+| 🟢 P2    | Original game tournaments (Critical, Sea Battle)   | Differentiation   | High      | Manual   | Pending |
+| 🟢 P2    | Mobile App Store launch                            | New channel       | Very High | Manual   | Pending |
+| 🟢 P2    | Russian/Spanish content strategy                   | Untapped markets  | High      | Agent 3  | ✅ Done |
+| 🟢 P2    | Backlink opportunity finder                        | Organic authority | Medium    | Agent 10 | Pending |

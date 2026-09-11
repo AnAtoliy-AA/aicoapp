@@ -20,6 +20,7 @@
     "check-translations": "node scripts/check_translation.js",
     "check-i18n-sync": "node scripts/sync-i18n.js",
     "check-content-gaps": "node scripts/check-content-gaps.js",
+    "check-strategy-guides": "node scripts/check-strategy-guides.js",
     "check-sitemap": "node scripts/check-sitemap.js",
     "check-hreflang": "pnpm --filter web run seo:hreflang:audit",
     "docs:check": "node scripts/check-doc-links.js",
