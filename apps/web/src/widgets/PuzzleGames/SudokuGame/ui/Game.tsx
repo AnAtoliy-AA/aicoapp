@@ -42,6 +42,7 @@ function SudokuTable() {
     actions,
     themeId,
     pause,
+    timer,
     game,
     gameSpecific: {
       finished,
@@ -189,6 +190,7 @@ function SudokuTable() {
         />
       }
       loadingMessage="games.sudoku_v1.board.loading"
+      timer={timer}
       modal={{
         result: finished ? 'victory' : null,
         gameName: 'Sudoku',

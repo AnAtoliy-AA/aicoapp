@@ -25,7 +25,7 @@ export interface Game2048GameSpecific {
   usedUndo: boolean;
 }
 
-export type Game2048Result = SoloGameResult<{ grid: number[] }> & {
+export type Game2048Result = SoloGameResult<number[]> & {
   gameSpecific: Game2048GameSpecific;
 };
 
@@ -35,7 +35,7 @@ const game2048Selectors = {
   startedAt: (s: ReturnType<typeof useGame2048Store.getState>) => s.startedAt,
   finishedAt: (s: ReturnType<typeof useGame2048Store.getState>) => s.finishedAt,
   newGame: (s: ReturnType<typeof useGame2048Store.getState>) => s.newGame,
-  game: (s: ReturnType<typeof useGame2048Store.getState>) => ({ grid: s.grid }),
+  game: (s: ReturnType<typeof useGame2048Store.getState>) => s.grid,
 };
 
 export function useGame2048Game(): Game2048Result {
@@ -73,7 +73,7 @@ export function useGame2048Game(): Game2048Result {
     () => ({
       ...base,
       gameSpecific: {
-        grid: base.game.grid,
+        grid: base.game,
         score,
         best,
         finished,

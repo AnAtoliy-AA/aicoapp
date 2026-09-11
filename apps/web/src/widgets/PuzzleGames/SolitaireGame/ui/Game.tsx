@@ -29,6 +29,7 @@ function SolitaireTable() {
     state,
     actions,
     themeId,
+    timer,
     game,
     gameSpecific: {
       finished,
@@ -89,6 +90,7 @@ function SolitaireTable() {
       ]}
       undo={{ onUndo: undo, canUndo }}
       loadingMessage="games.solitaire_v1.board.loading"
+      timer={timer}
       modal={{
         result: finished ? (finished.won ? 'victory' : 'defeat') : null,
         gameName: 'Solitaire',

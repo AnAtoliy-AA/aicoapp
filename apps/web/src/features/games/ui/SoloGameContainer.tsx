@@ -60,8 +60,17 @@ export function useSoloFullscreen(): boolean {
   return useContext(SoloFullscreenContext);
 }
 
+const mountedSnapshot = true;
+const serverSnapshot = false;
+const noopCleanup = () => undefined;
 function subscribeNoop(): () => void {
-  return () => undefined;
+  return noopCleanup;
+}
+function getMountedSnapshot() {
+  return mountedSnapshot;
+}
+function getServerSnapshot() {
+  return serverSnapshot;
 }
 
 export interface SoloStatItem {
@@ -107,6 +116,7 @@ export interface SoloGameContainerProps {
     onClose?: () => void;
   };
   loadingMessage: TranslationKey;
+  timer?: { elapsedMs: number; formatted: string };
 }
 
 export function SoloGameContainer({
@@ -131,13 +141,16 @@ export function SoloGameContainer({
   undo,
   modal,
   loadingMessage,
+  timer,
 }: SoloGameContainerProps) {
   const { t } = useTranslation();
   const mounted = useSyncExternalStore(
     subscribeNoop,
-    () => true,
-    () => false,
+    getMountedSnapshot,
+    getServerSnapshot,
   );
+
+  const gameIdPrefix = gameId.replace(/_v\d+$/, '').replace(/_/g, '-');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef, {
@@ -239,6 +252,23 @@ export function SoloGameContainer({
         )}
 
         <div className="flex items-center justify-end gap-1 sm:gap-1.5 shrink-0">
+          {timer && (
+            <span
+              data-testid={`${gameIdPrefix}-timer`}
+              className="font-mono text-xs font-bold tabular-nums text-[var(--color)] rounded-md border border-[var(--glassBorder)] bg-[var(--backgroundHover)] px-1.5 sm:px-2 py-0.5 select-none"
+            >
+              {timer.formatted}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={handleNewGame}
+            data-testid={`${gameIdPrefix}-new-game-button`}
+            className="flex items-center gap-1 rounded-lg border border-[var(--primary)]/50 bg-[var(--primary)] text-[var(--primaryForeground,white)] px-2 py-0.5 text-xs font-bold transition-colors hover:bg-[var(--primary)]/90 active:scale-95 select-none"
+          >
+            🔄
+          </button>
+
           {rules.length > 0 && (
             <button
               type="button"

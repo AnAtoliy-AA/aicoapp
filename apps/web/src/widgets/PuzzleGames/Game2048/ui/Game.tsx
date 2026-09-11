@@ -30,6 +30,7 @@ function Game2048Table() {
     state,
     actions,
     themeId,
+    timer,
     gameSpecific: {
       grid,
       score,
@@ -126,6 +127,7 @@ function Game2048Table() {
           : []),
       ]}
       loadingMessage="games.game_2048_v1.board.loading"
+      timer={timer}
       undo={{ onUndo: undo, canUndo }}
       modal={{
         result: finished ? (finished.won ? 'victory' : 'defeat') : null,
