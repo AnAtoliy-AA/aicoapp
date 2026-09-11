@@ -139,7 +139,6 @@ export class GamesController {
     const room = await this.aiVsAiService.createAIvsAIRoom(user.userId, dto);
     return { room };
   }
-
   @UseGuards(JwtOptionalAuthGuard)
   @Get('rooms')
   async listRooms(
@@ -389,7 +388,6 @@ export class GamesController {
         dto.engine,
       );
     }
-
     // Default to Critical (legacy behavior)
     return this.criticalService.startSession(
       user.userId,
@@ -439,7 +437,6 @@ export class GamesController {
     if (!user) {
       throw new UnauthorizedException();
     }
-
     const room = await this.gamesService.updateRoomOptions(
       roomId,
       user.userId,

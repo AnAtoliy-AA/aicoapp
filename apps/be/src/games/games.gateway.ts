@@ -154,9 +154,7 @@ export class GamesGateway {
         );
       }
     }
-
     void client.join(this.realtime.lobbyChannel());
-
     client.on('ping', () => {
       const uid = (client.data as Record<string, unknown>)?.userId as
         string | undefined;
