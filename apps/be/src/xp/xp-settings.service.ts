@@ -81,14 +81,18 @@ export class XpSettingsService {
     values: Partial<XpSettingsValues>,
     adminUserId: string,
   ): Promise<void> {
+    const update: Record<string, unknown> = { updatedBy: adminUserId };
+    if (values.winXp !== undefined) update.winXp = values.winXp;
+    if (values.lossXp !== undefined) update.lossXp = values.lossXp;
+    if (values.drawXp !== undefined) update.drawXp = values.drawXp;
+    if (values.soloCoefficient !== undefined)
+      update.soloCoefficient = values.soloCoefficient;
+    if (values.botCoefficient !== undefined)
+      update.botCoefficient = values.botCoefficient;
+
     await this.settingsModel.findOneAndUpdate(
       { scope },
-      {
-        $set: {
-          ...values,
-          updatedBy: adminUserId,
-        },
-      },
+      { $set: update },
       { upsert: true, new: true },
     );
   }

@@ -21,6 +21,11 @@ interface RequestWithUser {
   user: AuthenticatedUser;
 }
 
+/** Only allow alphanumeric, hyphens, underscores, and dots in scope names. */
+function isValidScope(scope: string): boolean {
+  return /^[a-zA-Z0-9_.-]+$/.test(scope);
+}
+
 @Controller('admin/xp-settings')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
@@ -38,6 +43,9 @@ export class AdminXpSettingsController {
     @Param('scope') scope: string,
     @Body() dto: UpdateXpSettingsDto,
   ) {
+    if (!isValidScope(scope)) {
+      return { error: 'Invalid scope name' };
+    }
     await this.service.updateSettings(scope, dto, req.user.userId);
     const all = await this.service.listAll();
     return all.find((s) => s.scope === scope);
@@ -46,6 +54,9 @@ export class AdminXpSettingsController {
   @Delete(':scope')
   @HttpCode(HttpStatus.NO_CONTENT)
   async reset(@Param('scope') scope: string) {
+    if (!isValidScope(scope)) {
+      return;
+    }
     await this.service.resetToDefaults(scope);
   }
 }

@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../auth/schemas/user.schema';
-import { OCI_CONNECTION } from '../common/providers/mongo-connections.provider';
 
 const MAX_PRESTIGE = 99;
 const LEVEL_REQUIRED = 99;
@@ -12,7 +11,7 @@ export class PrestigeService {
   private readonly logger = new Logger(PrestigeService.name);
 
   constructor(
-    @InjectModel(User.name, OCI_CONNECTION)
+    @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
   ) {}
 

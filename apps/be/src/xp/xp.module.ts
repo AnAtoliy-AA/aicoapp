@@ -9,13 +9,16 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { User, UserSchema } from '../auth/schemas/user.schema';
 import { OCI_CONNECTION } from '../common/providers/mongo-connections.provider';
 
+/**
+ * XpModule does NOT import AuthModule to avoid circular dependencies.
+ * RolesGuard is provided locally (same pattern as EconomyModule).
+ * User model is imported on the default connection for RolesGuard.
+ */
 @Module({
   imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature(
-      [
-        { name: XpSettings.name, schema: XpSettingsSchema },
-        { name: User.name, schema: UserSchema },
-      ],
+      [{ name: XpSettings.name, schema: XpSettingsSchema }],
       OCI_CONNECTION,
     ),
   ],
