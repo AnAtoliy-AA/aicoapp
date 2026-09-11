@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [1.29.31] - 2026-09-11
 
-- add streak freeze card, buy freeze action, and header streak pill (ARC-955)
+### Added
+- add streak freeze card and prominent streak UI (ARC-955) (ARC-955)
+
+### Documentation
+- record streak system UI improvements (ARC-955) (ARC-955)
+
 
 ## [1.29.30] - 2026-09-11
 
