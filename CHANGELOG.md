@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [1.29.32] - 2026-09-11
 
-- add full public player profiles with game history, win/loss stats, favorite games, and indexable sitemaps (ARC-956)
+### Added
+- add public player profiles with game history, stats, and indexable sitemaps (ARC-956) (ARC-956)
+
 
 ## [1.29.31] - 2026-09-11
 
