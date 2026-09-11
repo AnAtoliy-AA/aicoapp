@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.36] - 2026-09-11
+
+### Fixed
+- fix DI crash and skip XP for solo undo
+- sanitize XP scope param and fix DI for e2e tests
+- add level and prestige to mock PlayerProfile
+
+
 ## [1.29.35] - 2026-09-11
 
 ### Added
