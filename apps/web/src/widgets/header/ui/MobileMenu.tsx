@@ -39,6 +39,7 @@ import {
   UserIcon,
   WalletIcon,
   PlayIcon,
+  DiscordIcon,
 } from '@arcadeum/ui/components/Icons/index';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useHeaderAuth } from './useHeaderAuth';
@@ -243,6 +244,16 @@ export default function MobileMenu({
         >
           {t('common.actions.support')}
         </NavMobileLink>
+        <a
+          href={appConfig.social.discord ?? 'https://discord.gg/arcadeum'}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-testid="mobile-discord-link"
+          className="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-[16px] text-[var(--color)] hover:bg-[var(--backgroundHover)] transition-colors"
+        >
+          <DiscordIcon size={18} />
+          <span>{t('navigation.discordCommunity')}</span>
+        </a>
       </MobileSection>
 
       {isAuthenticated && (
