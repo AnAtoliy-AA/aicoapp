@@ -115,7 +115,11 @@ export function analyzeGame(
       evalAfter,
       delta,
       loss,
-      quality: qualityForLoss(loss, evalBefore, evalAfter),
+      quality: qualityForLoss(
+        loss,
+        color === 'white' ? evalBefore : -evalBefore,
+        color === 'white' ? evalAfter : -evalAfter,
+      ),
     });
   }
 
