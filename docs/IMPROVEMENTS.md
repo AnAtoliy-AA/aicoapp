@@ -451,7 +451,7 @@ Agent posts: Discord webhook with opportunity table
 | 🟡 P1    | Daily chess puzzle page                            | Recurring visits  | Medium    | Manual   | Pending     |
 | 🟡 P1    | Complete OG images for all 18 games                | Social sharing    | Low       | Agent 6  | ✅ Done     |
 | 🟡 P1    | i18n auto-translation on new keys                  | Locale coverage   | Low       | Agent 5  | ✅ Done     |
-| 🟡 P1    | Core Web Vitals CI gate                            | Performance       | Low       | Agent 7  | Pending     |
+| 🟡 P1    | Core Web Vitals CI gate                            | Performance       | Low       | Agent 7  | ✅ Done     |
 | 🟡 P1    | Hreflang validator in CI                           | SEO integrity     | Low       | Agent 8  | ✅ Done     |
 | 🟡 P1    | Weekly content gap reports                         | Content direction | Low       | Agent 9  | ✅ Done     |
 | 🟢 P2    | Discord server                                     | Community         | Low       | Manual   | Pending     |
