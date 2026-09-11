@@ -39,6 +39,7 @@ export const by = {
     nav: {
       dashboard: 'Панэль',
       statistics: 'Статыстыка',
+      monitoring: 'Маніторынг',
       users: 'Карыстальнікі',
       payments: 'Плацяжы',
       announcements: "Аб'явы",
@@ -159,6 +160,18 @@ export const by = {
         free: 'Вольна',
         total: 'Усяго',
       },
+    },
+    monitoring: {
+      title: 'Маніторынг',
+      loading: 'Загрузка метрык...',
+      enableHint: 'Уключыце METRICS_ENABLED=true у .env для прагляду метрык',
+      status: 'Статус',
+      uptime: 'Час працы',
+      connections: 'Злучэнні',
+      memory: 'Памяць (RSS)',
+      details: 'Падрабязнасці сервера',
+      heap: 'Усяго кучы',
+      lastCheck: 'Апошняя праверка',
     },
     error: {
       title: 'Нешта пайшло не так',

@@ -39,6 +39,7 @@ export const ru = {
     nav: {
       dashboard: 'Панель',
       statistics: 'Статистика',
+      monitoring: 'Мониторинг',
       users: 'Пользователи',
       payments: 'Платежи',
       announcements: 'Объявления',
@@ -140,7 +141,8 @@ export const ru = {
       environment: 'Окружение',
       serverResources: {
         title: 'Ресурсы сервера',
-        subtitle: 'Мониторинг CPU, памяти и системных метрик в реальном времени',
+        subtitle:
+          'Мониторинг CPU, памяти и системных метрик в реальном времени',
         cpu: 'Процессор',
         ram: 'ОЗУ',
         perCore: 'По ядрам',
@@ -160,6 +162,18 @@ export const ru = {
         free: 'Свободно',
         total: 'Всего',
       },
+    },
+    monitoring: {
+      title: 'Мониторинг',
+      loading: 'Загрузка метрик...',
+      enableHint: 'Включите METRICS_ENABLED=true в .env для просмотра метрик',
+      status: 'Статус',
+      uptime: 'Время работы',
+      connections: 'Соединения',
+      memory: 'Память (RSS)',
+      details: 'Сведения о сервере',
+      heap: 'Всего кучи',
+      lastCheck: 'Последняя проверка',
     },
     error: {
       title: 'Что-то пошло не так',

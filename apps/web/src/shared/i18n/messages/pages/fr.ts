@@ -39,6 +39,7 @@ export const fr = {
     nav: {
       dashboard: 'Tableau de bord',
       statistics: 'Statistiques',
+      monitoring: 'Surveillance',
       users: 'Utilisateurs',
       payments: 'Paiements',
       announcements: 'Annonces',
@@ -164,6 +165,19 @@ export const fr = {
         free: 'Libre',
         total: 'Total',
       },
+    },
+    monitoring: {
+      title: 'Surveillance',
+      loading: 'Chargement des métriques...',
+      enableHint:
+        'Activez METRICS_ENABLED=true dans .env pour voir les métriques',
+      status: 'Statut',
+      uptime: 'Temps de fonctionnement',
+      connections: 'Connexions',
+      memory: 'Mémoire (RSS)',
+      details: 'Détails du serveur',
+      heap: 'Total du tas',
+      lastCheck: 'Dernière vérification',
     },
     error: {
       title: "Une erreur s'est produite",
