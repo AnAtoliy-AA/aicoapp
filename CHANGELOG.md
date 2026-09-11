@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [1.29.30] - 2026-09-11
 
-- add daily chess puzzle page and streak retention loop (ARC-954)
+### Added
+- add daily chess puzzle page and streak retention loop (ARC-954) (ARC-954)
+
+### Documentation
+- record daily chess puzzle page in CHANGELOG.md (ARC-954) (ARC-954)
+
 
 ## [1.29.29] - 2026-09-11
 
