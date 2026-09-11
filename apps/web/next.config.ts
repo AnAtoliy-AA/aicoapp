@@ -412,14 +412,6 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['127.0.0.1', 'localhost'],
   reactCompiler: true,
   transpilePackages: ['@arcadeum/ui', '@arcadeum/games-core'],
-  serverExternalPackages: [
-    'pixi.js',
-    'pixi-filters',
-    'recharts',
-    'zod',
-    'mongoose',
-    '@socket.io/redis-adapter',
-  ],
   experimental: {
     inlineCss: true,
     optimizePackageImports: [
