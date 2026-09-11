@@ -111,7 +111,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 
 #### Community
 
-- [ ] Discord server — link from navbar
+- [x] Discord server — link from navbar
 - [ ] Platform-wide activity feed — "Recently active games" visible to logged-out users
 - [ ] Friend system — invite via username or shareable profile link
 - [x] Public player profiles with game history, win/loss stats, favorite games (Google-indexable pages)
@@ -454,7 +454,7 @@ Agent posts: Discord webhook with opportunity table
 | 🟡 P1    | Core Web Vitals CI gate                            | Performance       | Low       | Agent 7  | ✅ Done |
 | 🟡 P1    | Hreflang validator in CI                           | SEO integrity     | Low       | Agent 8  | ✅ Done |
 | 🟡 P1    | Weekly content gap reports                         | Content direction | Low       | Agent 9  | ✅ Done |
-| 🟢 P2    | Discord server                                     | Community         | Low       | Manual   | Pending |
+| 🟢 P2    | Discord server                                     | Community         | Low       | Manual   | ✅ Done |
 | 🟢 P2    | Shareable game result cards                        | Viral growth      | Medium    | Manual   | Pending |
 | 🟢 P2    | Original game tournaments (Critical, Sea Battle)   | Differentiation   | High      | Manual   | Pending |
 | 🟢 P2    | Mobile App Store launch                            | New channel       | Very High | Manual   | Pending |

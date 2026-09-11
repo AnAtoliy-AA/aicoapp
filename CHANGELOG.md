@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add share dropdown menu and functional QR code generator to game landing invite modal (ARC-958)
 
+## [1.29.33] - 2026-09-11
+
+### Added
+
+- add Discord community link to desktop and mobile navigation (ARC-957) (ARC-957)
+
 ## [1.29.32] - 2026-09-11
 
 ### Added
