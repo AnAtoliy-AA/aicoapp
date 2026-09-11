@@ -36,6 +36,11 @@ const STATIC_CONTENT = new Set([
   'blog', 'changelog', 'community', 'developers', 'roadmap', 'features',
 ]);
 
+// Game play pages — heavy client JS bundle (game engine, store, board) makes
+// them consistently score ~0.89 on performance. Not actionable without
+// rewriting the games to use lighter rendering (Canvas2D instead of DOM).
+const GAME_PLAY = new Set(['play']);
+
 /**
  * Recursively find all page.tsx files under dir, returning
  * relative paths from APP_DIR (e.g. "games/chess/page.tsx").
@@ -110,6 +115,9 @@ function shouldExclude(urlPath) {
 
   // Skip static content pages (socket.io hurts perf score but they don't need real-time)
   if (segments.some((s) => STATIC_CONTENT.has(s))) return true;
+
+  // Skip game play pages (heavy client JS bundle)
+  if (segments.some((s) => GAME_PLAY.has(s))) return true;
 
   return false;
 }
