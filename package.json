@@ -24,6 +24,9 @@
     "shorts:gameplay": "node scripts/shorts-factory/gameplay.js",
     "shorts:gameplay:preview": "node scripts/shorts-factory/gameplay.js --preview",
     "shorts:factory": "node scripts/shorts-factory/factory.js",
+    "vercel:clean": "python3 scripts/clean-vercel-deployments.sh",
+    "vercel:clean:all": "python3 scripts/clean-vercel-deployments.sh --all",
+    "vercel:clean:dry": "python3 scripts/clean-vercel-deployments.sh --dry-run",
     "changelog": "auto-changelog --stdout --template ./scripts/changelog-template.hbs --unreleased --commit-limit false > CHANGELOG.md",
     "release": "standard-version"
   },
