@@ -8,6 +8,7 @@ import {
   loadStoredSettings,
   saveStoredSettings,
 } from '@/shared/lib/settings-storage';
+import { gameSocket } from '@/shared/lib/socket';
 import {
   LobbyContent,
   CenterSection,
@@ -152,14 +153,12 @@ export function ReusableGameLobby({
     return settings.aiDifficulty ?? 'medium';
   });
   const cooldownRef = React.useRef(0);
-
   useEffect(() => {
     saveStoredSettings({ aiDifficulty: difficulty });
     if (enableBots && isHost && room.status === 'lobby') {
       setOption({ aiDifficulty: difficulty });
     }
   }, [difficulty, enableBots, isHost, room.status, setOption]);
-
   const handleStart = React.useCallback(() => {
     const now = Date.now();
     if (now - cooldownRef.current < 1000) return;
@@ -170,6 +169,23 @@ export function ReusableGameLobby({
       onStartGame();
     }
   }, [enableBots, room.playerCount, botCount, difficulty, onStartGame]);
+
+  const handleAddBot = React.useCallback(() => {
+    gameSocket.emit('games.room.add_bot', {
+      roomId: room.id,
+      userId,
+    });
+  }, [room.id, userId]);
+  const handleRemoveBot = React.useCallback(
+    (botId: string) => {
+      gameSocket.emit('games.room.remove_bot', {
+        roomId: room.id,
+        userId,
+        botId,
+      });
+    },
+    [room.id, userId],
+  );
 
   const progress = Math.round((room.playerCount / maxPlayers) * 100);
 
@@ -441,6 +457,13 @@ export function ReusableGameLobby({
           extraPlayersCardSlot={extraPlayersCardSlot}
           onRefresh={onRefresh}
           labels={labels}
+          enableBots={enableBots}
+          onAddBot={
+            isHost && room.status === 'lobby' ? handleAddBot : undefined
+          }
+          onRemoveBot={
+            isHost && room.status === 'lobby' ? handleRemoveBot : undefined
+          }
         />
       </LobbyContent>
 
