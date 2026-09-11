@@ -139,7 +139,7 @@ export default function ProfilePageContent() {
         <Container size="md">
           <div className="flex flex-col items-center p-12 gap-3">
             <EmptyState
-              message="User not found"
+              message={t('games.common.profile.notFound')}
               icon={<UserIcon size={32} />}
             />
           </div>
@@ -195,7 +195,7 @@ export default function ProfilePageContent() {
                   {isAlreadyFriend ? (
                     <>
                       <Badge variant="success" size="sm">
-                        Friends
+                        {t('games.common.profile.friends')}
                       </Badge>
                       <Button
                         variant="primary"
@@ -203,16 +203,16 @@ export default function ProfilePageContent() {
                         onClick={() => setGiftDialogOpen(true)}
                         data-testid="profile-send-gift"
                       >
-                        🎁 Gift
+                        🎁 {t('games.common.profile.gift')}
                       </Button>
                     </>
                   ) : hasPendingOutgoing || friendSent ? (
                     <Badge variant="warning" size="sm">
-                      Request Sent
+                      {t('games.common.profile.requestSent')}
                     </Badge>
                   ) : hasPendingIncoming ? (
                     <Badge variant="info" size="sm">
-                      Request Received
+                      {t('games.common.profile.requestReceived')}
                     </Badge>
                   ) : (
                     <Button
@@ -222,7 +222,7 @@ export default function ProfilePageContent() {
                       disabled={friendLoading}
                       data-testid="profile-add-friend"
                     >
-                      Add Friend
+                      {t('games.common.profile.addFriend')}
                     </Button>
                   )}
                 </>
@@ -242,7 +242,7 @@ export default function ProfilePageContent() {
           <div className="flex flex-col items-stretch gap-3">
             <div className="flex flex-row items-center gap-2">
               <span className="text-[18px] font-bold">
-                {t('navigation.friendsTab') || 'Friends'}
+                {t('games.common.profile.friends')}
               </span>
               {friends.length > 0 && (
                 <Badge variant="neutral" size="sm">
@@ -252,7 +252,7 @@ export default function ProfilePageContent() {
             </div>
             {friends.length === 0 ? (
               <EmptyState
-                message="No friends yet."
+                message={t('games.common.profile.noFriends')}
                 icon={<UserIcon size={24} />}
               />
             ) : (
@@ -282,7 +282,9 @@ export default function ProfilePageContent() {
                       variant={friend.online ? 'success' : 'neutral'}
                       size="sm"
                     >
-                      {friend.online ? 'Online' : 'Offline'}
+                      {friend.online
+                        ? t('games.common.profile.online')
+                        : t('games.common.profile.offline')}
                     </Badge>
                   </div>
                 </Card>
@@ -294,13 +296,13 @@ export default function ProfilePageContent() {
             <div className="flex flex-col items-stretch gap-3">
               <div className="flex flex-row items-center justify-between">
                 <span className="text-[18px] font-bold">
-                  {t('games.replay.list.title') || 'Replays'}
+                  {t('games.common.profile.replays')}
                 </span>
                 <Link
                   href="/replays"
                   className="text-[13px] text-[var(--color)] hover:underline"
                 >
-                  View All →
+                  {t('games.common.profile.viewAll')} →
                 </Link>
               </div>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
