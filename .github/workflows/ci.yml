@@ -241,7 +241,7 @@ jobs:
           retention-days: 30
 
   web-e2e-develop:
-    name: Web E2E (${{ matrix.project }}, Shard ${{ matrix.shard }}/5)
+    name: Web E2E (${{ matrix.project }}, Shard ${{ matrix.shard }}/6)
     needs: build
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' && !startsWith(github.event.head_commit.message, 'chore: bump version') && !startsWith(github.event.head_commit.message, 'chore: start next minor version') }}"
     runs-on: ubuntu-latest
@@ -249,7 +249,7 @@ jobs:
       fail-fast: false
       matrix:
         project: ['chromium']
-        shard: [1, 2, 3, 4, 5]
+        shard: [1, 2, 3, 4, 5, 6]
     services:
       mongodb:
         image: mongo:latest
@@ -307,7 +307,7 @@ jobs:
         run: pnpm --filter web exec playwright install chromium
 
       - name: Run Web E2E Tests
-        run: pnpm --filter web test:e2e --project=chromium --shard=${{ matrix.shard }}/5
+        run: pnpm --filter web test:e2e --project=chromium --shard=${{ matrix.shard }}/6
 
       - name: Upload Test Report
         if: always()
@@ -358,7 +358,7 @@ jobs:
           retention-days: 1
 
   lhci-audit:
-    name: Lighthouse (Shard ${{ matrix.shard }}/10)
+    name: Lighthouse (Shard ${{ matrix.shard }}/8)
     needs: [build, lhci-urls]
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
@@ -375,7 +375,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -441,7 +441,7 @@ jobs:
           node -e "
             const urls = require('./apps/web/lighthouse-urls.json');
             const shard = ${{ matrix.shard }};
-            const total = 10;
+            const total = 8;
             const shardUrls = urls.filter((_, i) => i % total === shard - 1);
             require('fs').writeFileSync('./apps/web/lighthouse-urls.json', JSON.stringify(shardUrls, null, 2));
             console.log('Shard ' + shard + ': ' + shardUrls.length + ' URLs');
@@ -486,14 +486,14 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
 
   axe-a11y:
-    name: axe-a11y (Shard ${{ matrix.shard }}/3)
+    name: axe-a11y (Shard ${{ matrix.shard }}/2)
     needs: [build, lhci-urls]
     if: "${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: [1, 2]
     services:
       mongodb:
         image: mongo:latest
@@ -553,7 +553,7 @@ jobs:
         run: pnpm --filter web test:e2e --project=chromium e2e/audit/axe-a11y.spec.ts
         env:
           SHARD_INDEX: ${{ matrix.shard }}
-          SHARD_TOTAL: '3'
+          SHARD_TOTAL: '2'
           E2E_PROD: 'true'
 
       - name: Upload Test Report
