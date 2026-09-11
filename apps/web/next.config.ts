@@ -425,12 +425,9 @@ const nextConfig: NextConfig = {
     optimizePackageImports: [
       'lucide-react',
       '@arcadeum/ui',
-      'recharts',
       '@dnd-kit/core',
       '@dnd-kit/sortable',
       '@dnd-kit/utilities',
-      'pixi.js',
-      'pixi-filters',
       'qrcode.react',
       'posthog-js',
       'zustand',
