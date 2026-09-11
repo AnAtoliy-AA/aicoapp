@@ -4,7 +4,10 @@ export interface EngineLine {
   quality:
     | 'brilliant'
     | 'great'
+    | 'best'
+    | 'excellent'
     | 'good'
+    | 'book'
     | 'inaccuracy'
     | 'mistake'
     | 'blunder';
@@ -30,7 +33,10 @@ export interface GameAnalysisResult {
   summary: {
     brilliant: number;
     great: number;
+    best: number;
+    excellent: number;
     good: number;
+    book: number;
     inaccuracy: number;
     mistake: number;
     blunder: number;
