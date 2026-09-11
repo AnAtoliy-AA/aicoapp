@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [1.29.34] - 2026-09-11
 
-- add share dropdown menu and functional QR code generator to game landing invite modal (ARC-958)
+### Added
+- add share dropdown menu and functional QR code to game landing (ARC-958) (ARC-958)
+
 
 ## [1.29.33] - 2026-09-11
 
