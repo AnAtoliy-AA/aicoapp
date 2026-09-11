@@ -1,22 +1,26 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { useTrackSoloGameStarted } from '@/shared/analytics/useTrackSoloGameStarted';
 import type { GameResultStats } from '@/features/games/ui/GameResultStatsGrid';
 import {
   SoloGameContainer,
   formatDuration,
+  useSoloTimer,
+  useSoloPause,
+  SoloActionButton,
 } from '@/features/games/ui/SoloGameContainer';
+import { useSoloTheme } from '@/features/games/store/soloThemeStore';
+import { useGameSound } from '@/shared/lib/game-sounds';
 import { Game2048ThemeProvider } from '../lib/Game2048ThemeContext';
-import { useGame2048Game } from '../hooks/useGame2048Game';
-import { useSoloRating } from '@/shared/hooks/useSoloRating';
+import { useGame2048Store } from '../store/game2048Store';
 import type { Direction } from '../types';
 import { Game2048Board } from './Game2048Board';
 
 export default function Game2048() {
   useTrackSoloGameStarted('game_2048_v1');
-  const { themeId } = useGame2048Game();
+  const { themeId } = useSoloTheme('game_2048_v1');
   return (
     <Game2048ThemeProvider variant={themeId}>
       <Game2048Table />
@@ -26,28 +30,27 @@ export default function Game2048() {
 
 function Game2048Table() {
   const { t } = useTranslation();
-  const {
-    state,
-    actions,
-    themeId,
-    timer,
-    gameSpecific: {
-      grid,
-      score,
-      best,
-      finished,
-      status,
-      keepPlayingFlag,
-      continuePlaying,
-      handleMove,
-      undo,
-      canUndo,
-    },
-  } = useGame2048Game();
-  const { rating } = useSoloRating();
+  const { themeId } = useSoloTheme('game_2048_v1');
+  const grid = useGame2048Store((state) => state.grid);
+  const score = useGame2048Store((state) => state.score);
+  const best = useGame2048Store((state) => state.best);
+  const finished = useGame2048Store((state) => state.finished);
+  const status = useGame2048Store((state) => state.status);
+  const keepPlayingFlag = useGame2048Store((state) => state.keepPlayingFlag);
+  const startedAt = useGame2048Store((state) => state.startedAt);
+  const finishedAt = useGame2048Store((state) => state.finishedAt);
+  const move = useGame2048Store((state) => state.move);
+  const continuePlaying = useGame2048Store((state) => state.continuePlaying);
+  const newGame = useGame2048Store((state) => state.newGame);
+
+  const isRunning = finishedAt === null;
+  const pause = useSoloPause(isRunning, finishedAt);
+  const timer = useSoloTimer(isRunning, startedAt, pause.isPaused);
+  const { play } = useGameSound('game_2048_v1');
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if (pause.isPaused) return;
       const keyMap: Record<string, Direction> = {
         ArrowUp: 'up',
         ArrowDown: 'down',
@@ -65,13 +68,13 @@ function Game2048Table() {
       const direction = keyMap[event.key];
       if (!direction) return;
       event.preventDefault();
-      handleMove(direction);
+      move(direction);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [handleMove]);
+  }, [move, pause.isPaused]);
 
-  const maxTile = useMemo(() => Math.max(0, ...grid.flat()), [grid]);
+  const maxTile = useMemo(() => Math.max(0, ...grid), [grid]);
 
   const stats: GameResultStats | null = useMemo(() => {
     if (!finished) return null;
@@ -85,10 +88,63 @@ function Game2048Table() {
           label: t('games.game_2048_v1.hud.best'),
           value: best,
         },
-        { id: 'max-tile', label: 'Max Tile', value: maxTile },
+        {
+          id: 'max-tile',
+          label: 'Max Tile',
+          value: maxTile,
+        },
       ],
     };
   }, [finished, best, maxTile, t]);
+
+  const handleMove = useCallback(
+    (direction: Direction) => {
+      if (pause.isPaused) return;
+      const prevScore = useGame2048Store.getState().score;
+      move(direction);
+      const newScore = useGame2048Store.getState().score;
+      if (newScore > prevScore) {
+        play('merge');
+      } else {
+        play('slide_tile');
+      }
+    },
+    [move, pause.isPaused, play],
+  );
+
+  const statsItems = [
+    {
+      id: 'score',
+      label: t('games.game_2048_v1.hud.score'),
+      value: score,
+      icon: '🎯',
+      dataTestId: 'game-2048-score',
+    },
+    {
+      id: 'best',
+      label: t('games.game_2048_v1.hud.best'),
+      value: best,
+      icon: '🏆',
+      dataTestId: 'game-2048-best',
+    },
+    {
+      id: 'time',
+      label: t('games.game_2048_v1.hud.time'),
+      value: timer.formatted,
+      icon: '⏱️',
+      dataTestId: 'game-2048-timer',
+    },
+  ];
+
+  const actions = (
+    <SoloActionButton
+      onClick={newGame}
+      dataTestId="game-2048-new-game-button"
+      icon="🔄"
+    >
+      {t('games.game_2048_v1.hud.newGame')}
+    </SoloActionButton>
+  );
 
   return (
     <SoloGameContainer
@@ -96,39 +152,14 @@ function Game2048Table() {
       difficulty="default"
       sortBy="score"
       order="desc"
-      isRunning={state.isRunning}
-      startedAt={state.startedAt}
-      finishedAt={state.finishedAt}
-      onNewGame={actions.newGame}
-      statsItems={[
-        {
-          id: 'score',
-          label: t('games.game_2048_v1.hud.score'),
-          value: score,
-          icon: '🎯',
-          dataTestId: 'game-2048-score',
-        },
-        {
-          id: 'best',
-          label: t('games.game_2048_v1.hud.best'),
-          value: best,
-          icon: '🏆',
-          dataTestId: 'game-2048-best',
-        },
-        ...(rating
-          ? [
-              {
-                id: 'rating',
-                label: 'Rating',
-                value: rating.rating,
-                icon: '⭐',
-              },
-            ]
-          : []),
-      ]}
+      pause={pause}
+      isRunning={isRunning}
+      startedAt={startedAt}
+      finishedAt={finishedAt}
+      onNewGame={newGame}
+      statsItems={statsItems}
+      actions={actions}
       loadingMessage="games.game_2048_v1.board.loading"
-      timer={timer}
-      undo={{ onUndo: undo, canUndo }}
       modal={{
         result: finished ? (finished.won ? 'victory' : 'defeat') : null,
         gameName: '2048',
@@ -159,6 +190,7 @@ function Game2048Table() {
       }}
     >
       <Game2048Board grid={grid} onMove={handleMove} />
+
       <div className="flex flex-col items-center gap-3">
         <div className="flex flex-col items-center gap-1 sm:hidden select-none">
           <div className="relative flex h-28 w-28 items-center justify-center">
@@ -204,6 +236,7 @@ function Game2048Table() {
             {t('games.game_2048_v1.board.controlsHint')}
           </p>
         </div>
+
         <div className="hidden sm:flex items-center gap-3 text-xs text-[var(--textSecondary)]">
           <div className="flex items-center gap-1">
             <kbd className="rounded border border-[var(--glassBorder)] bg-[var(--backgroundHover)] px-1.5 py-0.5 font-mono text-[11px] font-semibold text-[var(--color)] shadow-sm">

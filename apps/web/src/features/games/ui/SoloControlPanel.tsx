@@ -6,7 +6,6 @@ import { useTranslation } from '@/shared/lib/useTranslation';
 import { useSoundSetting } from '@/shared/hooks/useSoundSetting';
 import { useMusicSetting } from '@/shared/hooks/useMusicSetting';
 import type { SoloPauseState } from './useSoloPause';
-import { SoloUndoButton, type SoloUndoButtonProps } from './SoloUndoButton';
 
 export interface SoloControlPanelProps {
   pause: SoloPauseState;
@@ -17,7 +16,6 @@ export interface SoloControlPanelProps {
   className?: string;
   showLeaderboard?: boolean;
   onToggleLeaderboard?: () => void;
-  undo?: SoloUndoButtonProps;
 }
 
 export function SoloControlPanel({
@@ -28,7 +26,6 @@ export function SoloControlPanel({
   className,
   showLeaderboard,
   onToggleLeaderboard,
-  undo,
 }: SoloControlPanelProps) {
   const { t } = useTranslation();
   const { isPaused, togglePause, autoPauseEnabled, toggleAutoPause } = pause;
@@ -105,14 +102,6 @@ export function SoloControlPanel({
               : t('games.soloControls.off') || 'OFF'}
           </span>
         </button>
-
-        {undo && (
-          <SoloUndoButton
-            onUndo={undo.onUndo}
-            canUndo={undo.canUndo}
-            disabled={undo.disabled}
-          />
-        )}
 
         {controls}
       </div>

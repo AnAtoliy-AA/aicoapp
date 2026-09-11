@@ -23,9 +23,7 @@ test.describe('Single Player Puzzle Games', () => {
 
     const controlPanel = page.getByTestId('solo-control-panel');
     await expect(controlPanel).toBeVisible();
-    await expect(
-      controlPanel.getByTestId('solo-pause-button'),
-    ).toBeVisible();
+    await expect(controlPanel.getByTestId('solo-pause-button')).toBeVisible();
     await expect(
       controlPanel.getByTestId('solo-autopause-control-button'),
     ).toBeVisible();
@@ -159,26 +157,30 @@ test.describe('Single Player Puzzle Games', () => {
     const initialSound = await soundBtn.getAttribute('aria-pressed');
     const expectedSound = initialSound === 'true' ? 'false' : 'true';
     await soundBtn.click();
-    await expect(
-      page.getByTestId('solo-sound-toggle-button'),
-    ).toHaveAttribute('aria-pressed', expectedSound);
+    await expect(page.getByTestId('solo-sound-toggle-button')).toHaveAttribute(
+      'aria-pressed',
+      expectedSound,
+    );
     await page.getByTestId('solo-sound-toggle-button').click();
-    await expect(
-      page.getByTestId('solo-sound-toggle-button'),
-    ).toHaveAttribute('aria-pressed', initialSound ?? 'true');
+    await expect(page.getByTestId('solo-sound-toggle-button')).toHaveAttribute(
+      'aria-pressed',
+      initialSound ?? 'true',
+    );
 
     const musicBtn = page.getByTestId('solo-music-toggle-button');
     await expect(musicBtn).toHaveAttribute('aria-pressed', /true|false/);
     const initialMusic = await musicBtn.getAttribute('aria-pressed');
     const expectedMusic = initialMusic === 'true' ? 'false' : 'true';
     await musicBtn.click();
-    await expect(
-      page.getByTestId('solo-music-toggle-button'),
-    ).toHaveAttribute('aria-pressed', expectedMusic);
+    await expect(page.getByTestId('solo-music-toggle-button')).toHaveAttribute(
+      'aria-pressed',
+      expectedMusic,
+    );
     await page.getByTestId('solo-music-toggle-button').click();
-    await expect(
-      page.getByTestId('solo-music-toggle-button'),
-    ).toHaveAttribute('aria-pressed', initialMusic ?? 'true');
+    await expect(page.getByTestId('solo-music-toggle-button')).toHaveAttribute(
+      'aria-pressed',
+      initialMusic ?? 'true',
+    );
 
     const leaderboardToggle = page.getByTestId(
       'solo-leaderboard-toggle-button',
@@ -313,7 +315,7 @@ test.describe('Single Player Puzzle Games', () => {
       localStorage.setItem(storageKey, JSON.stringify(state));
     });
 
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'load' });
     await expect(board).toBeVisible();
 
     await page.keyboard.press('ArrowLeft');

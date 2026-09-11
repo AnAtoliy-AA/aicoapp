@@ -60,7 +60,7 @@ test.describe('2048 Puzzle Game', () => {
       );
     });
 
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'load' });
 
     const resultModal = page.getByTestId('game-result-modal');
     await expect(resultModal).toBeVisible();

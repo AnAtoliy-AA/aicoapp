@@ -7,8 +7,10 @@ import {
   useContext,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react';
 import Image from 'next/image';
+import { LoadingState } from '@arcadeum/ui';
 import { cx } from '@arcadeum/ui/utils/cx';
 import {
   useTranslation,
@@ -33,29 +35,25 @@ import {
   SoloActionButton,
   type SoloActionButtonProps,
 } from './SoloActionButton';
-import { SoloUndoButton, type SoloUndoButtonProps } from './SoloUndoButton';
 
 export {
   formatDuration,
   useSoloTimer,
   StatCard,
   useSoloPause,
-  useSoloPause as useSoloGamePause,
   SoloControlPanel,
   SoloActionButton,
-  SoloUndoButton,
 };
-export type {
-  SoloPauseState,
-  SoloControlPanelProps,
-  SoloActionButtonProps,
-  SoloUndoButtonProps,
-};
+export type { SoloPauseState, SoloControlPanelProps, SoloActionButtonProps };
 
 const SoloFullscreenContext = createContext<boolean>(false);
 
 export function useSoloFullscreen(): boolean {
   return useContext(SoloFullscreenContext);
+}
+
+function subscribeNoop(): () => void {
+  return () => undefined;
 }
 
 export interface SoloStatItem {
@@ -85,7 +83,6 @@ export interface SoloGameContainerProps {
   actions?: ReactNode;
   children: ReactNode;
   controls?: ReactNode;
-  undo?: SoloUndoButtonProps;
   modal: {
     result: 'victory' | 'defeat' | null;
     gameName: string;
@@ -101,7 +98,6 @@ export interface SoloGameContainerProps {
     onClose?: () => void;
   };
   loadingMessage: TranslationKey;
-  timer?: { elapsedMs: number; formatted: string };
 }
 
 export function SoloGameContainer({
@@ -123,14 +119,15 @@ export function SoloGameContainer({
   actions,
   children,
   controls,
-  undo,
   modal,
-  loadingMessage: _loadingMessage,
-  timer,
+  loadingMessage,
 }: SoloGameContainerProps) {
   const { t } = useTranslation();
-
-  const gameIdPrefix = gameId.replace(/_v\d+$/, '').replace(/_/g, '-');
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef, {
@@ -153,6 +150,10 @@ export function SoloGameContainer({
     resolvedPause.resumeGame();
     onNewGame();
   }, [onNewGame, resolvedPause]);
+
+  if (!mounted) {
+    return <LoadingState message={t(loadingMessage)} />;
+  }
 
   const themeName =
     t(theme.nameKey as TranslationKey) ||
@@ -228,23 +229,6 @@ export function SoloGameContainer({
         )}
 
         <div className="flex items-center justify-end gap-1 sm:gap-1.5 shrink-0">
-          {timer && (
-            <span
-              data-testid={`${gameIdPrefix}-timer`}
-              className="font-mono text-xs font-bold tabular-nums text-[var(--color)] rounded-md border border-[var(--glassBorder)] bg-[var(--backgroundHover)] px-1.5 sm:px-2 py-0.5 select-none"
-            >
-              {timer.formatted}
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={handleNewGame}
-            data-testid={`${gameIdPrefix}-new-game-button`}
-            className="flex items-center gap-1 rounded-lg border border-[var(--primary)]/50 bg-[var(--primary)] text-[var(--primaryForeground,white)] px-2 py-0.5 text-xs font-bold transition-colors hover:bg-[var(--primary)]/90 active:scale-95 select-none"
-          >
-            🔄
-          </button>
-
           {rules.length > 0 && (
             <button
               type="button"
@@ -323,7 +307,6 @@ export function SoloGameContainer({
         isFullscreen={isFullscreen}
         showLeaderboard={showLeaderboard}
         onToggleLeaderboard={() => setShowLeaderboard((prev) => !prev)}
-        undo={undo}
       />
     </div>
   );
