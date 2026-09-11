@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@arcadeum/ui';
-import styles from './ChessLanding.module.scss';
+import { cx } from '@arcadeum/ui/utils/cx';
 
 type BoardState = Array<Array<string | null>>;
 
@@ -89,6 +89,15 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
       data-testid="chess-puzzle-teaser"
       className="relative overflow-hidden rounded-[24px] border border-[var(--glassBorder)] bg-[var(--glassBg)] p-6 sm:p-8 backdrop-blur-md"
     >
+      <style>{`
+        .cp-chess-board{box-sizing:border-box;width:100%;max-width:360px;margin:0 auto;aspect-ratio:1/1;padding:10px;border-radius:var(--chess-border-radius,16px);border:2px solid var(--chess-selected-square,rgba(245,158,11,.4));box-shadow:0 16px 40px rgba(0,0,0,.5);display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));gap:2px;background:var(--chess-board-bg,#78350f);transition:background-color .25s ease,border-color .25s ease}
+        .cp-sq{box-sizing:border-box;display:flex;align-items:center;justify-content:center;border-radius:2px;font-size:20px;font-weight:700;user-select:none;position:relative;transition:background-color .2s ease}
+        .cp-sq-l{background:var(--chess-square-light,#f0d9b5)}
+        .cp-sq-d{background:var(--chess-square-dark,#b58863)}
+        .cp-moved{background:var(--chess-last-move,#cdd26a)}
+        .cp-selectable{cursor:pointer;box-shadow:inset 0 0 0 2px rgba(245,158,11,.9)}
+      `}</style>
+
       <header className="mb-6 flex flex-col gap-1.5">
         <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
           Tactics of the Day
@@ -104,10 +113,7 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         <div className="md:col-span-6 flex flex-col items-center">
-          <div
-            aria-label="Puzzle Chess Board"
-            className={styles.boardContainer}
-          >
+          <div aria-label="Puzzle Chess Board" className="cp-chess-board">
             {currentBoard.map((row, rowIdx) =>
               row.map((cell, colIdx) => {
                 const isLight = (rowIdx + colIdx) % 2 === 0;
@@ -125,13 +131,12 @@ export function ChessPuzzleTeaser({ playHref }: ChessPuzzleTeaserProps) {
                     onClick={
                       isSolutionTarget && !isSolved ? handleSolve : undefined
                     }
-                    className={`${isLight ? styles.squareLight : styles.squareDark} ${
-                      isSolved && isSolutionTarget
-                        ? styles.squareMoved
-                        : showHint && isSolutionTarget
-                          ? styles.squareSelectable
-                          : ''
-                    }`}
+                    className={cx(
+                      'cp-sq',
+                      isLight ? 'cp-sq-l' : 'cp-sq-d',
+                      isSolved && isSolutionTarget && 'cp-moved',
+                      showHint && isSolutionTarget && 'cp-selectable',
+                    )}
                   >
                     {cell ? PIECE_GLYPHS[cell] : ''}
                   </button>
