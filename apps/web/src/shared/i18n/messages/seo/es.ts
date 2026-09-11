@@ -239,6 +239,10 @@ export const es: DeepPartial<SeoMessages> = {
     title: `Perfil del jugador · ${APP}`,
     description: `Consulta el rango, las estadísticas y las partidas recientes de este jugador en ${APP}.`,
   },
+  dailyChessPuzzle: {
+    title: `Problema Diario de Ajedrez · Desafío Diario Gratis · ${APP}`,
+    description: `Resuelve el problema diario de ajedrez gratis en ${APP}. Un nuevo problema táctico cada 24 horas con seguimiento de racha diaria y progreso de puntuación.`,
+  },
   notFound: {
     title: `Página no encontrada · ${APP}`,
     description: `La página que buscas no existe en ${APP}. Explora nuestros juegos o vuelve al inicio.`,
