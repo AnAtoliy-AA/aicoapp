@@ -18,6 +18,7 @@
     "clean": "rm -rf .turbo .wrangler .next node_modules/.cache apps/*/node_modules/.cache packages/*/node_modules/.cache apps/web/.next apps/be/dist apps/mobile/.expo packages/*/dist bots/*/dist apps/*/dist",
     "check-file-length": "node scripts/check-file-length.js",
     "check-translations": "node scripts/check_translation.js",
+    "check-hreflang": "pnpm --filter web run seo:hreflang:audit",
     "docs:check": "node scripts/check-doc-links.js",
     "shorts:daily": "node scripts/shorts-factory/daily-runner.js",
     "shorts:daily:preview": "node scripts/shorts-factory/daily-runner.js --preview",
