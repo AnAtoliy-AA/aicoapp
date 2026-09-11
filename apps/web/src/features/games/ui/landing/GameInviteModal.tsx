@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   Modal,
   ModalContent,
@@ -10,48 +11,15 @@ import {
   ModalFooter,
   Button,
 } from '@arcadeum/ui';
+import { useTimedTrue } from '@/shared/hooks/useTimedTrue';
+import { trackInviteShared } from '@/shared/analytics/funnel';
+import { ShareChannelsPopover } from '@/features/games/ui/share/ShareChannelsMenu';
 
 interface GameInviteModalProps {
   open: boolean;
   onClose: () => void;
   gameId: string;
   gameTitle: string;
-}
-
-function SvgQrCode() {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      className="w-40 h-40 rounded-xl bg-white p-2 shadow-lg"
-      aria-label="QR Code to join game"
-    >
-      <rect x="10" y="10" width="24" height="24" fill="#09090b" rx="2" />
-      <rect x="14" y="14" width="16" height="16" fill="#ffffff" rx="1" />
-      <rect x="18" y="18" width="8" height="8" fill="#09090b" rx="1" />
-
-      <rect x="66" y="10" width="24" height="24" fill="#09090b" rx="2" />
-      <rect x="70" y="14" width="16" height="16" fill="#ffffff" rx="1" />
-      <rect x="74" y="18" width="8" height="8" fill="#09090b" rx="1" />
-
-      <rect x="10" y="66" width="24" height="24" fill="#09090b" rx="2" />
-      <rect x="14" y="70" width="16" height="16" fill="#ffffff" rx="1" />
-      <rect x="18" y="74" width="8" height="8" fill="#09090b" rx="1" />
-
-      <rect x="42" y="14" width="6" height="10" fill="#09090b" />
-      <rect x="52" y="10" width="6" height="18" fill="#09090b" />
-      <rect x="42" y="32" width="16" height="6" fill="#09090b" />
-      <rect x="14" y="44" width="12" height="6" fill="#09090b" />
-      <rect x="34" y="44" width="8" height="8" fill="#09090b" />
-      <rect x="50" y="44" width="10" height="6" fill="#09090b" />
-      <rect x="70" y="42" width="16" height="8" fill="#09090b" />
-      <rect x="44" y="58" width="12" height="6" fill="#09090b" />
-      <rect x="62" y="58" width="8" height="16" fill="#09090b" />
-      <rect x="76" y="66" width="14" height="8" fill="#09090b" />
-      <rect x="42" y="74" width="12" height="12" fill="#09090b" />
-      <rect x="62" y="80" width="12" height="8" fill="#09090b" />
-      <rect x="80" y="82" width="10" height="8" fill="#09090b" />
-    </svg>
-  );
 }
 
 export function GameInviteModal({
@@ -61,50 +29,129 @@ export function GameInviteModal({
   gameTitle,
 }: GameInviteModalProps) {
   const [copied, setCopied] = useState(false);
+  const [isDropdownCopied, setIsDropdownCopied] = useTimedTrue(2000);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const shareMenuRef = useRef<HTMLDivElement | null>(null);
+  const qrContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const getShareUrl = () => {
+  const handleClose = useCallback(() => {
+    setIsDropdownOpen(false);
+    setCopied(false);
+    onClose();
+  }, [onClose]);
+
+  const shareUrl = useMemo(() => {
     if (typeof window !== 'undefined') {
       return window.location.href;
     }
     return `https://arcadeum.games/en/games/${gameId}`;
-  };
+  }, [gameId]);
 
-  const handleCopy = async () => {
-    const url = getShareUrl();
+  const shareTitle = `Play ${gameTitle} on Arcadeum`;
+  const shareText = `Join me for an instant game of ${gameTitle} on Arcadeum! Zero signup or download needed.`;
+
+  const handleCopy = useCallback(async () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
+      trackInviteShared('copy', gameId);
     }
-  };
+  }, [shareUrl, gameId]);
 
-  const handleNativeShare = async () => {
-    const url = getShareUrl();
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({
-          title: `Play ${gameTitle} on Arcadeum`,
-          text: `Join me for an instant game of ${gameTitle} on Arcadeum! Zero signup or download needed.`,
-          url,
-        });
-      } catch {
-        // user aborted or not supported
-      }
+  const handleDropdownCopy = useCallback(async () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(shareUrl);
+      setIsDropdownCopied();
+      setCopied(true);
+      trackInviteShared('copy', gameId);
     }
-  };
+  }, [shareUrl, gameId, setIsDropdownCopied]);
+
+  const handleShowQr = useCallback(() => {
+    setIsDropdownOpen(false);
+    qrContainerRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }, []);
+
+  const handleChannelClick = useCallback(
+    (channel: string, href: string) => {
+      if (typeof window !== 'undefined') {
+        window.open(href, '_blank', 'noopener,noreferrer');
+        trackInviteShared(channel, gameId);
+        setIsDropdownOpen(false);
+      }
+    },
+    [gameId],
+  );
 
   const canNativeShare =
     typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
+  const handleNativeShare = useCallback(async () => {
+    if (canNativeShare) {
+      try {
+        setIsDropdownOpen(false);
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        trackInviteShared('native', gameId);
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+      }
+    }
+  }, [canNativeShare, shareTitle, shareText, shareUrl, gameId]);
+
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (
+        shareMenuRef.current &&
+        !shareMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onDocClick, { capture: true });
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick, { capture: true });
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [isDropdownOpen]);
+
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <ModalContent maxWidth={480} data-testid="game-invite-modal-content">
-        <ModalHeader onClose={onClose}>
+        <ModalHeader onClose={handleClose}>
           <ModalTitle>Invite a Friend to {gameTitle}</ModalTitle>
         </ModalHeader>
 
         <ModalBody>
           <div className="flex flex-col items-center gap-6 py-2 text-center">
-            <SvgQrCode />
+            <div
+              ref={qrContainerRef}
+              className="rounded-xl bg-white p-3 shadow-lg flex items-center justify-center transition-all"
+              data-testid="game-invite-qr-container"
+            >
+              <QRCodeSVG
+                value={shareUrl}
+                size={160}
+                marginSize={0}
+                level="M"
+                aria-label="QR Code to join game"
+                data-testid="game-invite-qr-svg"
+              />
+            </div>
 
             <div className="flex flex-col gap-1">
               <span className="text-xs font-bold uppercase tracking-wider text-[var(--color)]">
@@ -120,7 +167,7 @@ export function GameInviteModal({
               <input
                 type="text"
                 readOnly
-                value={getShareUrl()}
+                value={shareUrl}
                 className="flex-1 bg-transparent px-2 text-xs font-mono text-[var(--foreground)] outline-none"
                 aria-label="Share URL"
               />
@@ -133,21 +180,41 @@ export function GameInviteModal({
               </Button>
             </div>
 
-            {canNativeShare ? (
+            <div ref={shareMenuRef} className="relative w-full">
               <Button
                 variant="outline"
                 size="md"
                 className="w-full"
-                onClick={handleNativeShare}
+                onClick={() => setIsDropdownOpen((v) => !v)}
+                aria-label="Share via Apps / Messages"
+                aria-haspopup="menu"
+                aria-expanded={isDropdownOpen}
+                aria-controls="share-game-menu-popover"
+                data-testid="share-via-apps-button"
               >
                 Share via Apps / Messages 📱
               </Button>
-            ) : null}
+
+              {isDropdownOpen && (
+                <ShareChannelsPopover
+                  url={shareUrl}
+                  text={shareText}
+                  title={shareTitle}
+                  isCopied={isDropdownCopied}
+                  onCopy={handleDropdownCopy}
+                  onShowQr={handleShowQr}
+                  onChannelClick={handleChannelClick}
+                  onNativeShare={handleNativeShare}
+                  hasNativeShare={canNativeShare}
+                  className="mt-2 w-full"
+                />
+              )}
+            </div>
           </div>
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="secondary" size="md" onClick={onClose}>
+          <Button variant="secondary" size="md" onClick={handleClose}>
             Close
           </Button>
         </ModalFooter>
