@@ -189,6 +189,9 @@ function Profile({
         elo={player.elo}
         rank={player.rank}
         tier={player.tier}
+        xp={profile.xp}
+        level={profile.level}
+        prestige={profile.prestige}
       />
 
       <SeasonBanner className="w-full" />

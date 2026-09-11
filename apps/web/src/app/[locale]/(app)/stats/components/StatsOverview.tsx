@@ -2,6 +2,7 @@ import React from 'react';
 import type { PlayerStats } from '@/features/history/api';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { Card, SkeletonText, ProgressCircle } from '@arcadeum/ui';
+import { xpProgress } from '@/shared/lib/xp-level';
 
 export const statsOverviewCSS = `
   .stats-overview-grid {
@@ -30,6 +31,8 @@ interface StatsOverviewProps {
   currentStreakType?: 'won' | 'lost' | null;
   bestWinStreak?: number;
   favoriteGame?: string | null;
+  level?: number;
+  xp?: number;
 }
 
 export function StatsOverview({
@@ -39,6 +42,8 @@ export function StatsOverview({
   currentStreakType,
   bestWinStreak,
   favoriteGame,
+  level = 1,
+  xp = 0,
 }: StatsOverviewProps) {
   const { t } = useTranslation();
 
@@ -68,6 +73,34 @@ export function StatsOverview({
     <>
       <style>{statsOverviewCSS}</style>
       <div className="stats-overview-grid">
+        <Card variant="glass" padding="md">
+          <StatLabel>{t('stats.level')}</StatLabel>
+          <StatValue data-testid="stats-level" color="#a78bfa">
+            {level}
+          </StatValue>
+          {(() => {
+            const { progress, xpInLevel, xpNeeded } = xpProgress(xp);
+            return (
+              <div className="mt-2">
+                <div className="w-full rounded-full bg-white/10 h-1.5">
+                  <div
+                    className="h-full rounded-full bg-violet-500 transition-all duration-500"
+                    style={{ width: `${Math.round(progress * 100)}%` }}
+                  />
+                </div>
+                <span className="text-[10px] text-violet-400/70 mt-1 block">
+                  {xpInLevel}/{xpNeeded} {t('stats.xpToNextLevel')}
+                </span>
+              </div>
+            );
+          })()}
+        </Card>
+        <Card variant="glass" padding="md">
+          <StatLabel>{t('stats.totalXP')}</StatLabel>
+          <StatValue data-testid="stats-total-xp">
+            {xp.toLocaleString()}
+          </StatValue>
+        </Card>
         <Card variant="glass" padding="md">
           <StatLabel>{t('stats.totalGames')}</StatLabel>
           <StatValue data-testid="stats-total-games">

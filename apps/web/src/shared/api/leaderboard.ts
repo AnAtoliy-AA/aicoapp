@@ -205,6 +205,8 @@ export function getMockPlayer(id: string): PlayerProfile {
       { mode: 'critical_v1', rank: 18, rating: player.rating - 80 },
     ],
     xp: 0,
+    level: 1,
+    prestige: 0,
     squad: {
       id: 'sq_1',
       name: 'Ember Pact',
