@@ -8,7 +8,7 @@ import {
   boardVars,
 } from '@/widgets/BoardGames/ChessGame/lib/theme';
 import { Button } from '@arcadeum/ui';
-import styles from './ChessLanding.module.scss';
+import { cx } from '@arcadeum/ui/utils/cx';
 
 type BoardState = Array<Array<string | null>>;
 
@@ -133,8 +133,18 @@ export function ChessLandingPreview() {
         const vars = boardVars(currentTheme);
 
         return (
-          <div className={styles.demoWrapper}>
-            <div className={styles.evalHeader}>
+          <div className="flex flex-col items-center gap-3 w-full">
+            <style>{`
+              .clp-chess-board{box-sizing:border-box;width:100%;max-width:360px;margin:0 auto;aspect-ratio:1/1;padding:10px;border-radius:var(--chess-border-radius,16px);border:2px solid var(--chess-selected-square,rgba(245,158,11,.4));box-shadow:0 16px 40px rgba(0,0,0,.5);display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));gap:2px;background:var(--chess-board-bg,#78350f);transition:background-color .25s ease,border-color .25s ease}
+              .clp-sq{box-sizing:border-box;display:flex;align-items:center;justify-content:center;border-radius:2px;font-size:20px;font-weight:700;user-select:none;position:relative;transition:background-color .2s ease}
+              .clp-sq-l{background:var(--chess-square-light,#f0d9b5)}
+              .clp-sq-d{background:var(--chess-square-dark,#b58863)}
+              .clp-moved{background:var(--chess-last-move,#cdd26a)}
+              .clp-piece-w{color:var(--chess-piece-light,#fff);filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+              .clp-piece-b{color:var(--chess-piece-dark,#18181b);filter:drop-shadow(0 1px 1px rgba(255,255,255,.25))}
+            `}</style>
+
+            <div className="flex items-center justify-between w-full max-w-[320px] text-xs font-bold">
               <span className="text-[var(--color)] font-bold">
                 {activePreset ? 'Stockfish 19 Eval' : 'Stockfish 19 Ready'}
               </span>
@@ -143,18 +153,19 @@ export function ChessLandingPreview() {
               </span>
             </div>
 
-            <div className={styles.evalBarContainer}>
+            <div className="flex h-1.5 w-full max-w-[320px] rounded-full overflow-hidden bg-[#18181b] border border-[rgba(255,255,255,0.2)]">
               <div
-                className={`${styles.evalWhiteBar} ${
-                  activePreset ? 'w-[56%]' : 'w-1/2'
-                }`}
+                className={cx(
+                  'bg-[#f8fafc] transition-[width] duration-[0.3s]',
+                  activePreset ? 'w-[56%]' : 'w-1/2',
+                )}
               />
-              <div className={styles.evalBlackBar} />
+              <div className="bg-[#334155] flex-1" />
             </div>
 
             <div
               aria-label="Interactive Chess Board"
-              className={styles.boardContainer}
+              className="clp-chess-board"
               style={vars}
             >
               {board.map((row, rowIdx) =>
@@ -168,15 +179,15 @@ export function ChessLandingPreview() {
                   return (
                     <div
                       key={`${rowIdx}-${colIdx}`}
-                      className={`${
-                        isLight ? styles.squareLight : styles.squareDark
-                      } ${isHighlighted ? styles.squareMoved : ''}`}
+                      className={cx(
+                        'clp-sq',
+                        isLight ? 'clp-sq-l' : 'clp-sq-d',
+                        isHighlighted && 'clp-moved',
+                      )}
                     >
                       {cell ? (
                         <span
-                          className={
-                            isWhite ? styles.pieceWhite : styles.pieceBlack
-                          }
+                          className={isWhite ? 'clp-piece-w' : 'clp-piece-b'}
                         >
                           {PIECE_GLYPHS[cell]}
                         </span>
@@ -187,7 +198,7 @@ export function ChessLandingPreview() {
               )}
             </div>
 
-            <div className={styles.statusPill}>
+            <div className="flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-semibold bg-[rgba(245,158,11,0.15)] border border-[rgba(245,158,11,0.3)] text-[var(--foreground)] text-center max-w-[320px]">
               {activePreset ? (
                 <span>
                   {activePreset.whiteMove} ➔{' '}
@@ -199,7 +210,7 @@ export function ChessLandingPreview() {
               )}
             </div>
 
-            <div className={styles.demoActions}>
+            <div className="flex gap-2 w-full max-w-[320px] justify-center">
               {!activePreset ? (
                 PRESETS.map((preset) => (
                   <Button
