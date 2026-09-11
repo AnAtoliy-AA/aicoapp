@@ -39,6 +39,7 @@ export const es = {
     nav: {
       dashboard: 'Panel',
       statistics: 'Estadísticas',
+      monitoring: 'Monitorización',
       users: 'Usuarios',
       payments: 'Pagos',
       announcements: 'Anuncios',
@@ -164,6 +165,18 @@ export const es = {
         free: 'Libre',
         total: 'Total',
       },
+    },
+    monitoring: {
+      title: 'Monitorización',
+      loading: 'Cargando métricas...',
+      enableHint: 'Activa METRICS_ENABLED=true en .env para ver métricas',
+      status: 'Estado',
+      uptime: 'Tiempo de actividad',
+      connections: 'Conexiones',
+      memory: 'Memoria (RSS)',
+      details: 'Detalles del servidor',
+      heap: 'Total del heap',
+      lastCheck: 'Última comprobación',
     },
     error: {
       title: 'Algo salió mal',
