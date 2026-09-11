@@ -120,7 +120,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 #### Retention
 
 - [x] Daily chess puzzle page (resets every 24h — drives recurring visits)
-- [ ] Streak system — show prominently in UI (streak_freeze already exists on backend)
+- [x] Streak system — show prominently in UI (streak_freeze already exists on backend)
 - [ ] Achievement badges — visible on profile, shareable on social
 - [ ] Email + push notifications for async game turns and weekly events
 - [ ] Smart "Play Again" flow after game ends

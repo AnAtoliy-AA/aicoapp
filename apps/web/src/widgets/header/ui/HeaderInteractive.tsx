@@ -152,6 +152,20 @@ export function HeaderInteractive({
               <HeaderMobileHidden>{balanceChip}</HeaderMobileHidden>
             )}
 
+            {isAuthenticated && (
+              <HeaderMobileHidden>
+                <Link
+                  href={routes.rewards}
+                  data-testid="header-streak-badge"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-semibold hover:bg-amber-500/20 transition-all"
+                  aria-label="Daily Streak & Rewards"
+                >
+                  <span aria-hidden="true">🔥</span>
+                  <span>Streak</span>
+                </Link>
+              </HeaderMobileHidden>
+            )}
+
             <HeaderMobileHidden>
               <LanguageSwitcher
                 data-testid="header-language-switcher"

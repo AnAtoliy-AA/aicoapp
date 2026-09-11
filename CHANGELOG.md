@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add streak freeze card, buy freeze action, and header streak pill (ARC-955)
+
 ## [1.29.30] - 2026-09-11
 
 ### Added
+
 - add daily chess puzzle page and streak retention loop (ARC-954) (ARC-954)
 
 ### Documentation
-- record daily chess puzzle page in CHANGELOG.md (ARC-954) (ARC-954)
 
+- record daily chess puzzle page in CHANGELOG.md (ARC-954) (ARC-954)
 
 ## [1.29.29] - 2026-09-11
 
