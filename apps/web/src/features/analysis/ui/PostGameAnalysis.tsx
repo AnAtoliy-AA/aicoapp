@@ -103,14 +103,25 @@ export function PostGameAnalysis({
 
   useEffect(() => {
     let cancelled = false;
+    const timeout = setTimeout(() => {
+      if (!cancelled) setLoading(false);
+    }, 60_000);
+
     analyzeGameWithStockfish(positionHistory, notations).then((result) => {
       if (!cancelled) {
+        clearTimeout(timeout);
         setStockfishResult(result);
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        clearTimeout(timeout);
         setLoading(false);
       }
     });
     return () => {
       cancelled = true;
+      clearTimeout(timeout);
     };
   }, [positionHistory, notations]);
 

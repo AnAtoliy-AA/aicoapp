@@ -65,10 +65,12 @@ export async function analyzeGameWithStockfish(
   notations?: string[],
 ): Promise<GameAnalysisResult | null> {
   try {
-    return await apiClient.post<GameAnalysisResult>(
+    const result = await apiClient.post<GameAnalysisResult>(
       '/chess/engine/analyze-game',
       { positionHistory, notations, depth: 18, timeMsPerPly: 3000 },
     );
+    if (result && 'error' in result) return null;
+    return result;
   } catch {
     return null;
   }
