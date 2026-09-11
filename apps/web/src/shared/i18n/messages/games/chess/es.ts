@@ -84,6 +84,28 @@ export const esMessages = {
           answer:
             'Puzzle Rush es un modo de puzzles cronometrado. En Supervivencia tienes 3 vidas e intentas resolver la mayor cantidad de puzzles posible. En Modo Tiempo tienes 3 minutos.',
         },
+        tablebases: {
+          question: '¿Qué son las tablas de finales Syzygy?',
+          answer:
+            'Las tablas de finales Syzygy proporcionan un juego matemáticamente perfecto para cualquier posición con 7 o menos piezas en el tablero, mostrando al instante victoria, tablas o derrota teórica.',
+        },
+        mobile: {
+          question:
+            '¿Puedo jugar al ajedrez en el móvil sin instalar una aplicación?',
+          answer:
+            'Sí. Arcadeum Games funciona completamente en cualquier navegador móvil moderno con controles táctiles, tablero adaptable y arrastre fluido de piezas.',
+        },
+        pgn: {
+          question: '¿Puedo importar y exportar posiciones PGN o FEN?',
+          answer:
+            'Sí. El tablero de análisis admite copiar/pegar PGN, configuración de posiciones FEN y editor de tablero personalizado para estudiar partidas.',
+        },
+        free: {
+          question:
+            '¿El análisis y la revisión de partidas son realmente 100% gratuitos?',
+          answer:
+            'Sí. El análisis de Stockfish 19 en profundidad máxima, los gráficos de evaluación, la precisión y la clasificación de errores son totalmente gratuitos sin límites ni muros de pago.',
+        },
       },
       advantages: {
         kicker: 'Por qué los jugadores eligen Arcadeum Games',

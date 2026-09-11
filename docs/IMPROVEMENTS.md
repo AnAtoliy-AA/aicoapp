@@ -84,7 +84,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 
 - [ ] Submit all 18 game landing pages × 5 locales to Google Search Console
 - [x] Audit sitemap — `changefreq`, `lastmod` on every game landing page (all 18 games registered with proper hreflang alternates)
-- [ ] Verify hreflang with Screaming Frog — detect orphaned/mismatched tags
+- [x] Verify hreflang — automated reciprocal alternates validator in CI via `pnpm check-hreflang` (Agent 8)
 - [ ] Measure LCP/CLS on game landing pages using CrUX field data. Target LCP < 2.5s
 - [x] Add `FAQPage` JSON-LD schema to all FAQ sections on game landing pages
 - [x] Add `HowTo` JSON-LD schema to all "How to Play" sections
@@ -95,7 +95,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 
 #### Content
 
-- [ ] Expand all game FAQs from 3–5 to 10–12 questions per game
+- [x] Expand game FAQs to 10 questions per game across all 5 locales (chess, critical, glimworm, sea battle, backgammon, checkers, go)
 - [ ] Write 5 pillar strategy guides (chess, backgammon, go, checkers, sea battle) — 2,000+ words each
 - [ ] Activate the blog with at minimum 2 articles per month
 
