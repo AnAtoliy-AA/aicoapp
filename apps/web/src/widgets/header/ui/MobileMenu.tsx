@@ -45,6 +45,7 @@ import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useHeaderAuth } from './useHeaderAuth';
 import LanguagePills from './LanguagePills';
 import { usePWAOptional } from '@/features/pwa/context';
+import { canonicalKeyFor, type Locale } from '@/shared/config/locale-slugs';
 
 interface MobileMenuProps {
   navItems: Array<{
@@ -72,8 +73,13 @@ const NAV_ICON_BY_SLUG: Record<string, IconComponent> = {
 };
 
 function iconForHref(href: string): IconComponent | undefined {
-  const last = href.split('/').filter(Boolean).pop();
-  return last ? NAV_ICON_BY_SLUG[last] : undefined;
+  const parts = href.split('/').filter(Boolean);
+  const last = parts[parts.length - 1];
+  if (!last) return undefined;
+  if (NAV_ICON_BY_SLUG[last]) return NAV_ICON_BY_SLUG[last];
+  const locale = parts[0] as Locale;
+  const canonical = canonicalKeyFor(locale, last);
+  return canonical ? NAV_ICON_BY_SLUG[canonical] : undefined;
 }
 
 export default function MobileMenu({

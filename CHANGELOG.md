@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add Leaderboards tab to desktop and mobile navigation (ARC-959) (ARC-959)
+
 ## [1.29.34] - 2026-09-11
 
 ### Added
-- add share dropdown menu and functional QR code to game landing (ARC-958) (ARC-958)
 
+- add share dropdown menu and functional QR code to game landing (ARC-958) (ARC-958)
 
 ## [1.29.33] - 2026-09-11
 

@@ -29,6 +29,7 @@ vi.mock('@/shared/config/useRoutes', () => ({
     home: '/',
     games: '/games',
     rooms: '/rooms',
+    leaderboards: '/leaderboards',
     shop: '/shop',
     friends: '/friends',
     chats: '/chats',
@@ -110,5 +111,26 @@ describe('Discord Community Links', () => {
     expect(discordLink.getAttribute('href')).toContain('discord');
     expect(discordLink.getAttribute('target')).toBe('_blank');
     expect(discordLink.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+});
+
+describe('Leaderboards Navigation', () => {
+  it('renders leaderboards link in desktop header navigation', () => {
+    render(<HeaderInteractive />);
+    const link = screen.getByTestId('nav-leaderboards');
+    expect(link).toBeDefined();
+    expect(link.getAttribute('href')).toBe('/leaderboards');
+  });
+
+  it('renders leaderboards link in mobile menu with trophy icon', () => {
+    render(
+      <MobileMenu
+        navItems={[{ href: '/leaderboards', label: 'Leaderboards' }]}
+      />,
+    );
+    const link = screen.getByTestId('mobile-nav-leaderboards');
+    expect(link).toBeDefined();
+    expect(link.getAttribute('href')).toBe('/leaderboards');
+    expect(link.querySelector('svg')).toBeDefined();
   });
 });
