@@ -119,7 +119,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 
 #### Retention
 
-- [ ] Daily chess puzzle page (resets every 24h — drives recurring visits)
+- [x] Daily chess puzzle page (resets every 24h — drives recurring visits)
 - [ ] Streak system — show prominently in UI (streak_freeze already exists on backend)
 - [ ] Achievement badges — visible on profile, shareable on social
 - [ ] Email + push notifications for async game turns and weekly events
@@ -448,7 +448,7 @@ Agent posts: Discord webhook with opportunity table
 | 🟡 P1    | Write 5 strategy guide articles (2,000+ words)     | Topical authority | High      | Agent 3  | ✅ Done |
 | 🟡 P1    | Ship public leaderboards                           | Engagement + SEO  | Medium    | Manual   | Pending |
 | 🟡 P1    | Ship public player profiles                        | Indexable pages   | Medium    | Manual   | Pending |
-| 🟡 P1    | Daily chess puzzle page                            | Recurring visits  | Medium    | Manual   | Pending |
+| 🟡 P1    | Daily chess puzzle page                            | Recurring visits  | Medium    | Manual   | ✅ Done |
 | 🟡 P1    | Complete OG images for all 18 games                | Social sharing    | Low       | Agent 6  | ✅ Done |
 | 🟡 P1    | i18n auto-translation on new keys                  | Locale coverage   | Low       | Agent 5  | ✅ Done |
 | 🟡 P1    | Core Web Vitals CI gate                            | Performance       | Low       | Agent 7  | ✅ Done |
