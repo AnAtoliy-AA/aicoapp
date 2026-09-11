@@ -8,6 +8,9 @@ import { JsonLd } from '@/shared/ui/JsonLd';
 import { getFeaturesData } from './features-parser';
 import FeaturesClient from './FeaturesClient';
 
+export const dynamic = 'force-static';
+export const revalidate = 2592000; // 30 days – ISR: render on first request, cache until user changes language
+
 export async function generateMetadata({
   params,
 }: {

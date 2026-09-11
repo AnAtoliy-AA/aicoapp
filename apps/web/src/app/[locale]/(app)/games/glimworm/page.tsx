@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import { GlimwormLandingView } from './GlimwormLandingView';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const GLIMWORM_SLUG = 'glimworm_v1';

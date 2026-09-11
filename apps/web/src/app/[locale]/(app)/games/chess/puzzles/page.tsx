@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import { PuzzleGame } from '@/widgets/BoardGames/ChessPuzzles/ui/Game';
 
+export const dynamic = 'force-static';
+export const revalidate = 2592000; // 30 days – ISR: render on first request, cache until user changes language
+
 export default function ChessPuzzlesPage() {
   return (
     <main className="flex flex-col items-center min-h-screen py-6">

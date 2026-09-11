@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import CascadeLanding from './CascadeLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const CASCADE_SLUG = 'cascade_v1';

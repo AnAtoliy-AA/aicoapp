@@ -9,6 +9,8 @@ import { getPostsByTag } from '@/features/blog/registry';
 import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import SudokuLanding from './SudokuLanding';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const SUDOKU_SLUG = 'sudoku_v1';

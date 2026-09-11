@@ -9,6 +9,8 @@ import { getPostsByTag } from '@/features/blog/registry';
 import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import MinesweeperLanding from './MinesweeperLanding';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const MINESWEEPER_SLUG = 'minesweeper_v1';

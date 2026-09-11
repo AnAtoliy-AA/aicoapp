@@ -6,6 +6,9 @@ import { getTranslations } from '@/shared/i18n/server';
 import { DEFAULT_LOCALE, isLocale } from '@/shared/i18n';
 import SettingsClient from './SettingsClient';
 
+export const dynamic = 'force-static';
+export const revalidate = 2592000; // 30 days – ISR: render on first request, cache until user changes language
+
 export async function generateMetadata({
   params,
 }: {

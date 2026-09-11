@@ -1,8 +1,11 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
-const CoordinateTrainer = dynamic(
+export const dynamic = 'force-static';
+export const revalidate = 2592000; // 30 days – ISR: render on first request, cache until user changes language
+
+const CoordinateTrainer = dynamicImport(
   () => import('@/widgets/BoardGames/ChessGame/ui/CoordinateTrainer').then((m) => m.CoordinateTrainer),
   {
     ssr: false,

@@ -4,6 +4,9 @@ import { join } from 'path';
 import { appConfig } from '@/shared/config/app-config';
 import ChangelogClient from './ChangelogClient';
 
+export const dynamic = 'force-static';
+export const revalidate = 2592000; // 30 days – ISR: render on first request, cache until user changes language
+
 export type ChangelogEntry = {
   version: string;
   date: string;

@@ -11,6 +11,8 @@ import { RelatedArticles } from '@/features/blog/RelatedArticles';
 import CatDashLanding from './CatDashLanding';
 import { isGameComingSoon } from '@/features/games/api.server';
 
+export const dynamic = 'force-static';
+
 export const revalidate = 300;
 
 const CAT_DASH_SLUG = 'cat_dash_v1';

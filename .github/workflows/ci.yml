@@ -307,10 +307,7 @@ jobs:
         run: pnpm --filter web exec playwright install chromium
 
       - name: Run Web E2E Tests
-        run: pnpm --filter web test:e2e --project=chromium
-        env:
-          SHARD_INDEX: ${{ matrix.shard }}
-          SHARD_TOTAL: '5'
+        run: pnpm --filter web test:e2e --project=chromium --shard=${{ matrix.shard }}/5
 
       - name: Upload Test Report
         if: always()
