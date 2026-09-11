@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.19] - 2026-09-11
+
+### Fixed
+- localize profile page i18n, fix invite URLs locale, add share tracking, fix setTimeout leak
+
+
 ## [1.29.18] - 2026-09-11
 
 ### Added
