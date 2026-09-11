@@ -5,9 +5,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
-  useSyncExternalStore,
 } from 'react';
 import Image from 'next/image';
 import { LoadingState } from '@arcadeum/ui';
@@ -58,19 +58,6 @@ const SoloFullscreenContext = createContext<boolean>(false);
 
 export function useSoloFullscreen(): boolean {
   return useContext(SoloFullscreenContext);
-}
-
-const mountedSnapshot = true;
-const serverSnapshot = false;
-const noopCleanup = () => undefined;
-function subscribeNoop(): () => void {
-  return noopCleanup;
-}
-function getMountedSnapshot() {
-  return mountedSnapshot;
-}
-function getServerSnapshot() {
-  return serverSnapshot;
 }
 
 export interface SoloStatItem {
@@ -144,11 +131,8 @@ export function SoloGameContainer({
   timer,
 }: SoloGameContainerProps) {
   const { t } = useTranslation();
-  const mounted = useSyncExternalStore(
-    subscribeNoop,
-    getMountedSnapshot,
-    getServerSnapshot,
-  );
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const gameIdPrefix = gameId.replace(/_v\d+$/, '').replace(/_/g, '-');
 
