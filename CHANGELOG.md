@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.18] - 2026-09-11
+
+### Added
+- add bot management to player list
+
+### Fixed
+- add GameRoomsBotService to test module and trim file lengths
+
+
 ## [1.29.17] - 2026-09-11
 
 ### Fixed
