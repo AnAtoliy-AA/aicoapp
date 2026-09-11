@@ -441,7 +441,7 @@ Agent posts: Discord webhook with opportunity table
 
 | Priority | Action                                             | Impact            | Effort    | Agent?   | Status      |
 | -------- | -------------------------------------------------- | ----------------- | --------- | -------- | ----------- |
-| 🔴 P0    | Google Search Console setup, sitemap audit         | SEO foundation    | Low       | Agent 4  | Pending     |
+| 🔴 P0    | Google Search Console setup, sitemap audit         | SEO foundation    | Low       | Agent 4  | ✅ Done     |
 | 🔴 P0    | Add `FAQPage` + `HowTo` + `AggregateRating` schema | Rich snippets     | Low       | Agent 1  | ✅ Done     |
 | 🔴 P0    | Expand all game FAQs to 10+ entries                | Keyword coverage  | Medium    | Agent 2  | ✅ Done     |
 | 🔴 P0    | Product Hunt + Hacker News launch                  | Backlinks         | Low       | Manual   | Pending     |
