@@ -18,18 +18,31 @@ import {
   UserInventoryItem,
   UserInventoryItemSchema,
 } from '../shop/schemas/user-inventory-item.schema';
+import { WalletModule } from '../wallet/wallet.module';
+import { LevelRewardsService } from './level-rewards.service';
+import { LevelRewardsController } from './level-rewards.controller';
 
 @Module({
   imports: [
     ConfigModule,
+    WalletModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: XpSettings.name, schema: XpSettingsSchema },
       { name: UserInventoryItem.name, schema: UserInventoryItemSchema },
     ]),
   ],
-  providers: [XpSettingsService, PrestigeService, RolesGuard],
-  controllers: [AdminXpSettingsController, PrestigeController],
-  exports: [XpSettingsService, PrestigeService],
+  providers: [
+    XpSettingsService,
+    PrestigeService,
+    LevelRewardsService,
+    RolesGuard,
+  ],
+  controllers: [
+    AdminXpSettingsController,
+    PrestigeController,
+    LevelRewardsController,
+  ],
+  exports: [XpSettingsService, PrestigeService, LevelRewardsService],
 })
 export class XpModule {}

@@ -159,3 +159,7 @@ export const LEVEL_BADGE_REWARDS: readonly LevelBadgeReward[] = [
 export function getRewardForLevel(level: number): LevelBadgeReward | undefined {
   return LEVEL_BADGE_REWARDS.find((r) => r.level === level);
 }
+
+export function getCoinsForLevel(level: number): number {
+  return level * 50;
+}

@@ -42,6 +42,10 @@ export function getRewardForExactLevel(
   return LEVEL_BADGE_REWARDS.find((r) => r.level === level);
 }
 
+export function getCoinsForLevel(level: number): number {
+  return level * 50;
+}
+
 export async function grantLevelBadges(
   userId: string | Types.ObjectId,
   level: number,
@@ -51,7 +55,11 @@ export async function grantLevelBadges(
   if (eligibleBadges.length === 0) return;
 
   const userObjId =
-    typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
+    userId instanceof Types.ObjectId
+      ? userId
+      : Types.ObjectId.isValid(userId)
+        ? new Types.ObjectId(userId)
+        : new Types.ObjectId('000000000000000000000000');
 
   const ops = eligibleBadges.map((badgeId) => ({
     updateOne: {
@@ -63,7 +71,7 @@ export async function grantLevelBadges(
         $setOnInsert: {
           userId: userObjId,
           itemId: badgeId,
-          purchaseId: `level-reward-${userObjId.toHexString()}-${badgeId}`,
+          purchaseId: `level-reward-${String(userObjId)}-${badgeId}`,
           acquiredVia: 'grant' as const,
           paidAmount: null,
           paidCurrency: null,

@@ -60,6 +60,13 @@ describe('LevelProgression', () => {
     expect(reward10).toHaveTextContent('Locked');
   });
 
+  it('renders coins rewards for each level', () => {
+    render(<LevelProgression currentLevel={5} />);
+
+    expect(screen.getByTestId('level-coins-1')).toHaveTextContent('+50 🪙');
+    expect(screen.getByTestId('level-coins-5')).toHaveTextContent('+250 🪙');
+  });
+
   it('toggles expansion to show all 99 levels', () => {
     render(<LevelProgression currentLevel={5} />);
 

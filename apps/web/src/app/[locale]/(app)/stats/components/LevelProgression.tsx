@@ -6,6 +6,7 @@ import { Card } from '@arcadeum/ui';
 import { xpForLevel } from '@/shared/lib/xp-level';
 import {
   getRewardForLevel,
+  getCoinsForLevel,
   type LevelBadgeReward,
 } from '@/shared/lib/level-rewards';
 import {
@@ -112,7 +113,8 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
     const isCurrent = level === currentLevel;
     const isPast = level < currentLevel;
     const reward = getRewardForLevel(level);
-    return { level, totalXp, gap, isCurrent, isPast, reward };
+    const coinAmount = getCoinsForLevel(level);
+    return { level, totalXp, gap, isCurrent, isPast, reward, coinAmount };
   });
 
   const visibleRows = expanded ? rows : rows.slice(0, 10);
@@ -147,6 +149,9 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
               <th className="text-right py-1.5 font-semibold">
                 {t('stats.xpNeeded' as TranslationKey)}
               </th>
+              <th className="text-right py-1.5 font-semibold">
+                {t('stats.coins' as TranslationKey)}
+              </th>
               <th className="text-left py-1.5 pl-4 font-semibold">
                 {t('stats.reward' as TranslationKey)}
               </th>
@@ -176,6 +181,12 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
                   {row.totalXp.toLocaleString()}
                 </td>
                 <td className="text-right py-1">{row.gap.toLocaleString()}</td>
+                <td
+                  className="text-right py-1 font-semibold text-amber-400"
+                  data-testid={`level-coins-${row.level}`}
+                >
+                  +{row.coinAmount.toLocaleString()} 🪙
+                </td>
                 <td className="py-1 pl-4">
                   {row.reward ? (
                     <LevelRewardCell

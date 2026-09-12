@@ -118,4 +118,55 @@ test.describe('Level Badge Rewards', () => {
     await action5.click();
     await expect(page.getByTestId('badge-action-5')).toHaveText(/equipped/i);
   });
+
+  test('displays coins reward in level progression table', async ({ page }) => {
+    await navigateTo(page, '/stats');
+
+    const myStatsTab = page.getByTestId('stats-tab-my-stats');
+    await expect(myStatsTab).toBeVisible();
+    if ((await myStatsTab.getAttribute('aria-pressed')) !== 'true') {
+      await myStatsTab.click({ force: true });
+    }
+
+    await expect(page.getByTestId('level-coins-1')).toBeVisible();
+    await expect(page.getByTestId('level-coins-1')).toHaveText(/\+50/);
+    await expect(page.getByTestId('level-coins-5')).toHaveText(/\+250/);
+  });
+
+  test('level up modal displays congratulatory message, coins reward and claims reward', async ({
+    page,
+  }) => {
+    await page.route('**/xp/level-rewards/claim', async (route) => {
+      await handleRoute(route, {
+        currentLevel: 5,
+        claimedLevel: 5,
+        coinsAwarded: 250,
+        badgesAwarded: ['badge-scout'],
+        alreadyClaimed: false,
+      });
+    });
+
+    await page.route('**/xp/level-rewards', async (route) => {
+      await handleRoute(route, {
+        currentLevel: 5,
+        claimedLevel: 4,
+        unclaimedLevels: [5],
+        pendingCoins: 250,
+        pendingBadges: ['badge-scout'],
+      });
+    });
+
+    await navigateTo(page, '/stats');
+
+    const modal = page.getByTestId('level-up-modal');
+    await expect(modal).toBeVisible();
+    await expect(page.getByTestId('level-up-coins-reward')).toBeVisible();
+    await expect(page.getByTestId('level-up-coins-reward')).toHaveText(/\+250/);
+
+    const claimBtn = page.getByTestId('level-up-claim-btn');
+    await expect(claimBtn).toBeVisible();
+    await claimBtn.click();
+
+    await expect(claimBtn).toHaveText(/claimed/i);
+  });
 });
