@@ -1,7 +1,22 @@
 import { expect } from '@playwright/test';
 import { test, navigateTo } from './fixtures/test-utils';
+import { getMockPlayer } from '@/shared/api/leaderboard';
+import { handleRoute } from './fixtures/utils/network';
 
 test.describe('Public Player Profile Page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route(/\/leaderboards\/players\/([^/]+)$/, async (route) => {
+      if (route.request().resourceType() === 'document') {
+        return route.fallback();
+      }
+      const url = new URL(route.request().url());
+      const playerMatch = url.pathname.match(
+        /\/leaderboards\/players\/([^/]+)$/,
+      );
+      const id = playerMatch ? decodeURIComponent(playerMatch[1] ?? '') : 'p_1';
+      await handleRoute(route, getMockPlayer(id));
+    });
+  });
   test('renders player profile with stats overview, favorite games, and match history', async ({
     page,
   }) => {
