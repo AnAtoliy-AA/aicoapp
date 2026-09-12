@@ -7,7 +7,7 @@ import {
   getRewardForLevel,
 } from '@/shared/lib/level-rewards';
 import { useLevelUpModalStore } from '../store/levelUpModalStore';
-import { getLevelRewardsStatusAction } from '../server/level-rewards.actions';
+import { getLevelRewardsStatus } from '../api/level-rewards.api';
 import { LevelUpModal } from './LevelUpModal';
 
 const LAST_SEEN_LEVEL_KEY = 'arcadeum_last_seen_level';
@@ -39,16 +39,16 @@ export function LevelUpModalHost() {
 
     if (!checkedRef.current) {
       checkedRef.current = true;
-      getLevelRewardsStatusAction()
+      getLevelRewardsStatus(snapshot.accessToken)
         .then((res) => {
-          if (res.ok && res.data.unclaimedLevels.length > 0) {
+          if (res.unclaimedLevels.length > 0) {
             const latestUnclaimed =
-              res.data.unclaimedLevels[res.data.unclaimedLevels.length - 1];
+              res.unclaimedLevels[res.unclaimedLevels.length - 1];
             const badge =
-              res.data.pendingBadges.length > 0
-                ? res.data.pendingBadges[res.data.pendingBadges.length - 1]
+              res.pendingBadges.length > 0
+                ? res.pendingBadges[res.pendingBadges.length - 1]
                 : null;
-            openModal(latestUnclaimed, res.data.pendingCoins, badge);
+            openModal(latestUnclaimed, res.pendingCoins, badge);
           }
         })
         .catch(() => {});

@@ -10,7 +10,8 @@ test.describe('Level Badge Rewards', () => {
   test.beforeEach(async ({ page }) => {
     await mockSession(page, {
       xp: 250,
-      role: 'user',
+      level: 5,
+      role: 'free',
     });
 
     await page.route('**/games/stats', async (route) => {

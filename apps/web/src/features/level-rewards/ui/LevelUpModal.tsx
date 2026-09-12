@@ -7,12 +7,14 @@ import {
   useTranslation,
   type TranslationKey,
 } from '@/shared/lib/useTranslation';
+import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { getRewardForLevel } from '@/shared/lib/level-rewards';
 import { useLevelUpModalStore } from '../store/levelUpModalStore';
-import { claimLevelRewardsAction } from '../server/level-rewards.actions';
+import { claimLevelRewards } from '../api/level-rewards.api';
 
 export function LevelUpModal() {
   const { t } = useTranslation();
+  const { snapshot } = useSessionTokens();
   const {
     isOpen,
     level,
@@ -31,14 +33,12 @@ export function LevelUpModal() {
     if (isClaiming || isClaimed) return;
     setClaiming(true);
     try {
-      const res = await claimLevelRewardsAction();
-      if (res.ok) {
-        setClaimed(true);
-      }
+      await claimLevelRewards(snapshot.accessToken);
+      setClaimed(true);
     } finally {
       setClaiming(false);
     }
-  }, [isClaiming, isClaimed, setClaiming, setClaimed]);
+  }, [isClaiming, isClaimed, setClaiming, setClaimed, snapshot.accessToken]);
 
   if (!isOpen) return null;
 

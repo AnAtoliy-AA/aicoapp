@@ -5,8 +5,9 @@ import { useLevelUpModalStore } from '../store/levelUpModalStore';
 
 const mockClaimAction = vi.fn();
 
-vi.mock('../server/level-rewards.actions', () => ({
-  claimLevelRewardsAction: () => mockClaimAction(),
+vi.mock('../api/level-rewards.api', () => ({
+  claimLevelRewards: () => mockClaimAction(),
+  getLevelRewardsStatus: vi.fn(),
 }));
 
 vi.mock('@/shared/lib/useTranslation', () => ({
