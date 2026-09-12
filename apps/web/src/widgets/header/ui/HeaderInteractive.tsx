@@ -1,40 +1,19 @@
 'use client';
 
 import { useMemo, useEffect } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '@/shared/lib/useTranslation';
 import { useRoutes } from '@/shared/config/useRoutes';
 import { usePendingFriendRequestCount } from '@/shared/hooks/usePendingFriendRequestCount';
 import { getNotificationsSocket } from '@/shared/lib/socket';
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
-import { appConfig } from '@/shared/config/app-config';
 import { Button } from '@arcadeum/ui/components/Button/Button';
 import { LinkButton } from '@arcadeum/ui/components/Button/LinkButton';
 import {
   MenuIcon,
   CloseIcon,
   GiftIcon,
-  DiscordIcon,
 } from '@arcadeum/ui/components/Icons/index';
-
-const GearIcon = ({ size = 20 }: { size?: number }) => (
-  <span className="gear-icon-wrapper">
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  </span>
-);
 import { MobileLoginIndicator } from '@arcadeum/ui/components/MobileLoginIndicator/MobileLoginIndicator';
 import ProfileMenu from '@/widgets/header/ui/ProfileMenu';
 import dynamic from 'next/dynamic';
@@ -155,39 +134,14 @@ export function HeaderInteractive({
               <HeaderMobileHidden>{balanceChip}</HeaderMobileHidden>
             )}
 
-            {isAuthenticated && (
+            {!isAuthenticated && (
               <HeaderMobileHidden>
-                <Link
-                  href={routes.rewards}
-                  data-testid="header-streak-badge"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-semibold hover:bg-amber-500/20 transition-all"
-                  aria-label="Daily Streak & Rewards"
-                >
-                  <span aria-hidden="true">🔥</span>
-                  <span>Streak</span>
-                </Link>
+                <LanguageSwitcher
+                  data-testid="header-language-switcher"
+                  className="header-language-switcher"
+                />
               </HeaderMobileHidden>
             )}
-
-            <HeaderMobileHidden>
-              <a
-                href={appConfig.social.discord ?? 'https://discord.gg/arcadeum'}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="header-discord-link"
-                className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 hover:text-white transition-all"
-                aria-label={t('navigation.discordCommunity')}
-              >
-                <DiscordIcon size={16} />
-              </a>
-            </HeaderMobileHidden>
-
-            <HeaderMobileHidden>
-              <LanguageSwitcher
-                data-testid="header-language-switcher"
-                className="header-language-switcher"
-              />
-            </HeaderMobileHidden>
 
             {isAuthenticated && (
               <HeaderMobileHidden>
@@ -195,30 +149,12 @@ export function HeaderInteractive({
               </HeaderMobileHidden>
             )}
 
-            {isAuthenticated && displayName && (
-              <HeaderMobileHidden>
-                <ProfileMenu />
-              </HeaderMobileHidden>
-            )}
+            <HeaderMobileHidden>
+              <ProfileMenu />
+            </HeaderMobileHidden>
 
             {!isAuthenticated && (
               <DesktopOnly>
-                <Link
-                  href={routes.settings}
-                  aria-label={t('navigation.settingsTab')}
-                  className="inline-flex no-underline"
-                  data-testid="desktop-settings-button"
-                >
-                  <Button
-                    variant="icon"
-                    size="md"
-                    aria-label={t('navigation.settingsTab')}
-                    tabIndex={-1}
-                    className="hover:-translate-y-[2px] hover:scale-[1.1] hover:bg-[rgba(255,255,255,0.15)] hover:border-[rgba(255,255,255,0.25)]"
-                  >
-                    <GearIcon size={20} />
-                  </Button>
-                </Link>
                 <LinkButton
                   variant="primary"
                   size="sm"

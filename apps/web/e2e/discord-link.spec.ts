@@ -4,12 +4,15 @@ import { test, navigateTo } from './fixtures/test-utils';
 test.describe('Discord Links', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('desktop header should render discord link with correct attributes', async ({
+  test('profile menu should render discord link with correct attributes', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await navigateTo(page, '/');
-    const discordLink = page.getByTestId('header-discord-link');
+    await expect(page.getByTestId('header-discord-link')).toHaveCount(0);
+    const profileMenu = page.getByTestId('profile-menu');
+    await profileMenu.click();
+    const discordLink = page.getByTestId('profile-discord-link');
     await expect(discordLink).toBeVisible();
     await expect(discordLink).toHaveAttribute('href', /discord\.(gg|com)/);
     await expect(discordLink).toHaveAttribute('target', '_blank');
