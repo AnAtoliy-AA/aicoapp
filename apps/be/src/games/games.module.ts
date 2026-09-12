@@ -143,6 +143,7 @@ import { GameRuleVisibilityModule } from '../admin/game-visibility/game-rule-vis
 import { BattlePassModule } from '../battle-pass/battle-pass.module';
 import { XpModule } from '../xp/xp.module';
 import { FriendsModule } from '../friends/friends.module';
+import { ActivityFeedModule } from './activity-feed/activity-feed.module';
 import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
 // Note: GamesModule ↔ LeaderboardsModule is a circular dep
 // (LeaderboardsService.markInMatch is called from GamesService when matches
@@ -209,6 +210,7 @@ import { resolveJwtSecret } from '../common/utils/jwt-secret.util';
     BattlePassModule,
     XpModule,
     FriendsModule,
+    ActivityFeedModule,
     ChessStockfishModule,
     ChessPuzzlesModule,
     ChessOpeningsModule,

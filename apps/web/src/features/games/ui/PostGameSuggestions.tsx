@@ -94,12 +94,7 @@ export function PostGameSuggestions({
     if (!roomId) return;
 
     const { origin } = window.location;
-    const params = new URLSearchParams({
-      utm_source: 'result_share',
-      utm_medium: 'social',
-      utm_campaign: 'post_game',
-    });
-    const shareUrl = `${origin}/${locale}/games/${gameSlug}?${params.toString()}`;
+    const shareUrl = `${origin}/${locale}/results/${roomId}`;
 
     await shareLink({
       title: `Play ${gameName} on Arcadeum`,

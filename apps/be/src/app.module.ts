@@ -28,6 +28,7 @@ import { BattlePassModule } from './battle-pass/battle-pass.module';
 import { SupportModule } from './support/support.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { BulkRewardsModule } from './bulk-rewards/bulk-rewards.module';
+import { ActivityFeedModule } from './games/activity-feed/activity-feed.module';
 import { FriendsModule } from './friends/friends.module';
 import { ClansModule } from './clans/clans.module';
 import { EventsModule } from './events/events.module';
@@ -79,6 +80,7 @@ import { GlobalThrottlerGuard } from './common/guards/global-throttler.guard';
     ShopModule,
     BattlePassModule,
     NotificationsModule,
+    ActivityFeedModule,
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       { name: 'default', ttl: 60_000, limit: 100 },
