@@ -78,7 +78,7 @@ export async function navigateTo(
         console.warn(
           `Detected issue (Hydration: ${hydrationError}) on ${path}, reloading... (Attempt ${attempt + 1})`,
         );
-        await page.reload({ waitUntil: 'load' });
+        await page.reload({ waitUntil: 'commit' });
       }
 
       // Robust hydration check: wait for either data-hydrated or data-app-ready
