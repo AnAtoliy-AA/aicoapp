@@ -86,4 +86,36 @@ test.describe('Level Badge Rewards', () => {
     await expect(page.getByTestId('shop-buy-badge-newcomer')).toHaveCount(0);
     await expect(page.getByTestId('shop-buy-badge-scout')).toHaveCount(0);
   });
+
+  test('milestone badges showcase is rendered and supports equipping unlocked badges', async ({
+    page,
+  }) => {
+    await page.route('**/shop/equip', async (route) => {
+      await handleRoute(route, {
+        avatar: null,
+        badge: 'badge-scout',
+        name_color: null,
+        frame: null,
+        aura: null,
+        banner: null,
+      });
+    });
+
+    await navigateTo(page, '/stats');
+
+    const myStatsTab = page.getByTestId('stats-tab-my-stats');
+    await expect(myStatsTab).toBeVisible();
+    if ((await myStatsTab.getAttribute('aria-pressed')) !== 'true') {
+      await myStatsTab.click({ force: true });
+    }
+
+    await expect(page.getByTestId('milestone-badge-card-1')).toBeVisible();
+    await expect(page.getByTestId('milestone-badge-card-5')).toBeVisible();
+    await expect(page.getByTestId('milestone-badge-card-10')).toBeVisible();
+
+    const action5 = page.getByTestId('badge-action-5');
+    await expect(action5).toBeVisible();
+    await action5.click();
+    await expect(page.getByTestId('badge-action-5')).toHaveText(/equipped/i);
+  });
 });

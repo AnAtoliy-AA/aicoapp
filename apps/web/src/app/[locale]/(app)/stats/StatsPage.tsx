@@ -31,6 +31,7 @@ import {
   Leaderboard,
 } from './components';
 import { LevelProgression } from './components/LevelProgression';
+import { BadgesShowcase } from './components/BadgesShowcase';
 import { getAllSupportedGameIds } from '@/features/games/lib/gameIdMapping';
 import type { PlayerStats, LeaderboardResponse } from '@/features/history/api';
 
@@ -260,6 +261,7 @@ export default function StatsPage({
                 level={snapshot.level}
                 xp={snapshot.xp}
               />
+              <BadgesShowcase currentLevel={snapshot.level} />
               <LevelProgression currentLevel={snapshot.level} />
               <GameBreakdown stats={stats} loading={loading} />
             </>

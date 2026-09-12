@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, type ComponentType } from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { logoutSession } from '@/entities/session/api/authApi';
@@ -134,34 +135,42 @@ export default function MobileMenu({
   return (
     <MobileNav data-mobile-menu data-testid="mobile-nav">
       {isAuthenticated && displayName ? (
-        <MobileUserCard data-testid="mobile-user-card">
-          <EquippedPlayerAvatar
-            name={displayName}
-            size="md"
-            equippedAvatarId={snapshot.equippedAvatarId}
-            equippedBadgeId={snapshot.equippedBadgeId}
-            equippedNameColorId={snapshot.equippedNameColorId}
-            equippedFrameId={snapshot.equippedFrameId}
-            equippedAuraId={snapshot.equippedAuraId}
-            equippedBannerId={snapshot.equippedBannerId}
-            equippedGameSkinId={snapshot.equippedGameSkinId}
-          />
-          <div className="flex min-w-[120px] flex-1 flex-col gap-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <UserNameEllipsis>{displayName}</UserNameEllipsis>
-              {role !== 'free' && (
-                <RoleBadge role={role}>{t(`common.roles.${role}`)}</RoleBadge>
-              )}
-            </div>
-            {cosmeticBadges?.length ? (
-              <div className="flex flex-wrap gap-1">
-                {cosmeticBadges.map((badgeId) => (
-                  <CosmeticBadge key={badgeId} badgeId={badgeId} />
-                ))}
+        <Link
+          href={
+            snapshot.userId ? routes.profile(snapshot.userId) : routes.settings
+          }
+          className="block link-no-decoration"
+          data-testid="mobile-user-card-link"
+        >
+          <MobileUserCard data-testid="mobile-user-card">
+            <EquippedPlayerAvatar
+              name={displayName}
+              size="md"
+              equippedAvatarId={snapshot.equippedAvatarId}
+              equippedBadgeId={snapshot.equippedBadgeId}
+              equippedNameColorId={snapshot.equippedNameColorId}
+              equippedFrameId={snapshot.equippedFrameId}
+              equippedAuraId={snapshot.equippedAuraId}
+              equippedBannerId={snapshot.equippedBannerId}
+              equippedGameSkinId={snapshot.equippedGameSkinId}
+            />
+            <div className="flex min-w-[120px] flex-1 flex-col gap-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <UserNameEllipsis>{displayName}</UserNameEllipsis>
+                {role !== 'free' && (
+                  <RoleBadge role={role}>{t(`common.roles.${role}`)}</RoleBadge>
+                )}
               </div>
-            ) : null}
-          </div>
-        </MobileUserCard>
+              {cosmeticBadges?.length ? (
+                <div className="flex flex-wrap gap-1">
+                  {cosmeticBadges.map((badgeId) => (
+                    <CosmeticBadge key={badgeId} badgeId={badgeId} />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </MobileUserCard>
+        </Link>
       ) : (
         <LinkButton
           href={routes.auth}

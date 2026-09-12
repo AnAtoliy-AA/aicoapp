@@ -4,15 +4,106 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Card } from '@arcadeum/ui';
 import { xpForLevel } from '@/shared/lib/xp-level';
-import { getRewardForLevel } from '@/shared/lib/level-rewards';
+import {
+  getRewardForLevel,
+  type LevelBadgeReward,
+} from '@/shared/lib/level-rewards';
 import {
   useTranslation,
   type TranslationKey,
 } from '@/shared/lib/useTranslation';
+import { useMilestoneBadgeEquip } from '../hooks/useMilestoneBadgeEquip';
+
+interface LevelRewardCellProps {
+  reward: LevelBadgeReward;
+  level: number;
+  isUnlocked: boolean;
+  isLoggedIn: boolean;
+  equippedBadgeId?: string | null;
+  pendingBadgeId: string | null;
+  handleEquip: (badgeId: string) => Promise<void>;
+  handleUnequip: () => Promise<void>;
+}
+
+function LevelRewardCell({
+  reward,
+  level,
+  isUnlocked,
+  isLoggedIn,
+  equippedBadgeId,
+  pendingBadgeId,
+  handleEquip,
+  handleUnequip,
+}: LevelRewardCellProps) {
+  const { t } = useTranslation();
+  const isEquipped = equippedBadgeId === reward.badgeId;
+
+  return (
+    <div
+      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[var(--borderColor)] bg-[var(--surfaceSecondary)]"
+      data-testid={`level-reward-${level}`}
+    >
+      <Image
+        src={reward.assetUrl}
+        alt={reward.badgeId}
+        width={18}
+        height={18}
+        className="object-contain"
+      />
+      <span className="text-[11px] font-medium text-[var(--color)]">
+        {t(`pages.shop.${reward.nameKey}` as TranslationKey)}
+      </span>
+      {isUnlocked ? (
+        <>
+          <span className="text-[9px] px-1 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+            {t('stats.unlocked' as TranslationKey)}
+          </span>
+          {isLoggedIn &&
+            (isEquipped ? (
+              <button
+                type="button"
+                disabled={pendingBadgeId === 'unequip'}
+                onClick={handleUnequip}
+                data-testid={`level-equip-btn-${level}`}
+                className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-semibold hover:bg-emerald-500/40 cursor-pointer transition-colors"
+              >
+                {pendingBadgeId === 'unequip'
+                  ? '...'
+                  : `✓ ${t('stats.equipped' as TranslationKey)}`}
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={pendingBadgeId === reward.badgeId}
+                onClick={() => handleEquip(reward.badgeId)}
+                data-testid={`level-equip-btn-${level}`}
+                className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--primary)] text-white font-semibold hover:opacity-90 cursor-pointer transition-opacity"
+              >
+                {pendingBadgeId === reward.badgeId
+                  ? '...'
+                  : t('stats.equip' as TranslationKey)}
+              </button>
+            ))}
+        </>
+      ) : (
+        <span className="text-[9px] px-1 rounded bg-[var(--surfaceTertiary)] text-[var(--textSecondary)]">
+          {t('stats.locked' as TranslationKey)}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export function LevelProgression({ currentLevel }: { currentLevel: number }) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
+  const {
+    equippedBadgeId,
+    pendingBadgeId,
+    handleEquip,
+    handleUnequip,
+    isLoggedIn,
+  } = useMilestoneBadgeEquip();
 
   const rows = Array.from({ length: 99 }, (_, i) => {
     const level = i + 1;
@@ -87,34 +178,16 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
                 <td className="text-right py-1">{row.gap.toLocaleString()}</td>
                 <td className="py-1 pl-4">
                   {row.reward ? (
-                    <div
-                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[var(--borderColor)] bg-[var(--surfaceSecondary)]"
-                      data-testid={`level-reward-${row.level}`}
-                    >
-                      <Image
-                        src={row.reward.assetUrl}
-                        alt={row.reward.badgeId}
-                        width={18}
-                        height={18}
-                        className="object-contain"
-                      />
-                      <span className="text-[11px] font-medium text-[var(--color)]">
-                        {t(
-                          `pages.shop.${row.reward.nameKey}` as TranslationKey,
-                        )}
-                      </span>
-                      <span
-                        className={
-                          row.isPast || row.isCurrent
-                            ? 'text-[9px] px-1 rounded bg-emerald-500/20 text-emerald-300 font-semibold'
-                            : 'text-[9px] px-1 rounded bg-[var(--surfaceTertiary)] text-[var(--textSecondary)]'
-                        }
-                      >
-                        {row.isPast || row.isCurrent
-                          ? t('stats.unlocked' as TranslationKey)
-                          : t('stats.locked' as TranslationKey)}
-                      </span>
-                    </div>
+                    <LevelRewardCell
+                      reward={row.reward}
+                      level={row.level}
+                      isUnlocked={row.isPast || row.isCurrent}
+                      isLoggedIn={isLoggedIn}
+                      equippedBadgeId={equippedBadgeId}
+                      pendingBadgeId={pendingBadgeId}
+                      handleEquip={handleEquip}
+                      handleUnequip={handleUnequip}
+                    />
                   ) : (
                     <span className="text-[var(--textTertiary)] opacity-30">
                       —

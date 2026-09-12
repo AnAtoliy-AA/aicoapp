@@ -36,6 +36,13 @@ export const en = {
   youBadge: 'you',
   unlocked: 'Unlocked',
   locked: 'Locked',
+  milestoneBadges: 'Milestone Badges',
+  milestoneBadgesSubtitle:
+    'Earn exclusive badges at level milestones and equip them to your profile.',
+  equip: 'Equip',
+  equipped: 'Equipped',
+  unequip: 'Unequip',
+  lockedLevel: 'Requires Lv. {level}',
   // Game breakdown
   gameBreakdownTitle: 'Game Breakdown',
   game: 'Game',
@@ -88,6 +95,13 @@ export const es = {
   youBadge: 'tú',
   unlocked: 'Desbloqueado',
   locked: 'Bloqueado',
+  milestoneBadges: 'Insignias de Hito',
+  milestoneBadgesSubtitle:
+    'Gana insignias exclusivas en los hitos de nivel y equípalas en tu perfil.',
+  equip: 'Equipar',
+  equipped: 'Equipado',
+  unequip: 'Desequipar',
+  lockedLevel: 'Requiere Nv. {level}',
   // Game breakdown
   gameBreakdownTitle: 'Desglose por Juego',
   game: 'Juego',
@@ -140,6 +154,13 @@ export const fr = {
   youBadge: 'vous',
   unlocked: 'Débloqué',
   locked: 'Verrouillé',
+  milestoneBadges: 'Badges de Palier',
+  milestoneBadgesSubtitle:
+    'Gagnez des badges exclusifs aux paliers de niveau et équipez-les sur votre profil.',
+  equip: 'Équiper',
+  equipped: 'Équipé',
+  unequip: 'Déséquiper',
+  lockedLevel: 'Niveau {level} requis',
   // Game breakdown
   gameBreakdownTitle: 'Détail par Jeu',
   game: 'Jeu',
@@ -192,6 +213,13 @@ export const ru = {
   youBadge: 'вы',
   unlocked: 'Разблокировано',
   locked: 'Заблокировано',
+  milestoneBadges: 'Значки за уровни',
+  milestoneBadgesSubtitle:
+    'Получайте эксклюзивные значки за уровни и надевайте их в профиле.',
+  equip: 'Надеть',
+  equipped: 'Надето',
+  unequip: 'Снять',
+  lockedLevel: 'Требуется ур. {level}',
   // Game breakdown
   gameBreakdownTitle: 'Детализация по играм',
   game: 'Игра',
@@ -244,6 +272,13 @@ export const by = {
   youBadge: 'вы',
   unlocked: 'Разблакіравана',
   locked: 'Заблакіравана',
+  milestoneBadges: 'Значкі за ўзроўні',
+  milestoneBadgesSubtitle:
+    'Атрымлівайце эксклюзіўныя значкі за ўзроўні і надзявайце іх у профілі.',
+  equip: 'Надзець',
+  equipped: 'Надзета',
+  unequip: 'Зняць',
+  lockedLevel: 'Патрабуецца ўзр. {level}',
   // Game breakdown
   gameBreakdownTitle: 'Дэталізацыя па гульнях',
   game: 'Гульня',
