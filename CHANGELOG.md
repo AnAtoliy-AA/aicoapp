@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.40] - 2026-09-12
+
+### Added
+- optimize LCP and SSR on chess coordinate trainer (ARC-header-auth-declutter)
+- declutter header and improve profile button UI/UX
+
+### Fixed
+- keep quickplay in lobby and prevent duplicate bots
+
+
 ## [1.29.39] - 2026-09-12
 
 ### Added
