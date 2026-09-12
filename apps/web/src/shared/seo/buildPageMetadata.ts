@@ -88,8 +88,7 @@ const DEFAULT_PATH_BUILDERS: Partial<Record<SeoPageKey, PathBuilder>> = {
   developers: (r) => r.developers,
   features: (r) => r.features,
   admin: (r) => r.admin,
-  // playerProfile is dynamic — callers must pass `pathFor`, but we map it
-  // here to the locale root so hreflang at least covers all locales.
+  dailyChessPuzzle: (r) => `${r.chess}/puzzles/daily`,
   playerProfile: (r) => r.home,
   notFound: (r) => r.home,
 };

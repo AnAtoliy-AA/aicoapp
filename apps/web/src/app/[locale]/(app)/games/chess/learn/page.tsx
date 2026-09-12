@@ -1,8 +1,9 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
-const CoordinateTrainer = dynamic(
+
+const CoordinateTrainer = dynamicImport(
   () => import('@/widgets/BoardGames/ChessGame/ui/CoordinateTrainer').then((m) => m.CoordinateTrainer),
   {
     ssr: false,

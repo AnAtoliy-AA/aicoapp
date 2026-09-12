@@ -59,64 +59,7 @@ export const frMessages = {
       setup:
         'Chaque joueur commence avec une carte Désamorçage et une main de cartes aléatoires. Le paquet contient des cartes Explosives... attention !',
     },
-    variants: {
-      cyberpunk: {
-        name: 'Court-circuit',
-        description: 'Des hackers cyberpunk évitent la surcharge du système',
-      },
-      underwater: {
-        name: 'Pression Profonde',
-        description: 'Horreur sous-marine dans un sous-marin qui fuit',
-      },
-      crime: {
-        name: 'Le Casse',
-        description: 'Thème noir avec descentes de police et évasions',
-      },
-      horror: {
-        name: 'Banquet Maudit',
-        description: 'Thème d’horreur sociale à la fête d’un mage noir',
-      },
-      adventure: {
-        name: 'Le Temple Antique',
-        description: 'Survie dans une aventure dans un temple mystérieux',
-      },
-      'high-altitude-hike': {
-        name: 'Randonnée en Montagne',
-        description: 'Survie dans une aventure en échappant à une avalanche',
-      },
-      galaxy: {
-        name: 'Odyssée Cosmique',
-        description:
-          "Explorez les confins de l'espace à bord d'un vaisseau high-tech",
-      },
-      fantasy: {
-        name: 'Repaire du Dragon',
-        description:
-          'Un monde de magie, de bêtes mythiques et de légendes anciennes',
-      },
-      western: {
-        name: 'Vallée Poussiéreuse',
-        description:
-          "La frontière sauvage des hors-la-loi, shérifs et ruées vers l'or",
-      },
-      egypt: {
-        name: 'Malédiction du Pharaon',
-        description: 'Pyramides, chambres cachées et mystères du Nil',
-      },
-      steampunk: {
-        name: 'Machine à Vapeur',
-        description:
-          "Engrenages, mécanismes d'horlogerie et merveilles industrielles de l'ère victorienne",
-      },
-      zen: {
-        name: 'Zen au Clair de Lune',
-        description: 'Sérénité, discipline et la voie du samouraï',
-      },
-      random: {
-        name: 'Thème Aléatoire',
-        description: 'Surprenez-moi avec un thème au hasard !',
-      },
-    },
+    variants: cardVariants,
   },
   table: {
     cards: {

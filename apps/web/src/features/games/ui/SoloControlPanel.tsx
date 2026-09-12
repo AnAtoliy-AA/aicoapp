@@ -85,7 +85,8 @@ export function SoloControlPanel({
           className={cx(
             'inline-flex items-center justify-center gap-1 rounded-lg border px-2 h-7.5 text-xs font-semibold transition-colors shadow-xs active:scale-95 select-none',
             autoPauseEnabled
-              ? 'border-[var(--primary)]/40 bg-[var(--primary)]/15 text-[var(--color)] hover:bg-[var(--primary)]/25'              : 'border-[var(--glassBorder)] bg-[var(--backgroundHover)] text-[var(--textSecondary)] hover:text-[var(--color)] hover:border-[var(--glassBorderStrong)]',
+              ? 'border-[var(--primary)]/40 bg-[var(--primary)]/15 text-[var(--color)] hover:bg-[var(--primary)]/25'
+              : 'border-[var(--glassBorder)] bg-[var(--backgroundHover)] text-[var(--textSecondary)] hover:text-[var(--color)] hover:border-[var(--glassBorderStrong)]',
           )}
         >
           <span>⏱️</span>
@@ -158,7 +159,7 @@ export function SoloControlPanel({
             className={cx(
               'inline-flex items-center justify-center gap-1 rounded-lg border px-2 h-7.5 text-xs font-semibold transition-colors shadow-xs active:scale-95 select-none',
               showLeaderboard
-              ? 'border-[var(--primary)]/40 bg-[var(--primary)]/15 text-[var(--color)] hover:bg-[var(--primary)]/25'
+                ? 'border-[var(--primary)]/40 bg-[var(--primary)]/15 text-[var(--color)] hover:bg-[var(--primary)]/25'
                 : 'border-[var(--glassBorder)] bg-[var(--backgroundHover)] text-[var(--textSecondary)] hover:text-[var(--color)] hover:border-[var(--glassBorderStrong)]',
             )}
           >

@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { DailyChallengesService } from '../daily-challenges/daily-challenges.service';
 import { AchievementsService } from '../achievements/achievements.service';
 import { WalletService } from '../wallet/wallet.service';
@@ -8,6 +10,9 @@ import { GameSessionsService } from './sessions/game-sessions.service';
 import { PlayerStatsService } from './player-stats.service';
 import { BattlePassService } from '../battle-pass/battle-pass.service';
 import { ChessProfilesService } from './chess/profiles/chess-profiles.service';
+import { XpSettingsService } from '../xp/xp-settings.service';
+import { User } from '../auth/schemas/user.schema';
+import { OCI_CONNECTION } from '../common/providers/mongo-connections.provider';
 
 @Injectable()
 export class GamePostMatchService {
@@ -22,6 +27,9 @@ export class GamePostMatchService {
     private readonly playerStats: PlayerStatsService,
     private readonly battlePass: BattlePassService,
     private readonly chessProfiles: ChessProfilesService,
+    private readonly xpSettings: XpSettingsService,
+    @InjectModel(User.name, OCI_CONNECTION)
+    private readonly userModel: Model<User>,
   ) {}
 
   async onGameCompleted(
@@ -82,6 +90,14 @@ export class GamePostMatchService {
       } catch (err) {
         this.logger.warn(`Chess Elo update failed: ${(err as Error).message}`);
       }
+    }
+
+    try {
+      await this.awardMultiplayerXp(playerIds, winners, gameId);
+    } catch (err) {
+      this.logger.warn(
+        `Multiplayer XP award failed: ${(err as Error).message}`,
+      );
     }
   }
 
@@ -159,6 +175,37 @@ export class GamePostMatchService {
         'won',
         winnerChange,
       );
+    }
+  }
+
+  private async awardMultiplayerXp(
+    playerIds: string[],
+    winners: string[],
+    gameId: string,
+  ): Promise<void> {
+    const humanIds = playerIds.filter((id) => !id.startsWith('bot-'));
+    if (humanIds.length === 0) return;
+
+    const hasBots = playerIds.some((id) => id.startsWith('bot-'));
+
+    for (const userId of humanIds) {
+      const isWinner = winners.includes(userId);
+      const isDraw = winners.length === 0;
+      const result: 'won' | 'lost' | 'draw' = isWinner
+        ? 'won'
+        : isDraw
+          ? 'draw'
+          : 'lost';
+
+      const amount = await this.xpSettings.getXpReward(
+        gameId,
+        result,
+        false,
+        hasBots,
+      );
+      if (amount > 0) {
+        await this.xpSettings.awardXp(userId, this.userModel, amount);
+      }
     }
   }
 

@@ -29,10 +29,14 @@ const config = {
     },
     assert: {
       assertions: {
+        // Do NOT decrease — target is 95. Flaky marginal failures (e.g. 89) should be investigated, not threshold-lowered.
         'categories:performance': ['error', { minValue: 90, maxError: 0 }],
         'categories:accessibility': ['error', { minValue: 100, maxError: 0 }],
         'categories:seo': ['error', { minValue: 100, maxError: 0 }],
         'categories:best-practices': ['error', { minValue: 100, maxError: 0 }],
+        'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
+        'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
+        'total-blocking-time': ['warn', { maxNumericValue: 200 }],
       },
     },
     upload: {

@@ -137,6 +137,22 @@ test.describe('Game Landing SEO, AEO, GEO & Social Sharing', () => {
     const copyBtn = modalContent.getByRole('button', { name: 'Copy Link' });
     await expect(copyBtn).toBeVisible();
 
+    const shareAppsBtn = modalContent.getByTestId('share-via-apps-button');
+    await expect(shareAppsBtn).toBeVisible();
+    await shareAppsBtn.click();
+
+    const popover = modalContent.getByTestId('share-game-popover');
+    await expect(popover).toBeVisible();
+    await expect(modalContent.getByTestId('share-via-telegram')).toBeVisible();
+    await expect(modalContent.getByTestId('share-via-whatsapp')).toBeVisible();
+    await expect(modalContent.getByTestId('share-via-twitter')).toBeVisible();
+    await expect(modalContent.getByTestId('share-via-facebook')).toBeVisible();
+    await expect(modalContent.getByTestId('share-via-copy')).toBeVisible();
+    await expect(modalContent.getByTestId('share-via-qr')).toBeVisible();
+
+    await shareAppsBtn.click();
+    await expect(popover).not.toBeVisible();
+
     const closeBtn = modalContent.getByRole('button', {
       name: 'Close',
       exact: true,

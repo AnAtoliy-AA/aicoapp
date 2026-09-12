@@ -237,6 +237,10 @@ export const en = {
     title: `Player profile · ${APP}`,
     description: `View this player's ${APP} rank, stats, and recent matches.`,
   },
+  dailyChessPuzzle: {
+    title: `Daily Chess Puzzle · Free Online Daily Challenge · ${APP}`,
+    description: `Solve today's free daily chess puzzle on ${APP}. A new tactical puzzle every 24 hours with daily streak tracking, rating progress, and instant browser play.`,
+  },
   notFound: {
     title: `Page not found · ${APP}`,
     description: `The page you're looking for doesn't exist on ${APP}. Browse our games or head back home.`,

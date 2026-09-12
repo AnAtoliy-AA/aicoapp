@@ -34,6 +34,8 @@ export const buildRoutes = (locale: Locale) => {
     cascadeLanding: `/${locale}/${s('games')}/cascade`,
     chess: `/${locale}/${s('games')}/chess`,
     chessLanding: `/${locale}/${s('games')}/chess`,
+    chessPuzzles: `/${locale}/${s('games')}/chess/puzzles`,
+    chessDailyPuzzle: `/${locale}/${s('games')}/chess/puzzles/daily`,
     checkers: `/${locale}/${s('games')}/checkers`,
     checkersLanding: `/${locale}/${s('games')}/checkers`,
     catDash: `/${locale}/${s('games')}/cat-dash`,
@@ -72,6 +74,8 @@ export const buildRoutes = (locale: Locale) => {
     stats: `/${locale}/${s('stats')}`,
     referrals: `/${locale}/${s('referrals')}`,
     profile: (userId: string) => `/${locale}/${s('profile')}/${userId}`,
+    playerProfile: (id: string) =>
+      `/${locale}/${s('players')}/${encodeURIComponent(id)}`,
 
     // Admin
     admin: `/${locale}/${s('admin')}`,

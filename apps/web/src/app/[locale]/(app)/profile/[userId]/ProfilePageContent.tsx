@@ -15,6 +15,7 @@ import {
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
 import { useRoutes } from '@/shared/config/useRoutes';
 import { useTranslation } from '@/shared/lib/useTranslation';
+import { xpProgress, toRoman } from '@/shared/lib/xp-level';
 import {
   getUserProfile,
   getUserFriends,
@@ -175,6 +176,19 @@ export default function ProfilePageContent() {
                   <Badge variant="info" size="sm">
                     {profile.role}
                   </Badge>
+                  {profile.prestige > 0 && (
+                    <Badge variant="warning" size="sm">
+                      P{toRoman(profile.prestige)}
+                    </Badge>
+                  )}
+                  {(() => {
+                    const { level } = xpProgress(profile.xp ?? 0);
+                    return (
+                      <Badge variant="info" size="sm">
+                        Lv. {level}
+                      </Badge>
+                    );
+                  })()}
                   <Badge variant="neutral" size="sm">
                     XP: {profile.xp?.toLocaleString() ?? '0'}
                   </Badge>

@@ -17,6 +17,9 @@ apps/web/public/shop/
 apps/web/public/music/
 apps/web/public/sounds/
 
+# Source artwork used only by build scripts (spritesheet generation)
+assets/
+
 # Apps not deployed on Vercel
 apps/be/
 apps/mobile/

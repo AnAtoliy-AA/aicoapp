@@ -8,12 +8,14 @@ import { useRoutes } from '@/shared/config/useRoutes';
 import { usePendingFriendRequestCount } from '@/shared/hooks/usePendingFriendRequestCount';
 import { getNotificationsSocket } from '@/shared/lib/socket';
 import { useSessionTokens } from '@/entities/session/model/useSessionTokens';
+import { appConfig } from '@/shared/config/app-config';
 import { Button } from '@arcadeum/ui/components/Button/Button';
 import { LinkButton } from '@arcadeum/ui/components/Button/LinkButton';
 import {
   MenuIcon,
   CloseIcon,
   GiftIcon,
+  DiscordIcon,
 } from '@arcadeum/ui/components/Icons/index';
 
 const GearIcon = ({ size = 20 }: { size?: number }) => (
@@ -96,6 +98,7 @@ export function HeaderInteractive({
     () => [
       { href: routes.games, label: t('navigation.gamesTab') },
       { href: routes.rooms, label: t('navigation.roomsTab') },
+      { href: routes.leaderboards, label: t('navigation.leaderboardsTab') },
       {
         href: routes.shop,
         label: t('navigation.shopTab'),
@@ -152,6 +155,33 @@ export function HeaderInteractive({
               <HeaderMobileHidden>{balanceChip}</HeaderMobileHidden>
             )}
 
+            {isAuthenticated && (
+              <HeaderMobileHidden>
+                <Link
+                  href={routes.rewards}
+                  data-testid="header-streak-badge"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-semibold hover:bg-amber-500/20 transition-all"
+                  aria-label="Daily Streak & Rewards"
+                >
+                  <span aria-hidden="true">🔥</span>
+                  <span>Streak</span>
+                </Link>
+              </HeaderMobileHidden>
+            )}
+
+            <HeaderMobileHidden>
+              <a
+                href={appConfig.social.discord ?? 'https://discord.gg/arcadeum'}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="header-discord-link"
+                className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 hover:text-white transition-all"
+                aria-label={t('navigation.discordCommunity')}
+              >
+                <DiscordIcon size={16} />
+              </a>
+            </HeaderMobileHidden>
+
             <HeaderMobileHidden>
               <LanguageSwitcher
                 data-testid="header-language-switcher"
@@ -176,7 +206,7 @@ export function HeaderInteractive({
                 <Link
                   href={routes.settings}
                   aria-label={t('navigation.settingsTab')}
-                  style={{ textDecoration: 'none', display: 'inline-flex' }}
+                  className="inline-flex no-underline"
                   data-testid="desktop-settings-button"
                 >
                   <Button

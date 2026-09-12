@@ -39,11 +39,13 @@ import {
   UserIcon,
   WalletIcon,
   PlayIcon,
+  DiscordIcon,
 } from '@arcadeum/ui/components/Icons/index';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useHeaderAuth } from './useHeaderAuth';
 import LanguagePills from './LanguagePills';
 import { usePWAOptional } from '@/features/pwa/context';
+import { canonicalKeyFor, type Locale } from '@/shared/config/locale-slugs';
 
 interface MobileMenuProps {
   navItems: Array<{
@@ -71,8 +73,13 @@ const NAV_ICON_BY_SLUG: Record<string, IconComponent> = {
 };
 
 function iconForHref(href: string): IconComponent | undefined {
-  const last = href.split('/').filter(Boolean).pop();
-  return last ? NAV_ICON_BY_SLUG[last] : undefined;
+  const parts = href.split('/').filter(Boolean);
+  const last = parts[parts.length - 1];
+  if (!last) return undefined;
+  if (NAV_ICON_BY_SLUG[last]) return NAV_ICON_BY_SLUG[last];
+  const locale = parts[0] as Locale;
+  const canonical = canonicalKeyFor(locale, last);
+  return canonical ? NAV_ICON_BY_SLUG[canonical] : undefined;
 }
 
 export default function MobileMenu({
@@ -243,6 +250,16 @@ export default function MobileMenu({
         >
           {t('common.actions.support')}
         </NavMobileLink>
+        <a
+          href={appConfig.social.discord ?? 'https://discord.gg/arcadeum'}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-testid="mobile-discord-link"
+          className="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-[16px] text-[var(--color)] hover:bg-[var(--backgroundHover)] transition-colors"
+        >
+          <DiscordIcon size={18} />
+          <span>{t('navigation.discordCommunity')}</span>
+        </a>
       </MobileSection>
 
       {isAuthenticated && (

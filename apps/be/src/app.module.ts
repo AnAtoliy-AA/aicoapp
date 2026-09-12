@@ -35,6 +35,7 @@ import { SeasonsModule } from './seasons/seasons.module';
 import { EngagementModule } from './engagement/engagement.module';
 import { SocialRewardsModule } from './social-rewards/social-rewards.module';
 import { AsyncMatchModule } from './games/async-match/async-match.module';
+import { XpModule } from './xp/xp.module';
 import { LeaguesModule } from './leagues/leagues.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -96,6 +97,7 @@ import { GlobalThrottlerGuard } from './common/guards/global-throttler.guard';
     SocialRewardsModule,
     AsyncMatchModule,
     LeaguesModule,
+    XpModule,
     MongooseModule.forRoot(resolveMongoUri(), {
       ...resolveMongoOptions(),
       connectionName: OCI_CONNECTION,
