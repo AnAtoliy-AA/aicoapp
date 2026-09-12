@@ -96,7 +96,7 @@ export function RulesModal({
   };
 
   const snakeToCamel = (str: string) =>
-    str.replace(/([-_][a-z])/g, (_group) =>
+    str.replace(/([-_][a-z0-9])/g, (_group) =>
       _group.toUpperCase().replace('-', '').replace('_', ''),
     );
 
