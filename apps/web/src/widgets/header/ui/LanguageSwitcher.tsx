@@ -46,7 +46,7 @@ export default function LanguageSwitcher({
   );
 
   return (
-    <div className={`flex items-center gap-2 md:mx-5 ${className ?? ''}`}>
+    <div className={`flex items-center gap-2 ${className ?? ''}`}>
       <Select
         value={locale}
         onValueChange={handleLocaleChange}

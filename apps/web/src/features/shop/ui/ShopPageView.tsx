@@ -127,10 +127,6 @@ export function ShopPageView({
     () => liveCatalog.filter((c) => c.category === 'avatar'),
     [liveCatalog],
   );
-  const badges = useMemo(
-    () => liveCatalog.filter((c) => c.category === 'badge'),
-    [liveCatalog],
-  );
   const nameColors = useMemo(
     () => liveCatalog.filter((c) => c.category === 'name_color'),
     [liveCatalog],
@@ -302,18 +298,6 @@ export function ShopPageView({
               inventory={inventory.items}
               equipped={inventory.equipped}
               labels={labels.row.backgrounds}
-              cardLabels={labels.card}
-              balance={balance}
-              priorityCount={2}
-              onPurchaseFallback={(item) => setPurchaseTarget(item)}
-            />
-            <ShopRow
-              id="row-badges"
-              sectionKey="badge"
-              items={badges}
-              inventory={inventory.items}
-              equipped={inventory.equipped}
-              labels={labels.row.badges}
               cardLabels={labels.card}
               balance={balance}
               priorityCount={2}

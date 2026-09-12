@@ -29,5 +29,6 @@ export const WALLET_REASONS = [
   'signup_reward',
   'social_reward',
   'streak_freeze_purchase',
+  'level_reward',
 ] as const;
 export type WalletReason = (typeof WALLET_REASONS)[number];

@@ -34,7 +34,7 @@ export function LivePulseBadge() {
         {t('home.liveBadgeOnline')}
       </span>
       {stats.activeGames > 0 && (
-        <span className="hidden items-center gap-1 border-l border-emerald-500/30 pl-2 text-[11px] text-[var(--textSecondary)] md:inline-flex">
+        <span className="hidden items-center gap-1 border-l border-emerald-500/30 pl-2 text-[11px] text-[var(--textSecondary)] 2xl:inline-flex">
           <span className="text-[var(--color)] font-bold">
             {stats.activeGames}
           </span>
