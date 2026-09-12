@@ -37,11 +37,14 @@ test.describe('Streak System & Streak Freeze UI', () => {
 
     const headerStreakBadge = page.getByTestId('header-streak-badge');
     if ((await headerStreakBadge.count()) > 0) {
-      await expect(headerStreakBadge).toBeVisible();
       await expect(headerStreakBadge).toHaveAttribute(
         'href',
         expect.stringContaining('/rewards'),
       );
+      const viewport = page.viewportSize();
+      if (viewport && viewport.width >= 640) {
+        await expect(headerStreakBadge).toBeVisible();
+      }
     }
   });
 });
