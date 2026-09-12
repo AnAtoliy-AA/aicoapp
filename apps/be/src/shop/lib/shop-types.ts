@@ -42,6 +42,7 @@ export interface ShopItemDef {
   defaultPriceAmount: number;
   defaultPriceCurrency: ShopPriceCurrency;
   starter?: boolean;
+  purchasable?: boolean;
 }
 
 export interface EffectiveShopItem extends ShopItemDef {

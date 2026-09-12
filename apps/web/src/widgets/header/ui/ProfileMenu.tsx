@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@arcadeum/ui/components/Button/Button';
 import { Divider } from '@arcadeum/ui/components/Divider/Divider';
 import { EquippedPlayerAvatar } from '@/shared/ui/PlayerAvatar';
@@ -162,8 +163,12 @@ export default function ProfileMenu() {
       </Button>
 
       <ProfileDropdownWrapper isOpen={isOpen}>
-        <div
-          className="flex items-center gap-3 px-5 pb-3"
+        <Link
+          href={
+            snapshot.userId ? routes.profile(snapshot.userId) : routes.settings
+          }
+          onClick={closeMenu}
+          className="flex items-center gap-3 px-5 pb-3 pt-1 rounded-lg transition-colors hover:bg-[var(--backgroundHover)] cursor-pointer group link-no-decoration"
           data-testid="profile-identity-card"
         >
           <EquippedPlayerAvatar
@@ -195,7 +200,7 @@ export default function ProfileMenu() {
               </div>
             )}
           </div>
-        </div>
+        </Link>
         <Divider spacing="sm" />
 
         {role === 'admin' && (
