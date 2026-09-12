@@ -13,6 +13,7 @@ import { ChessProfilesService } from './chess/profiles/chess-profiles.service';
 import { XpSettingsService } from '../xp/xp-settings.service';
 import { User } from '../auth/schemas/user.schema';
 import { OCI_CONNECTION } from '../common/providers/mongo-connections.provider';
+import { ActivityFeedService } from './activity-feed/activity-feed.service';
 
 @Injectable()
 export class GamePostMatchService {
@@ -30,6 +31,7 @@ export class GamePostMatchService {
     private readonly xpSettings: XpSettingsService,
     @InjectModel(User.name, OCI_CONNECTION)
     private readonly userModel: Model<User>,
+    private readonly activityFeed: ActivityFeedService,
   ) {}
 
   async onGameCompleted(
@@ -97,6 +99,28 @@ export class GamePostMatchService {
     } catch (err) {
       this.logger.warn(
         `Multiplayer XP award failed: ${(err as Error).message}`,
+      );
+    }
+
+    try {
+      const humanPlayerIds = playerIds.filter((id) => !id.startsWith('bot-'));
+      const isDraw = winners.length === 0;
+      const detail = isDraw
+        ? 'played a draw'
+        : winners.length === 1
+          ? 'won a game'
+          : 'won a team game';
+      for (const playerId of humanPlayerIds) {
+        await this.activityFeed.recordEvent({
+          type: 'game_completed',
+          userId: playerId,
+          gameId,
+          detail,
+        });
+      }
+    } catch (err) {
+      this.logger.warn(
+        `Activity feed recording failed: ${(err as Error).message}`,
       );
     }
   }

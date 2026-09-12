@@ -41,6 +41,11 @@ vi.mock('@/shared/config/useRoutes', () => ({
     auth: '/auth',
     wallet: '/wallet',
     admin: '/admin',
+    battlePass: '/battle-pass',
+    referrals: '/referrals',
+    terms: '/terms',
+    privacy: '/privacy',
+    profile: (userId: string) => `/profile/${userId}`,
   }),
 }));
 
@@ -104,9 +109,10 @@ describe('Discord Community Links', () => {
     expect(discordLink.getAttribute('rel')).toBe('noopener noreferrer');
   });
 
-  it('renders desktop header discord link with target _blank and noopener noreferrer', () => {
+  it('renders profile dropdown discord link with target _blank and noopener noreferrer', () => {
     render(<HeaderInteractive />);
-    const discordLink = screen.getByTestId('header-discord-link');
+    expect(screen.queryByTestId('header-discord-link')).toBeNull();
+    const discordLink = screen.getByTestId('profile-discord-link');
     expect(discordLink).toBeDefined();
     expect(discordLink.getAttribute('href')).toContain('discord');
     expect(discordLink.getAttribute('target')).toBe('_blank');

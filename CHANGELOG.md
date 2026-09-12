@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.41] - 2026-09-12
+
+### Added
+- add platform growth features — achievement sharing, result cards, activity feed, embeddable widgets
+
+### Fixed
+- use array includes and origin equality check in embed handler (ARC-900) (ARC-900)
+- verify message origin in embed postMessage handler (ARC-900) (ARC-900)
+- import ActivityFeedModule in GamesModule to resolve dependency injection
+
+### Documentation
+- mark achievement sharing, result cards, activity feed, embeddable widgets as done in roadmap
+
+
+## [1.29.40] - 2026-09-12
+
+### Added
+- optimize LCP and SSR on chess coordinate trainer (ARC-header-auth-declutter)
+- declutter header and improve profile button UI/UX
+
+### Fixed
+- keep quickplay in lobby and prevent duplicate bots
+
+
+## [1.29.39] - 2026-09-12
+
+### Added
+- rework statistics page UI and UX with modern player hub
+- add level up modal with rewards and coins per level
+- add badges showcase with 1-click equip and profile navigation
+- add exclusive level badges progression and unbuyable badges
+
+### Fixed
+- resolve e2e tests for level rewards and shop badges
+
+### Refactored
+- use shared modal for level up and standard placeholder syntax
+
+
 ## [1.29.38] - 2026-09-12
 
 ### Fixed

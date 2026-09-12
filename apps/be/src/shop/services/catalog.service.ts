@@ -179,9 +179,11 @@ export class CatalogService {
       priceCurrency: ShopPriceCurrency | null;
     }> | null,
   ): Promise<EffectiveShopItem> {
+    const defaultAvailable =
+      def.purchasable !== false && def.category !== 'badge';
     const available =
       override?.available === null || override?.available === undefined
-        ? true
+        ? defaultAvailable
         : override.available;
     let priceAmount =
       override?.priceAmount === null || override?.priceAmount === undefined

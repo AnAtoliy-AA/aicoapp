@@ -112,7 +112,7 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 #### Community
 
 - [x] Discord server — link from navbar
-- [ ] Platform-wide activity feed — "Recently active games" visible to logged-out users
+- [x] Platform-wide activity feed — "Recently active games" visible to logged-out users
 - [x] Friend system — invite via username or shareable profile link
 - [x] Public player profiles with game history, win/loss stats, favorite games (Google-indexable pages)
 - [x] Ship public leaderboard page (leagues backend already exists)
@@ -121,14 +121,14 @@ Targeting high-competition generic terms does not work on a young domain. Win lo
 
 - [x] Daily chess puzzle page (resets every 24h — drives recurring visits)
 - [x] Streak system — show prominently in UI (streak_freeze already exists on backend)
-- [ ] Achievement badges — visible on profile, shareable on social
+- [x] Achievement badges — visible on profile, shareable on social
 - [ ] Email + push notifications for async game turns and weekly events
 - [ ] Smart "Play Again" flow after game ends
 
 #### Viral Growth
 
-- [ ] Shareable result cards — image generated after game ends ("I beat Magnus Bot!")
-- [ ] Embeddable mini-game widgets — Minesweeper, Tic-Tac-Toe on external sites = backlinks
+- [x] Shareable result cards — image generated after game ends ("I beat Magnus Bot!")
+- [x] Embeddable mini-game widgets — Minesweeper, Tic-Tac-Toe on external sites = backlinks
 - [ ] Short-form video content plan (TikTok/Reels) for original games
 
 ---
@@ -455,7 +455,10 @@ Agent posts: Discord webhook with opportunity table
 | 🟡 P1    | Hreflang validator in CI                           | SEO integrity     | Low       | Agent 8  | ✅ Done |
 | 🟡 P1    | Weekly content gap reports                         | Content direction | Low       | Agent 9  | ✅ Done |
 | 🟢 P2    | Discord server                                     | Community         | Low       | Manual   | ✅ Done |
-| 🟢 P2    | Shareable game result cards                        | Viral growth      | Medium    | Manual   | Pending |
+| 🟢 P2    | Shareable game result cards                        | Viral growth      | Medium    | Manual   | ✅ Done |
+| 🟢 P2    | Achievement badges on profiles                     | Retention + SEO   | Medium    | Manual   | ✅ Done |
+| 🟢 P2    | Embeddable mini-game widgets                       | Viral growth      | Medium    | Manual   | ✅ Done |
+| 🟢 P2    | Platform-wide activity feed                        | Community + SEO   | Medium    | Manual   | ✅ Done |
 | 🟢 P2    | Original game tournaments (Critical, Sea Battle)   | Differentiation   | High      | Manual   | Pending |
 | 🟢 P2    | Mobile App Store launch                            | New channel       | Very High | Manual   | Pending |
 | 🟢 P2    | Russian/Spanish content strategy                   | Untapped markets  | High      | Agent 3  | ✅ Done |

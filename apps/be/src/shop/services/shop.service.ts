@@ -26,35 +26,12 @@ import type {
   EquippedView,
   GrantResult,
   InventoryItemView,
+  InventoryRowSnapshot,
+  LeanUser,
   PurchaseResult,
   RevokeResult,
   SellResult,
 } from '../interfaces/shop-views';
-
-interface LeanUser {
-  _id: Types.ObjectId;
-  coins?: number;
-  gems?: number;
-  equippedAvatarId?: string | null;
-  equippedBadgeId?: string | null;
-  equippedNameColorId?: string | null;
-  equippedBannerId?: string | null;
-  equippedAuraId?: string | null;
-  equippedFrameId?: string | null;
-  equippedGameSkinId?: string | null;
-  equippedBackgroundId?: string | null;
-}
-interface InventoryRowSnapshot {
-  _id: Types.ObjectId;
-  userId: Types.ObjectId;
-  itemId: string;
-  purchaseId: string;
-  acquiredVia: 'coins' | 'gems' | 'grant' | 'starter';
-  paidAmount?: number | null;
-  paidCurrency?: 'coins' | 'gems' | null;
-  soldAt?: Date | null;
-  createdAt?: Date;
-}
 
 @Injectable()
 export class ShopService {
@@ -97,6 +74,8 @@ export class ShopService {
 
     const effective = await this.catalog.getEffective(itemId);
     if (!effective) throw new NotFoundException('shop.unknownItem');
+    if (effective.category === 'badge')
+      throw new BadRequestException('shop.badgeNotPurchasable');
     if (!effective.available) throw new BadRequestException('shop.unavailable');
 
     // Ownership short-circuit: the per-purchaseId dedup above only catches

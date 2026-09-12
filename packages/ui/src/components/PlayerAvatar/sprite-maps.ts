@@ -51,14 +51,27 @@ export const AVATAR_SPRITE_MAP: Record<string, SpriteInfo> = Object.fromEntries(
 );
 
 const _BADGE_SPRITE_MAP: Record<string, Omit<SpriteInfo, 'spritesheet'>> = {
-  '/shop/badges/champion.png': { index: 0, cols: 4, size: 256 },
-  '/shop/badges/elite.png': { index: 1, cols: 4, size: 256 },
-  '/shop/badges/legend.png': { index: 2, cols: 4, size: 256 },
-  '/shop/badges/mythic.png': { index: 3, cols: 4, size: 256 },
-  '/shop/badges/newcomer.png': { index: 4, cols: 4, size: 256 },
-  '/shop/badges/nexus.png': { index: 5, cols: 4, size: 256 },
-  '/shop/badges/vanguard.png': { index: 6, cols: 4, size: 256 },
-  '/shop/badges/veteran.png': { index: 7, cols: 4, size: 256 },
+  '/shop/badges/archon.png': { index: 0, cols: 4, size: 256 },
+  '/shop/badges/ascendant.png': { index: 1, cols: 4, size: 256 },
+  '/shop/badges/champion.png': { index: 2, cols: 4, size: 256 },
+  '/shop/badges/conqueror.png': { index: 3, cols: 4, size: 256 },
+  '/shop/badges/elite.png': { index: 4, cols: 4, size: 256 },
+  '/shop/badges/gladiator.png': { index: 5, cols: 4, size: 256 },
+  '/shop/badges/grandmaster.png': { index: 6, cols: 4, size: 256 },
+  '/shop/badges/guardian.png': { index: 7, cols: 4, size: 256 },
+  '/shop/badges/juggernaut.png': { index: 8, cols: 4, size: 256 },
+  '/shop/badges/legend.png': { index: 9, cols: 4, size: 256 },
+  '/shop/badges/mythic.png': { index: 10, cols: 4, size: 256 },
+  '/shop/badges/newcomer.png': { index: 11, cols: 4, size: 256 },
+  '/shop/badges/nexus.png': { index: 12, cols: 4, size: 256 },
+  '/shop/badges/paladin.png': { index: 13, cols: 4, size: 256 },
+  '/shop/badges/paragon.png': { index: 14, cols: 4, size: 256 },
+  '/shop/badges/scout.png': { index: 15, cols: 4, size: 256 },
+  '/shop/badges/sovereign.png': { index: 16, cols: 4, size: 256 },
+  '/shop/badges/titan.png': { index: 17, cols: 4, size: 256 },
+  '/shop/badges/vanguard.png': { index: 18, cols: 4, size: 256 },
+  '/shop/badges/veteran.png': { index: 19, cols: 4, size: 256 },
+  '/shop/badges/warlord.png': { index: 20, cols: 4, size: 256 },
 };
 
 const BADGE_SPRITESHEET = resolveAssetUrl('/shop/badges_spritesheet.png');

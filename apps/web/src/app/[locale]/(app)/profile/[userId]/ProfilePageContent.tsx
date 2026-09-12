@@ -19,6 +19,7 @@ import { xpProgress, toRoman } from '@/shared/lib/xp-level';
 import {
   getUserProfile,
   getUserFriends,
+  getUserAchievements,
   type PublicUserProfile,
 } from '@/shared/api/profile';
 import {
@@ -32,6 +33,8 @@ import { EquippedPlayerAvatar } from '@/shared/ui/PlayerAvatar/EquippedPlayerAva
 import { UserIcon } from '@arcadeum/ui/components/Icons/index';
 import { GiftDialog } from '@/features/shop/ui/GiftDialog';
 import type { Friend, FriendRequest } from '@/shared/api/friends';
+import type { Achievement } from '@/features/achievements/server/achievements.types';
+import { getRarityStyle } from '@/features/achievements/lib/rarity';
 
 export default function ProfilePageContent() {
   const params = useParams();
@@ -54,6 +57,7 @@ export default function ProfilePageContent() {
   const [friendLoading, setFriendLoading] = useState(false);
   const [giftDialogOpen, setGiftDialogOpen] = useState(false);
   const [replays, setReplays] = useState<ReplaySummary[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
 
   const isOwnProfile = snapshot.userId === userId;
   const isAlreadyFriend = myFriends.some((f) => f.userId === userId);
@@ -95,6 +99,14 @@ export default function ProfilePageContent() {
           if (!cancelled) setReplays(replayData.entries);
         } catch {
           // Replays are optional — don't block profile load
+        }
+
+        // Load achievements for this user
+        try {
+          const achievementData = await getUserAchievements(userId);
+          if (!cancelled) setAchievements(achievementData);
+        } catch {
+          // Achievements are optional — don't block profile load
         }
       } catch {
         if (!cancelled) setError(true);
@@ -305,6 +317,65 @@ export default function ProfilePageContent() {
               ))
             )}
           </div>
+
+          {achievements.length > 0 && (
+            <div className="flex flex-col items-stretch gap-3">
+              <div className="flex flex-row items-center gap-2">
+                <span className="text-[18px] font-bold">
+                  {t('pages.achievements.title')}
+                </span>
+                <Badge variant="neutral" size="sm">
+                  {achievements.length}
+                </Badge>
+              </div>
+              <div className="flex flex-row gap-2 overflow-x-auto pb-1">
+                {achievements.map((achievement) => {
+                  const rarityStyle = getRarityStyle(achievement.rarity);
+                  return (
+                    <div
+                      key={achievement.achievementId}
+                      className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border border-[var(--glassBorder)] bg-[var(--backgroundHover)] p-3 backdrop-blur-md"
+                      style={{ minWidth: 100 }}
+                    >
+                      <span
+                        className="flex h-10 w-10 items-center justify-center rounded-xl"
+                        style={{
+                          backgroundColor: rarityStyle.glow,
+                          color: rarityStyle.text,
+                        }}
+                      >
+                        {achievement.iconUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={achievement.iconUrl}
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="h-6 w-6 rounded object-contain"
+                            loading="lazy"
+                          />
+                        ) : (
+                          '🏆'
+                        )}
+                      </span>
+                      <span className="truncate text-center text-[11px] font-semibold">
+                        {achievement.name}
+                      </span>
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase"
+                        style={{
+                          color: rarityStyle.text,
+                          border: `1px solid ${rarityStyle.border}`,
+                        }}
+                      >
+                        {achievement.rarity}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {replays.length > 0 && (
             <div className="flex flex-col items-stretch gap-3">
