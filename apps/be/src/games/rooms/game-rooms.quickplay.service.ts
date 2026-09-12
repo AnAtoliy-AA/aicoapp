@@ -68,7 +68,6 @@ export class GameRoomsQuickplayService {
     const gameOptions: Record<string, unknown> = {
       ...(variant ? { variant } : {}),
       theme: effectiveTheme,
-      autoStartWithBots: botsToSeed,
     };
     const category = this.engineRegistry.getMetadata(gameId).category;
 
