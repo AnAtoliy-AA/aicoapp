@@ -1,8 +1,3 @@
-/**
- * Communication layer for embeddable game widgets.
- * Games embedded via iframe use postMessage to communicate with the parent page.
- */
-
 export interface EmbedReadyMessage {
   type: 'ready';
 }
@@ -30,24 +25,65 @@ export type EmbedMessage =
   | EmbedScoreUpdateMessage
   | EmbedConfigureMessage;
 
-/**
- * Send a message from the embedded game to the parent window.
- */
-export function sendEmbedMessage(message: EmbedMessage): void {
-  if (typeof window === 'undefined') return;
-  window.parent.postMessage(message, '*');
+export function getAllowedEmbedOrigins(
+  customOrigins?: Iterable<string>,
+): Set<string> {
+  const raw = process.env.NEXT_PUBLIC_EMBED_ALLOWED_ORIGINS ?? '';
+  const origins = new Set<string>(
+    raw
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean),
+  );
+
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    origins.add(window.location.origin);
+  }
+
+  if (typeof document !== 'undefined' && document.referrer) {
+    try {
+      const referrerOrigin = new URL(document.referrer).origin;
+      if (referrerOrigin) {
+        origins.add(referrerOrigin);
+      }
+    } catch {
+      return origins;
+    }
+  }
+
+  if (customOrigins) {
+    for (const origin of customOrigins) {
+      if (origin) {
+        origins.add(origin);
+      }
+    }
+  }
+
+  return origins;
 }
 
-/**
- * Listen for configuration messages from the parent window.
- */
+export function sendEmbedMessage(
+  message: EmbedMessage,
+  targetOrigin: string = '*',
+): void {
+  if (typeof window === 'undefined') return;
+  window.parent.postMessage(message, targetOrigin);
+}
+
 export function onEmbedMessage(
   handler: (message: EmbedConfigureMessage) => void,
+  customAllowedOrigins?: Iterable<string>,
 ): () => void {
   if (typeof window === 'undefined') return () => {};
 
+  const allowedOrigins = getAllowedEmbedOrigins(customAllowedOrigins);
+
   const listener = (event: MessageEvent) => {
-    const data = event.data as Partial<EmbedMessage>;
+    if (!allowedOrigins.has(event.origin)) {
+      return;
+    }
+
+    const data = event.data as Partial<EmbedMessage> | null | undefined;
     if (data?.type === 'configure') {
       handler(data as EmbedConfigureMessage);
     }
@@ -57,9 +93,6 @@ export function onEmbedMessage(
   return () => window.removeEventListener('message', listener);
 }
 
-/**
- * Detect if the current page is running inside an iframe.
- */
 export function isEmbedded(): boolean {
   if (typeof window === 'undefined') return false;
   try {
