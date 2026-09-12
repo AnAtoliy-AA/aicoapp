@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { XpSettings, XpSettingsDocument } from './schemas/xp-settings.schema';
@@ -9,6 +9,11 @@ import {
   levelFromXp as computeLevelFromXp,
   xpProgress as computeXpProgress,
 } from './lib/xp-level';
+import { grantLevelBadges } from './lib/level-rewards';
+import {
+  UserInventoryItem,
+  type UserInventoryItemDocument,
+} from '../shop/schemas/user-inventory-item.schema';
 
 const GLOBAL_SCOPE = 'global';
 
@@ -19,6 +24,9 @@ export class XpSettingsService {
   constructor(
     @InjectModel(XpSettings.name)
     private readonly settingsModel: Model<XpSettingsDocument>,
+    @Optional()
+    @InjectModel(UserInventoryItem.name)
+    private readonly inventoryModel?: Model<UserInventoryItemDocument>,
   ) {}
 
   async getSettings(gameId?: string): Promise<XpSettingsValues> {
@@ -46,7 +54,17 @@ export class XpSettingsService {
     amount: number,
   ): Promise<void> {
     if (amount <= 0) return;
-    await userModel.updateOne({ _id: userId }, { $inc: { xp: amount } });
+    const updated = await (
+      userModel as unknown as Model<{ xp?: number }>
+    ).findOneAndUpdate(
+      { _id: userId },
+      { $inc: { xp: amount } },
+      { new: true, projection: { xp: 1 } },
+    );
+    if (updated?.xp && this.inventoryModel) {
+      const level = computeLevelFromXp(updated.xp);
+      await grantLevelBadges(userId, level, this.inventoryModel);
+    }
   }
 
   async listAll(): Promise<

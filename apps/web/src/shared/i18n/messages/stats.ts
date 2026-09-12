@@ -28,6 +28,14 @@ export const en = {
   prestigeReset: 'Prestige Reset',
   prestigeHint:
     'Reach level 99 to prestige and reset your level for a prestige badge.',
+  levelProgression: 'Level Progression',
+  levelProgressionShowLess: 'Show less',
+  levelProgressionShowAll: 'Show all 99 levels',
+  reward: 'Reward',
+  xpNeeded: 'XP Needed',
+  youBadge: 'you',
+  unlocked: 'Unlocked',
+  locked: 'Locked',
   // Game breakdown
   gameBreakdownTitle: 'Game Breakdown',
   game: 'Game',
@@ -72,6 +80,14 @@ export const es = {
   prestigeReset: 'Reinicio de Prestigio',
   prestigeHint:
     'Alcanza el nivel 99 para prestigiar y reiniciar tu nivel por una insignia de prestigio.',
+  levelProgression: 'Progresión de Nivel',
+  levelProgressionShowLess: 'Mostrar menos',
+  levelProgressionShowAll: 'Mostrar los 99 niveles',
+  reward: 'Recompensa',
+  xpNeeded: 'XP Necesario',
+  youBadge: 'tú',
+  unlocked: 'Desbloqueado',
+  locked: 'Bloqueado',
   // Game breakdown
   gameBreakdownTitle: 'Desglose por Juego',
   game: 'Juego',
@@ -116,6 +132,14 @@ export const fr = {
   prestigeReset: 'Réinitialisation de Prestige',
   prestigeHint:
     'Atteignez le niveau 99 pour prestigier et réinitialiser votre niveau pour un badge de prestige.',
+  levelProgression: 'Progression de Niveau',
+  levelProgressionShowLess: 'Afficher moins',
+  levelProgressionShowAll: 'Afficher les 99 niveaux',
+  reward: 'Récompense',
+  xpNeeded: 'XP Requis',
+  youBadge: 'vous',
+  unlocked: 'Débloqué',
+  locked: 'Verrouillé',
   // Game breakdown
   gameBreakdownTitle: 'Détail par Jeu',
   game: 'Jeu',
@@ -160,6 +184,14 @@ export const ru = {
   prestigeReset: 'Сброс престижа',
   prestigeHint:
     'Достигните 99 уровня, чтобы получить престиж и сбросить уровень за значок престижа.',
+  levelProgression: 'Прогресс уровней',
+  levelProgressionShowLess: 'Показать меньше',
+  levelProgressionShowAll: 'Показать все 99 уровней',
+  reward: 'Награда',
+  xpNeeded: 'Требуется XP',
+  youBadge: 'вы',
+  unlocked: 'Разблокировано',
+  locked: 'Заблокировано',
   // Game breakdown
   gameBreakdownTitle: 'Детализация по играм',
   game: 'Игра',
@@ -204,6 +236,14 @@ export const by = {
   prestigeReset: 'Скід прэстыжу',
   prestigeHint:
     'Дасягніце 99 узроўню, каб атрымаць прэстыж і скінуць узровень за значок прэстыжу.',
+  levelProgression: 'Прагрэс узроўняў',
+  levelProgressionShowLess: 'Паказаць менш',
+  levelProgressionShowAll: 'Паказаць усе 99 узроўняў',
+  reward: 'Узнагарода',
+  xpNeeded: 'Патрабуецца XP',
+  youBadge: 'вы',
+  unlocked: 'Разблакіравана',
+  locked: 'Заблакіравана',
   // Game breakdown
   gameBreakdownTitle: 'Дэталізацыя па гульнях',
   game: 'Гульня',

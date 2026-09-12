@@ -14,12 +14,18 @@ import { User, UserSchema } from '../auth/schemas/user.schema';
  * RolesGuard is provided locally (same pattern as EconomyModule).
  * User model and XpSettings are both on the default connection.
  */
+import {
+  UserInventoryItem,
+  UserInventoryItemSchema,
+} from '../shop/schemas/user-inventory-item.schema';
+
 @Module({
   imports: [
     ConfigModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: XpSettings.name, schema: XpSettingsSchema },
+      { name: UserInventoryItem.name, schema: UserInventoryItemSchema },
     ]),
   ],
   providers: [XpSettingsService, PrestigeService, RolesGuard],

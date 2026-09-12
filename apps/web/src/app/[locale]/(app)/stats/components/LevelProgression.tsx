@@ -1,10 +1,17 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { Card } from '@arcadeum/ui';
 import { xpForLevel } from '@/shared/lib/xp-level';
+import { getRewardForLevel } from '@/shared/lib/level-rewards';
+import {
+  useTranslation,
+  type TranslationKey,
+} from '@/shared/lib/useTranslation';
 
 export function LevelProgression({ currentLevel }: { currentLevel: number }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   const rows = Array.from({ length: 99 }, (_, i) => {
@@ -13,7 +20,8 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
     const gap = level > 1 ? totalXp - xpForLevel(level - 1) : totalXp;
     const isCurrent = level === currentLevel;
     const isPast = level < currentLevel;
-    return { level, totalXp, gap, isCurrent, isPast };
+    const reward = getRewardForLevel(level);
+    return { level, totalXp, gap, isCurrent, isPast, reward };
   });
 
   const visibleRows = expanded ? rows : rows.slice(0, 10);
@@ -26,20 +34,31 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
         className="flex w-full items-center justify-between cursor-pointer"
       >
         <span className="text-[14px] font-bold uppercase tracking-wider text-[var(--textSecondary)]">
-          Level Progression
+          {t('stats.levelProgression' as TranslationKey)}
         </span>
         <span className="text-[12px] text-[var(--textSecondary)]">
-          {expanded ? 'Show less' : 'Show all 99 levels'}
+          {expanded
+            ? t('stats.levelProgressionShowLess' as TranslationKey)
+            : t('stats.levelProgressionShowAll' as TranslationKey)}
         </span>
       </button>
 
-      <div className="mt-3 overflow-hidden">
+      <div className="mt-3 overflow-x-auto">
         <table className="w-full text-[12px]">
           <thead>
             <tr className="text-[var(--textSecondary)] border-b border-[var(--borderColor)]">
-              <th className="text-left py-1.5 font-semibold">Level</th>
-              <th className="text-right py-1.5 font-semibold">Total XP</th>
-              <th className="text-right py-1.5 font-semibold">XP Needed</th>
+              <th className="text-left py-1.5 font-semibold">
+                {t('stats.level' as TranslationKey)}
+              </th>
+              <th className="text-right py-1.5 font-semibold">
+                {t('stats.totalXP' as TranslationKey)}
+              </th>
+              <th className="text-right py-1.5 font-semibold">
+                {t('stats.xpNeeded' as TranslationKey)}
+              </th>
+              <th className="text-left py-1.5 pl-4 font-semibold">
+                {t('stats.reward' as TranslationKey)}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -50,7 +69,7 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
                   row.isCurrent
                     ? 'bg-violet-500/10 font-bold text-violet-300'
                     : row.isPast
-                      ? 'text-[var(--textSecondary)] opacity-60'
+                      ? 'text-[var(--textSecondary)] opacity-70'
                       : ''
                 }
               >
@@ -58,7 +77,7 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
                   {row.level}
                   {row.isCurrent && (
                     <span className="ml-1.5 text-[10px] text-violet-400">
-                      ← you
+                      ← {t('stats.youBadge' as TranslationKey)}
                     </span>
                   )}
                 </td>
@@ -66,6 +85,42 @@ export function LevelProgression({ currentLevel }: { currentLevel: number }) {
                   {row.totalXp.toLocaleString()}
                 </td>
                 <td className="text-right py-1">{row.gap.toLocaleString()}</td>
+                <td className="py-1 pl-4">
+                  {row.reward ? (
+                    <div
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[var(--borderColor)] bg-[var(--surfaceSecondary)]"
+                      data-testid={`level-reward-${row.level}`}
+                    >
+                      <Image
+                        src={row.reward.assetUrl}
+                        alt={row.reward.badgeId}
+                        width={18}
+                        height={18}
+                        className="object-contain"
+                      />
+                      <span className="text-[11px] font-medium text-[var(--color)]">
+                        {t(
+                          `pages.shop.${row.reward.nameKey}` as TranslationKey,
+                        )}
+                      </span>
+                      <span
+                        className={
+                          row.isPast || row.isCurrent
+                            ? 'text-[9px] px-1 rounded bg-emerald-500/20 text-emerald-300 font-semibold'
+                            : 'text-[9px] px-1 rounded bg-[var(--surfaceTertiary)] text-[var(--textSecondary)]'
+                        }
+                      >
+                        {row.isPast || row.isCurrent
+                          ? t('stats.unlocked' as TranslationKey)
+                          : t('stats.locked' as TranslationKey)}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-[var(--textTertiary)] opacity-30">
+                      —
+                    </span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
