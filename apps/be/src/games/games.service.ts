@@ -31,7 +31,6 @@ import {
   touchEngineSession,
   type RematchHistoryOptions,
 } from './games.service-helpers';
-
 @Injectable()
 export class GamesService {
   private readonly logger = new Logger(GamesService.name);
@@ -318,11 +317,12 @@ export class GamesService {
   ) {
     return this.historyFacade.listHistoryForUser(userId, options);
   }
-
   async getHistoryEntry(userId: string, roomId: string) {
     return this.historyFacade.getHistoryEntry(userId, roomId);
   }
-
+  async getRoomResult(roomId: string) {
+    return this.historyFacade.getRoomResult(roomId);
+  }
   async hideHistoryEntry(userId: string, roomId: string) {
     return this.historyFacade.hideHistoryEntry(userId, roomId);
   }

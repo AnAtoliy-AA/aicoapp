@@ -400,6 +400,20 @@ const nextConfig: NextConfig = {
           ],
         }));
       })(),
+      // Embed routes allow frame-ancestors * so external sites can embed games
+      {
+        source: '/:locale/embed/:game*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: 'frame-ancestors *;',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL',
+          },
+        ],
+      },
     ];
   },
   env: {
