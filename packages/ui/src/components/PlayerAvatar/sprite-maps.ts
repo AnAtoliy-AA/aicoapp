@@ -41,7 +41,7 @@ const _AVATAR_SPRITE_MAP: Record<string, Omit<SpriteInfo, 'spritesheet'>> = {
   '/shop/avatars/wolf-cyber.png': { index: 27, cols: 6, size: 512 },
 };
 
-const AVATAR_SPRITESHEET = resolveAssetUrl('/shop/avatars_spritesheet.png');
+const AVATAR_SPRITESHEET = resolveAssetUrl('/shop/avatars_spritesheet.webp');
 
 export const AVATAR_SPRITE_MAP: Record<string, SpriteInfo> = Object.fromEntries(
   Object.entries(_AVATAR_SPRITE_MAP).map(([key, val]) => [
@@ -74,7 +74,7 @@ const _BADGE_SPRITE_MAP: Record<string, Omit<SpriteInfo, 'spritesheet'>> = {
   '/shop/badges/warlord.png': { index: 20, cols: 4, size: 256 },
 };
 
-const BADGE_SPRITESHEET = resolveAssetUrl('/shop/badges_spritesheet.png');
+const BADGE_SPRITESHEET = resolveAssetUrl('/shop/badges_spritesheet.webp');
 
 export const BADGE_SPRITE_MAP: Record<string, SpriteInfo> = Object.fromEntries(
   Object.entries(_BADGE_SPRITE_MAP).map(([key, val]) => [
