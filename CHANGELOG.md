@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.29.37] - 2026-09-12
+
+### Fixed
+- fix mobile viewport failures for support and streak tests
+- fix React hydration error #418 by moving anonId to Zustand store
+
+
 ## [1.29.36] - 2026-09-11
 
 ### Fixed
