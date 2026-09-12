@@ -27,7 +27,7 @@ export type EmbedMessage =
 
 export function getAllowedEmbedOrigins(
   customOrigins?: Iterable<string>,
-): Set<string> {
+): string[] {
   const raw = process.env.NEXT_PUBLIC_EMBED_ALLOWED_ORIGINS ?? '';
   const origins = new Set<string>(
     raw
@@ -47,7 +47,7 @@ export function getAllowedEmbedOrigins(
         origins.add(referrerOrigin);
       }
     } catch {
-      return origins;
+      return Array.from(origins);
     }
   }
 
@@ -59,7 +59,7 @@ export function getAllowedEmbedOrigins(
     }
   }
 
-  return origins;
+  return Array.from(origins);
 }
 
 export function sendEmbedMessage(
@@ -79,7 +79,10 @@ export function onEmbedMessage(
   const allowedOrigins = getAllowedEmbedOrigins(customAllowedOrigins);
 
   const listener = (event: MessageEvent) => {
-    if (!allowedOrigins.has(event.origin)) {
+    if (
+      event.origin !== window.location.origin &&
+      !allowedOrigins.includes(event.origin)
+    ) {
       return;
     }
 

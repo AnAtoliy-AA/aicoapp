@@ -22,9 +22,9 @@ describe('embedCommunication', () => {
     process.env.NEXT_PUBLIC_EMBED_ALLOWED_ORIGINS =
       'https://arcadeum.games, https://partner.example.com';
     const origins = getAllowedEmbedOrigins(['https://custom.example.com']);
-    expect(origins.has('https://arcadeum.games')).toBe(true);
-    expect(origins.has('https://partner.example.com')).toBe(true);
-    expect(origins.has('https://custom.example.com')).toBe(true);
+    expect(origins.includes('https://arcadeum.games')).toBe(true);
+    expect(origins.includes('https://partner.example.com')).toBe(true);
+    expect(origins.includes('https://custom.example.com')).toBe(true);
   });
 
   it('handles message from allowed origin', () => {
